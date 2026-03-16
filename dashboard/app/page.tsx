@@ -18,7 +18,7 @@ export default function HomePage() {
   if (error) {
     return (
       <div className="space-y-8">
-        <h1 className="text-3xl font-bold text-trust-blue">
+        <h1 className="text-3xl font-bold text-trust-navy font-heading">
           DALY Burden Dashboard
         </h1>
         <div className="card border-warning/50">
@@ -59,7 +59,7 @@ export default function HomePage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-trust-blue">
+        <h1 className="text-3xl font-bold text-trust-navy font-heading">
           DALY Burden Dashboard
         </h1>
         <p className="text-secondary mt-1">

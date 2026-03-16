@@ -1,10 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Poppins:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply bg-background text-primary antialiased;
+    @apply bg-background text-primary antialiased font-sans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
   }
 }
 
@@ -18,19 +24,19 @@
   }
 
   .pill-default {
-    @apply bg-trust-light text-trust-blue hover:bg-trust-accent hover:text-white;
+    @apply bg-trust-light text-trust-navy hover:bg-trust-blue hover:text-white;
   }
 
   .pill-active {
-    @apply bg-trust-blue text-white;
+    @apply bg-trust-navy text-white;
   }
 
   .nav-link {
-    @apply flex items-center gap-2 px-3 py-2 rounded-md text-secondary hover:bg-trust-light hover:text-trust-blue transition-colors;
+    @apply flex items-center gap-2 px-4 py-2 text-sm font-medium text-secondary hover:text-trust-navy transition-colors;
   }
 
   .nav-link-active {
-    @apply bg-trust-light text-trust-blue font-medium;
+    @apply text-trust-navy border-b-2 border-trust-navy;
   }
 
   .card {
@@ -43,7 +49,7 @@
 
   .breadcrumb a,
   .breadcrumb button {
-    @apply text-trust-accent hover:underline cursor-pointer bg-transparent border-none;
+    @apply text-trust-blue hover:underline cursor-pointer bg-transparent border-none;
   }
 
   .kpi {
@@ -51,6 +57,19 @@
   }
 
   .section-title {
-    @apply text-xs font-semibold uppercase tracking-wide text-secondary mb-4;
+    @apply text-xs font-semibold uppercase tracking-wide text-secondary mb-4 font-heading;
+  }
+
+  /* Top navbar styles */
+  .top-nav {
+    @apply bg-white border-b border-border shadow-sm;
+  }
+
+  .top-nav-link {
+    @apply px-4 py-3 text-sm font-medium text-secondary hover:text-trust-navy hover:bg-trust-light transition-colors;
+  }
+
+  .top-nav-link-active {
+    @apply text-trust-navy bg-trust-light border-b-2 border-trust-navy;
   }
 }

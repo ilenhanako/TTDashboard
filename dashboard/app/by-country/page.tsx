@@ -65,7 +65,7 @@ export default function ByCountryPage() {
   if (!countryData) {
     return (
       <div className="space-y-8">
-        <h1 className="text-3xl font-bold text-trust-blue">By Country</h1>
+        <h1 className="text-3xl font-bold text-trust-navy font-heading">By Country</h1>
         <p className="text-secondary">Select a country to view details.</p>
       </div>
     );
@@ -115,7 +115,7 @@ export default function ByCountryPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-trust-blue">By Country</h1>
+          <h1 className="text-3xl font-bold text-trust-navy font-heading">By Country</h1>
           <p className="text-secondary mt-1">
             Select a country to explore its disease profile
           </p>

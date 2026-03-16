@@ -57,7 +57,7 @@ export default function OverviewPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-trust-blue">Overview</h1>
+        <h1 className="text-3xl font-bold text-trust-navy font-heading">Overview</h1>
         <p className="text-secondary mt-1">
           WHO Global Health Estimates {selectedYear} — 15 Asian Countries · All
           values in DALYs (thousands)

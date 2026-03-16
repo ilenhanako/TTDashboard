@@ -107,7 +107,7 @@ export default function TimeSeriesPage() {
   if (availableYears.length < 2) {
     return (
       <div className="space-y-8">
-        <h1 className="text-3xl font-bold text-trust-blue">
+        <h1 className="text-3xl font-bold text-trust-navy font-heading">
           Time Series Analysis
         </h1>
         <div className="card">
@@ -178,7 +178,7 @@ export default function TimeSeriesPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-trust-blue">
+        <h1 className="text-3xl font-bold text-trust-navy font-heading">
           Time Series Analysis
         </h1>
         <p className="text-secondary mt-1">

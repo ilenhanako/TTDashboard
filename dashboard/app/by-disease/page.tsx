@@ -71,7 +71,7 @@ export default function ByDiseasePage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-trust-blue">By Disease</h1>
+          <h1 className="text-3xl font-bold text-trust-navy font-heading">By Disease</h1>
           <p className="text-secondary mt-1">
             Explore disease categories and drill down to sub-diseases and
             geography

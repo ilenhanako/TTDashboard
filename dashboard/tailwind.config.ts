@@ -10,9 +10,12 @@ const config: Config = {
       colors: {
         // Temasek Trust Brand Colors
         trust: {
-          blue: "#003366",
-          accent: "#0066CC",
-          light: "#E6F0FA",
+          navy: "#05006D",      // Primary navy from logo
+          blue: "#0A64BC",      // Trust blue
+          dark: "#0b203b",      // Dark blue
+          accent: "#0066CC",    // Accent blue
+          light: "#E8F4FC",     // Light blue background
+          green: "#a8b700",     // Pistachio accent
         },
         // UI Colors
         background: "#FFFFFF",
@@ -36,7 +39,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: ["Lato", "system-ui", "sans-serif"],
+        heading: ["Poppins", "system-ui", "sans-serif"],
       },
     },
   },

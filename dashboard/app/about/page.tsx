@@ -15,7 +15,7 @@ export default function AboutPage() {
           <span className="text-secondary mx-2">›</span>
           <span className="font-medium">About This Dashboard</span>
         </div>
-        <h1 className="text-3xl font-bold text-trust-blue">About This Dashboard</h1>
+        <h1 className="text-3xl font-bold text-trust-navy font-heading">About This Dashboard</h1>
         <p className="text-secondary mt-1">
           Understanding the WHO DALY data and disease categories
         </p>

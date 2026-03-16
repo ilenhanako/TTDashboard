@@ -129,7 +129,7 @@ export default function UploadPage() {
           <span className="text-secondary mx-2">›</span>
           <span className="font-medium">Upload Data</span>
         </div>
-        <h1 className="text-3xl font-bold text-trust-blue">Upload Data Files</h1>
+        <h1 className="text-3xl font-bold text-trust-navy font-heading">Upload Data Files</h1>
         <p className="text-secondary mt-1">
           Upload WHO GHE Excel files to update the dashboard data
         </p>
