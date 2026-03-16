@@ -8,7 +8,14 @@ import { GenderChart } from "@/components/charts/GenderChart";
 import { CompositionChart } from "@/components/charts/CompositionChart";
 
 export default function OverviewPage() {
-  const { loading, selectedYear, getYearData, getWorldDalyRate, getWorldDiseaseMix, data } = useDashboard();
+  const {
+    loading,
+    selectedYear,
+    getYearData,
+    getWorldDalyRate,
+    getWorldDiseaseMix,
+    data,
+  } = useDashboard();
   const worldDalyRate = getWorldDalyRate();
 
   if (loading) {
@@ -57,7 +64,13 @@ export default function OverviewPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-trust-navy font-heading">Overview</h1>
+        <h1 className="text-3xl font-bold text-trust-navy font-heading">
+          Overview
+        </h1>
+        <p className="text-secondary mt-1">
+          DALY charts, age distribution, gender comparison and disease
+          composition across the region
+        </p>
         <p className="text-secondary mt-1">
           WHO Global Health Estimates {selectedYear} — 15 Asian Countries · All
           values in DALYs (thousands)
@@ -77,7 +90,8 @@ export default function OverviewPage() {
             <strong className="text-primary">
               {worldDalyRate.toFixed(1)} per 1,000
             </strong>{" "}
-            · Bars are coloured red if above world average, blue if below, purple for World
+            · Bars are coloured red if above world average, blue if below,
+            purple for World
           </span>
         </div>
         <DALYRateChart data={rateData} worldDalyRate={worldDalyRate} />
@@ -133,9 +147,14 @@ export default function OverviewPage() {
       {/* Graph 5: Disease Composition */}
       <div className="card">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-secondary mb-4">
-          Disease category composition — all countries + World (% of total DALYs)
+          Disease category composition — all countries + World (% of total
+          DALYs)
         </h2>
-        <CompositionChart yearData={yearData} colors={colors} worldDiseaseMix={worldMix} />
+        <CompositionChart
+          yearData={yearData}
+          colors={colors}
+          worldDiseaseMix={worldMix}
+        />
       </div>
     </div>
   );

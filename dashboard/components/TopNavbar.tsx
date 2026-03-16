@@ -12,7 +12,6 @@ const navItems = [
   { href: "/by-country", label: "By Country" },
   { href: "/time-series", label: "Time Series" },
   { href: "/upload", label: "Upload" },
-  { href: "/about", label: "About" },
 ];
 
 export function TopNavbar() {
