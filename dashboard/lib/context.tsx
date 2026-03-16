@@ -11,6 +11,8 @@ interface DashboardContextType {
   setSelectedYear: (year: string) => void;
   availableYears: string[];
   getYearData: (year?: string) => YearData | null;
+  getWorldDalyRate: (year?: string) => number;
+  getWorldDiseaseMix: (year?: string) => Record<string, number>;
   refreshData: () => Promise<void>;
 }
 
@@ -58,6 +60,27 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     return data?.data?.byYear?.[targetYear] || null;
   };
 
+  const getWorldDalyRate = (year?: string): number => {
+    const targetYear = year || selectedYear;
+    const globalData = data?.data?.global;
+    if (globalData?.worldDalyRates?.[targetYear]) {
+      // World rates are stored per 1,000,000 population, convert to per 1,000
+      return globalData.worldDalyRates[targetYear] / 1000;
+    }
+    // Fallback to config value
+    return data?.config?.worldDalyRate || 380.0;
+  };
+
+  const getWorldDiseaseMix = (year?: string): Record<string, number> => {
+    const targetYear = year || selectedYear;
+    const globalData = data?.data?.global;
+    if (globalData?.worldDiseaseMix?.[targetYear]) {
+      return globalData.worldDiseaseMix[targetYear];
+    }
+    // Fallback to top-level worldDiseaseMix
+    return data?.data?.worldDiseaseMix || {};
+  };
+
   return (
     <DashboardContext.Provider
       value={{
@@ -68,6 +91,8 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
         setSelectedYear,
         availableYears,
         getYearData,
+        getWorldDalyRate,
+        getWorldDiseaseMix,
         refreshData,
       }}
     >

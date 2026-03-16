@@ -4,17 +4,12 @@ import { useState, useCallback } from "react";
 import Link from "next/link";
 import { useDashboard } from "@/lib/context";
 
-interface UploadedFile {
-  name: string;
-  size: number;
-  type: "country" | "global";
-}
-
 export default function UploadPage() {
-  const { refreshData } = useDashboard();
+  const { refreshData, data } = useDashboard();
   const [countryFiles, setCountryFiles] = useState<File[]>([]);
   const [globalFile, setGlobalFile] = useState<File | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error" | "info"; text: string } | null>(null);
 
   const handleCountryFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,6 +84,37 @@ export default function UploadPage() {
       setMessage({ type: "error", text: "Error uploading files. Please try again." });
     } finally {
       setProcessing(false);
+    }
+  };
+
+  const handleDeleteData = async () => {
+    if (!confirm("Are you sure you want to delete all dashboard data? This action cannot be undone.")) {
+      return;
+    }
+
+    setDeleting(true);
+    setMessage({ type: "info", text: "Deleting data..." });
+
+    try {
+      const response = await fetch("/api/upload", {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setMessage({ type: "success", text: result.message || "Data deleted successfully!" });
+        // Refresh the dashboard data
+        if (refreshData) {
+          await refreshData();
+        }
+      } else {
+        setMessage({ type: "error", text: result.error || "Failed to delete data" });
+      }
+    } catch (error) {
+      setMessage({ type: "error", text: "Error deleting data. Please try again." });
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -253,7 +279,7 @@ export default function UploadPage() {
           <li className="flex gap-2">
             <span className="text-trust-accent">2.</span>
             <span>
-              Upload country-specific Excel files for the 14 target Asian countries.
+              Upload country-specific Excel files for the 15 target Asian countries.
             </span>
           </li>
           <li className="flex gap-2">
@@ -291,6 +317,34 @@ export default function UploadPage() {
           {processing ? "Processing..." : "Process Files"}
         </button>
       </div>
+
+      {/* Current Data Management */}
+      {data && (
+        <div className="card border-red-100 bg-red-50/30">
+          <h2 className="text-lg font-semibold text-primary mb-3">Manage Existing Data</h2>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-secondary">
+                Dashboard currently has data loaded for {data.config?.availableYears?.length || 0} year(s).
+              </p>
+              <p className="text-xs text-secondary mt-1">
+                Years: {data.config?.availableYears?.join(", ") || "None"}
+              </p>
+            </div>
+            <button
+              onClick={handleDeleteData}
+              disabled={deleting}
+              className={`px-4 py-2 rounded-md transition-colors ${
+                deleting
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-red-600 text-white hover:bg-red-700"
+              }`}
+            >
+              {deleting ? "Deleting..." : "Delete All Data"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

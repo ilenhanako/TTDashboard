@@ -253,7 +253,7 @@ YEAR = "2000"
 TARGET_COUNTRIES = [
     "Bangladesh", "Brunei Darussalam", "Cambodia", "China", "India",
     "Indonesia", "Japan", "Lao People's Democratic Republic", "Malaysia",
-    "Myanmar", "Philippines", "Republic of Korea", "Singapore", "Viet Nam",
+    "Myanmar", "Philippines", "Republic of Korea", "Singapore", "Thailand", "Viet Nam",
 ]
 
 MPNC_FOCUSED_COUNTRIES = [

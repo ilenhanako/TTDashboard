@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useDashboard } from "@/lib/context";
 import { MetricCard } from "@/components/MetricCard";
 import { TrendChart } from "@/components/charts/TrendChart";
@@ -8,7 +8,11 @@ import {
   shortenCountryName,
   DISEASE_CATEGORIES,
   CATEGORY_SHORT_NAMES,
+  ASEAN_COUNTRIES,
+  isASEANCountry,
 } from "@/lib/constants";
+
+type RegionFilter = "all" | "asean" | "non-asean";
 
 export default function TimeSeriesPage() {
   const { loading, data, availableYears, getYearData } = useDashboard();
@@ -17,23 +21,50 @@ export default function TimeSeriesPage() {
   // Default to first 5 countries
   const allCountries = data?.constants?.countries || [];
   const [selectedCountries, setSelectedCountries] = useState<string[]>(
-    allCountries.slice(0, 5)
+    allCountries.slice(0, 5),
   );
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    DISEASE_CATEGORIES.slice(0, 3)
+    DISEASE_CATEGORIES.slice(0, 3),
   );
-  const [year1, setYear1] = useState(availableYears[availableYears.length - 1] || "");
+  const [year1, setYear1] = useState(
+    availableYears[availableYears.length - 1] || "",
+  );
   const [year2, setYear2] = useState(availableYears[0] || "");
+  const [regionFilter, setRegionFilter] = useState<RegionFilter>("all");
+  const [includeWorld, setIncludeWorld] = useState(true);
+
+  // Filter countries based on region selection
+  const filteredCountries = allCountries.filter((name: string) => {
+    if (regionFilter === "asean") return isASEANCountry(name);
+    if (regionFilter === "non-asean") return !isASEANCountry(name);
+    return true;
+  });
+
+  // Auto-select countries when region filter changes
+  const handleRegionChange = (newFilter: RegionFilter) => {
+    setRegionFilter(newFilter);
+    if (newFilter === "asean") {
+      // Select all ASEAN countries
+      const aseanInData = allCountries.filter((c: string) => isASEANCountry(c));
+      setSelectedCountries(aseanInData);
+    } else if (newFilter === "non-asean") {
+      // Select all non-ASEAN countries
+      const nonAseanInData = allCountries.filter((c: string) => !isASEANCountry(c));
+      setSelectedCountries(nonAseanInData);
+    }
+    // For "all", keep current selection
+  };
 
   // Build time series data from available years
   const timeSeriesData = useMemo(() => {
-    if (!data) return { dalyRates: {}, categoryTotals: {} };
+    if (!data) return { dalyRates: {}, categoryTotals: {}, worldRates: {} };
 
     const dalyRates: Record<string, Record<string, number>> = {};
     const categoryTotals: Record<string, Record<string, number>> = {};
+    const worldRates: Record<string, number> = {};
 
     // For each country, build year -> rate mapping
-    allCountries.forEach((country) => {
+    allCountries.forEach((country: string) => {
       dalyRates[country] = {};
       availableYears.forEach((year) => {
         const yearData = data.data?.byYear?.[year];
@@ -42,6 +73,16 @@ export default function TimeSeriesPage() {
         }
       });
     });
+
+    // Get world DALY rates from global data (convert from per 1M to per 1K)
+    const globalData = data.data?.global;
+    if (globalData?.worldDalyRates) {
+      availableYears.forEach((year) => {
+        if (globalData.worldDalyRates[year]) {
+          worldRates[year] = globalData.worldDalyRates[year] / 1000;
+        }
+      });
+    }
 
     // For each category, build year -> total mapping
     DISEASE_CATEGORIES.forEach((cat) => {
@@ -58,7 +99,7 @@ export default function TimeSeriesPage() {
       });
     });
 
-    return { dalyRates, categoryTotals };
+    return { dalyRates, categoryTotals, worldRates };
   }, [data, availableYears, allCountries, selectedCountries]);
 
   if (loading) return <div className="text-secondary">Loading...</div>;
@@ -66,11 +107,13 @@ export default function TimeSeriesPage() {
   if (availableYears.length < 2) {
     return (
       <div className="space-y-8">
-        <h1 className="text-3xl font-bold text-trust-blue">Time Series Analysis</h1>
+        <h1 className="text-3xl font-bold text-trust-blue">
+          Time Series Analysis
+        </h1>
         <div className="card">
           <p className="text-secondary">
-            Time series analysis requires data for multiple years. Currently only{" "}
-            {availableYears.length} year(s) available.
+            Time series analysis requires data for multiple years. Currently
+            only {availableYears.length} year(s) available.
           </p>
         </div>
       </div>
@@ -84,6 +127,11 @@ export default function TimeSeriesPage() {
       filteredRates[country] = timeSeriesData.dalyRates[country];
     }
   });
+
+  // Add World data if requested
+  if (includeWorld && Object.keys(timeSeriesData.worldRates).length > 0) {
+    filteredRates["World"] = timeSeriesData.worldRates;
+  }
 
   // Filter category trends
   const filteredCategories: Record<string, Record<string, number>> = {};
@@ -116,13 +164,13 @@ export default function TimeSeriesPage() {
     setSelectedCountries((prev) =>
       prev.includes(country)
         ? prev.filter((c) => c !== country)
-        : [...prev, country]
+        : [...prev, country],
     );
   };
 
   const toggleCategory = (cat: string) => {
     setSelectedCategories((prev) =>
-      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
     );
   };
 
@@ -130,7 +178,9 @@ export default function TimeSeriesPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-trust-blue">Time Series Analysis</h1>
+        <h1 className="text-3xl font-bold text-trust-blue">
+          Time Series Analysis
+        </h1>
         <p className="text-secondary mt-1">
           Track DALY trends across {availableYears.join(", ")}
         </p>
@@ -140,12 +190,47 @@ export default function TimeSeriesPage() {
       <div className="card">
         <h2 className="section-title">Filters</h2>
         <div className="space-y-4">
+          {/* Region Filter */}
           <div>
             <label className="block text-sm font-medium text-secondary mb-2">
-              Countries
+              Region
+            </label>
+            <div className="flex gap-2 flex-wrap">
+              {[
+                { value: "all" as RegionFilter, label: "All Countries" },
+                { value: "asean" as RegionFilter, label: "ASEAN Only" },
+                { value: "non-asean" as RegionFilter, label: "Non-ASEAN Only" },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => handleRegionChange(opt.value)}
+                  className={`px-3 py-1 rounded text-sm transition-all ${
+                    regionFilter === opt.value
+                      ? "bg-trust-blue text-white"
+                      : "bg-gray-100 text-secondary hover:bg-gray-200"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+              <label className="flex items-center gap-2 ml-4">
+                <input
+                  type="checkbox"
+                  checked={includeWorld}
+                  onChange={(e) => setIncludeWorld(e.target.checked)}
+                  className="rounded border-gray-300"
+                />
+                <span className="text-sm text-secondary">Include World</span>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-secondary mb-2">
+              Countries ({filteredCountries.length} shown)
             </label>
             <div className="flex flex-wrap gap-2">
-              {allCountries.map((country) => (
+              {filteredCountries.map((country: string) => (
                 <button
                   key={country}
                   onClick={() => toggleCountry(country)}
@@ -190,16 +275,18 @@ export default function TimeSeriesPage() {
       </div>
 
       {/* DALY Rate Trends */}
-      {selectedCountries.length > 0 && (
+      {(selectedCountries.length > 0 || includeWorld) && (
         <div className="card">
-          <h2 className="section-title">DALY Rate Trends</h2>
+          <h2 className="section-title">DALY Trends</h2>
           <p className="text-sm text-secondary mb-4">
-            DALY rate per 1,000 population over time
+            DALY per 1,000 population over time
+            {includeWorld && " (purple line = World average)"}
           </p>
           <TrendChart
             data={filteredRates}
             years={availableYears}
             formatLabel={shortenCountryName}
+            colors={{ World: "#6366F1" }}
           />
         </div>
       )}
@@ -218,7 +305,7 @@ export default function TimeSeriesPage() {
               selectedCategories.map((cat) => [
                 CATEGORY_SHORT_NAMES[cat] || cat,
                 colors[cat] || "#546E7A",
-              ])
+              ]),
             )}
           />
         </div>
@@ -267,10 +354,27 @@ export default function TimeSeriesPage() {
           <MetricCard
             label="Average Change"
             value={`${avgChange > 0 ? "+" : ""}${avgChange.toFixed(1)}%`}
-            deltaType={avgChange < 0 ? "positive" : avgChange > 0 ? "negative" : "neutral"}
+            deltaType={
+              avgChange < 0
+                ? "positive"  // Negative change = improvement = green
+                : avgChange > 0
+                  ? "negative"  // Positive change = worsening = red
+                  : "neutral"
+            }
+            highlightBox={true}
           />
-          <MetricCard label="Countries Improved" value={improved} deltaType="positive" />
-          <MetricCard label="Countries Worsened" value={worsened} deltaType="negative" />
+          <MetricCard
+            label="Countries Improved"
+            value={improved}
+            deltaType="positive"  // Green for improvement
+            highlightBox={true}
+          />
+          <MetricCard
+            label="Countries Worsened"
+            value={worsened}
+            deltaType="negative"  // Red for worsening
+            highlightBox={true}
+          />
         </div>
 
         {/* Change Table */}
@@ -301,8 +405,12 @@ export default function TimeSeriesPage() {
                   <td className="py-3 px-4 font-medium">
                     {shortenCountryName(row.country)}
                   </td>
-                  <td className="py-3 px-4 text-right">{row.rate1.toFixed(1)}</td>
-                  <td className="py-3 px-4 text-right">{row.rate2.toFixed(1)}</td>
+                  <td className="py-3 px-4 text-right">
+                    {row.rate1.toFixed(1)}
+                  </td>
+                  <td className="py-3 px-4 text-right">
+                    {row.rate2.toFixed(1)}
+                  </td>
                   <td
                     className={`py-3 px-4 text-right font-medium ${
                       row.change < 0 ? "text-success" : "text-warning"

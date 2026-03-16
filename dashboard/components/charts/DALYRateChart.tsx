@@ -11,22 +11,36 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import { WORLD_DALY_RATE, shortenCountryName } from "@/lib/constants";
+import { shortenCountryName } from "@/lib/constants";
 
 interface DALYRateChartProps {
   data: { name: string; rate: number }[];
+  worldDalyRate: number;
+  includeWorld?: boolean;
 }
 
-export function DALYRateChart({ data }: DALYRateChartProps) {
-  const chartData = data
+export function DALYRateChart({ data, worldDalyRate, includeWorld = true }: DALYRateChartProps) {
+  let chartData = data
     .map((d) => ({
       name: shortenCountryName(d.name),
       rate: d.rate,
+      isWorld: false,
     }))
     .sort((a, b) => b.rate - a.rate);
 
+  // Add World as a separate bar if requested
+  if (includeWorld) {
+    chartData = [
+      ...chartData,
+      { name: "World", rate: worldDalyRate, isWorld: true },
+    ].sort((a, b) => b.rate - a.rate);
+  }
+
+  // Dynamic height based on number of countries
+  const chartHeight = Math.max(400, chartData.length * 28 + 60);
+
   return (
-    <ResponsiveContainer width="100%" height={400}>
+    <ResponsiveContainer width="100%" height={chartHeight}>
       <BarChart
         data={chartData}
         layout="vertical"
@@ -51,14 +65,14 @@ export function DALYRateChart({ data }: DALYRateChartProps) {
             border: "1px solid #E1E4E8",
             borderRadius: 8,
           }}
-          formatter={(value: number) => [`${value.toFixed(0)}/1000`, "DALY Rate"]}
+          formatter={(value: number) => [`${value.toFixed(1)}/1,000`, "DALY Rate"]}
         />
         <ReferenceLine
-          x={WORLD_DALY_RATE}
+          x={worldDalyRate}
           stroke="#0066CC"
           strokeDasharray="5 5"
           label={{
-            value: `World: ${WORLD_DALY_RATE}`,
+            value: `World Avg: ${worldDalyRate.toFixed(1)}`,
             position: "top",
             fill: "#0066CC",
             fontSize: 11,
@@ -68,7 +82,13 @@ export function DALYRateChart({ data }: DALYRateChartProps) {
           {chartData.map((entry, index) => (
             <Cell
               key={`cell-${index}`}
-              fill={entry.rate > WORLD_DALY_RATE ? "#CF222E" : "#0066CC"}
+              fill={
+                entry.isWorld
+                  ? "#6366F1" // Purple for World
+                  : entry.rate > worldDalyRate
+                    ? "#CF222E" // Red if above world
+                    : "#0066CC" // Blue if below world
+              }
             />
           ))}
         </Bar>

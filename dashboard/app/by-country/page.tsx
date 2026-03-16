@@ -7,24 +7,37 @@ import { AgeChart } from "@/components/charts/AgeChart";
 import { CategoryBar } from "@/components/charts/CategoryBar";
 import {
   shortenCountryName,
-  WORLD_DALY_RATE,
   CATEGORY_SHORT_NAMES,
   AGE_GROUPS,
+  ASEAN_COUNTRIES,
+  isASEANCountry,
 } from "@/lib/constants";
 
 type DrillLevel = 0 | 1;
+type RegionFilter = "all" | "asean" | "non-asean";
 
 export default function ByCountryPage() {
-  const { loading, selectedYear, getYearData, data } = useDashboard();
+  const { loading, selectedYear, getYearData, getWorldDalyRate, data } = useDashboard();
+  const worldDalyRate = getWorldDalyRate();
 
   const yearData = getYearData();
   const countries = yearData?.countries || {};
   const countryNames = Object.keys(countries);
   const colors = data?.constants?.colors || {};
 
-  const [selectedCountry, setSelectedCountry] = useState(countryNames[0] || "India");
+  const [selectedCountry, setSelectedCountry] = useState(
+    countryNames[0] || "India",
+  );
   const [level, setLevel] = useState<DrillLevel>(0);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [regionFilter, setRegionFilter] = useState<RegionFilter>("all");
+
+  // Filter countries based on region selection
+  const filteredCountryNames = countryNames.filter((name) => {
+    if (regionFilter === "asean") return isASEANCountry(name);
+    if (regionFilter === "non-asean") return !isASEANCountry(name);
+    return true;
+  });
 
   // Update selected country when data loads
   useEffect(() => {
@@ -36,12 +49,15 @@ export default function ByCountryPage() {
   if (loading) return <div className="text-secondary">Loading...</div>;
 
   if (!yearData) {
-    return <div className="text-warning">No data available for {selectedYear}</div>;
+    return (
+      <div className="text-warning">No data available for {selectedYear}</div>
+    );
   }
 
-  const countryOptions = countryNames.map((name) => ({
+  const countryOptions = filteredCountryNames.map((name) => ({
     value: name,
     label: shortenCountryName(name),
+    isASEAN: isASEANCountry(name),
   }));
 
   const countryData = countries[selectedCountry];
@@ -88,7 +104,7 @@ export default function ByCountryPage() {
 
   // Get max percentage for table progress bars
   const maxPct = Math.max(
-    ...Object.values(countryData.diseases).map((d) => d.pct || 0)
+    ...Object.values(countryData.diseases).map((d) => d.pct || 0),
   );
 
   // ─────────────────────────────────────────────────────────────
@@ -105,6 +121,30 @@ export default function ByCountryPage() {
           </p>
         </div>
 
+        {/* Region Filter */}
+        <div className="flex items-center gap-4">
+          <span className="text-sm font-medium text-secondary">Region:</span>
+          <div className="flex gap-2">
+            {[
+              { value: "all" as RegionFilter, label: "All Countries" },
+              { value: "asean" as RegionFilter, label: "ASEAN" },
+              { value: "non-asean" as RegionFilter, label: "Non-ASEAN" },
+            ].map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setRegionFilter(opt.value)}
+                className={`px-3 py-1 rounded text-sm transition-all ${
+                  regionFilter === opt.value
+                    ? "bg-trust-blue text-white"
+                    : "bg-gray-100 text-secondary hover:bg-gray-200"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Country Pills */}
         <div className="flex flex-wrap gap-2">
           {countryOptions.map((opt) => (
@@ -114,10 +154,15 @@ export default function ByCountryPage() {
               className={`px-3 py-1.5 rounded-full text-sm transition-all ${
                 selectedCountry === opt.value
                   ? "bg-trust-blue text-white"
-                  : "bg-trust-light text-primary hover:bg-trust-accent hover:text-white"
+                  : regionFilter !== "all" && opt.isASEAN
+                    ? "bg-green-50 text-green-700 hover:bg-green-100 border border-green-200"
+                    : "bg-trust-light text-primary hover:bg-trust-accent hover:text-white"
               }`}
             >
               {opt.label}
+              {regionFilter !== "all" && opt.isASEAN && selectedCountry !== opt.value && (
+                <span className="ml-1 text-xs opacity-60">ASEAN</span>
+              )}
             </button>
           ))}
         </div>
@@ -132,7 +177,7 @@ export default function ByCountryPage() {
               <div className="text-2xl font-bold text-primary font-serif">
                 {(countryData.total / 1000).toFixed(0)}M
               </div>
-              <div className="text-xs text-secondary">thousands</div>
+              <div className="text-xs text-secondary"></div>
             </div>
             <div className="kpi">
               <div className="text-xs text-secondary uppercase tracking-wide mb-1">
@@ -141,7 +186,7 @@ export default function ByCountryPage() {
               <div className="text-2xl font-bold text-primary font-serif">
                 {(countryData.population / 1000).toFixed(1)}M
               </div>
-              <div className="text-xs text-secondary">millions</div>
+              <div className="text-xs text-secondary"></div>
             </div>
             <div className="kpi">
               <div className="text-xs text-secondary uppercase tracking-wide mb-1">
@@ -151,7 +196,7 @@ export default function ByCountryPage() {
                 {countryData.dalyRate.toFixed(0)}
               </div>
               <div className="text-xs text-secondary">
-                per 1,000 pop · world avg: {WORLD_DALY_RATE}
+                per 1,000 pop · world avg: {worldDalyRate}
               </div>
             </div>
             <div className="kpi">
@@ -162,7 +207,7 @@ export default function ByCountryPage() {
                 className="text-2xl font-bold font-serif"
                 style={{
                   color:
-                    countryData.dalyRate > WORLD_DALY_RATE
+                    countryData.dalyRate > worldDalyRate
                       ? "#f85149"
                       : "#3fb950",
                 }}
@@ -170,8 +215,8 @@ export default function ByCountryPage() {
                 {countryData.dalyRateVsWorld.toFixed(0)}%
               </div>
               <div className="text-xs text-secondary">
-                {countryData.dalyRate > WORLD_DALY_RATE ? "above" : "below"} world
-                average
+                {countryData.dalyRate > worldDalyRate ? "above" : "below"}{" "}
+                world average
               </div>
             </div>
           </div>
@@ -235,11 +280,15 @@ export default function ByCountryPage() {
               </thead>
               <tbody>
                 {Object.keys(countryData.diseases)
-                  .filter((cat) => cat !== "Unclassified" && countryData.diseases[cat]?.pct > 0)
+                  .filter(
+                    (cat) =>
+                      cat !== "Unclassified" &&
+                      countryData.diseases[cat]?.pct > 0,
+                  )
                   .sort(
                     (a, b) =>
                       (countryData.diseases[b]?.value || 0) -
-                      (countryData.diseases[a]?.value || 0)
+                      (countryData.diseases[a]?.value || 0),
                   )
                   .map((cat) => {
                     const d = countryData.diseases[cat];
@@ -316,7 +365,8 @@ export default function ByCountryPage() {
       color: `${colors[selectedCategory] || "#4472C4"}AA`,
     }));
 
-    const categoryShort = CATEGORY_SHORT_NAMES[selectedCategory] || selectedCategory;
+    const categoryShort =
+      CATEGORY_SHORT_NAMES[selectedCategory] || selectedCategory;
     const countryShort = shortenCountryName(selectedCountry);
 
     return (

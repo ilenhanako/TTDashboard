@@ -7,7 +7,7 @@ Extracted from categorise_daly_country.py and categorise_daly_global.py
 TARGET_COUNTRIES = [
     "Bangladesh", "Brunei Darussalam", "Cambodia", "China", "India",
     "Indonesia", "Japan", "Lao People's Democratic Republic", "Malaysia",
-    "Myanmar", "Philippines", "Republic of Korea", "Singapore", "Viet Nam",
+    "Myanmar", "Philippines", "Republic of Korea", "Singapore", "Thailand", "Viet Nam",
 ]
 
 # Short display names for countries
@@ -15,6 +15,7 @@ COUNTRY_SHORT_NAMES = {
     "Lao People's Democratic Republic": "Lao PDR",
     "Republic of Korea": "South Korea",
     "Brunei Darussalam": "Brunei",
+    "Thailand": "Thailand",
     "Viet Nam": "Vietnam",
 }
 
@@ -367,5 +368,6 @@ COUNTRY_INCOME_GROUPS = {
     "Philippines":                        2,
     "Republic of Korea":                  1,
     "Singapore":                          1,
+    "Thailand":                           3,
     "Viet Nam":                           4,
 }

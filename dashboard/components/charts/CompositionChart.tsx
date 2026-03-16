@@ -16,20 +16,30 @@ import type { YearData } from "@/lib/types";
 interface CompositionChartProps {
   yearData: YearData;
   colors: Record<string, string>;
+  worldDiseaseMix?: Record<string, number>;
 }
 
-export function CompositionChart({ yearData, colors }: CompositionChartProps) {
+export function CompositionChart({ yearData, colors, worldDiseaseMix }: CompositionChartProps) {
   const countries = yearData.countries;
 
   // Build chart data: each country as a row with category percentages
+  // Normalize percentages to ensure they sum to 100%
   const chartData = Object.entries(countries)
     .map(([name, data]) => {
       const row: Record<string, string | number> = {
         name: shortenCountryName(name),
       };
 
+      // Calculate raw total to normalize
+      let rawTotal = 0;
       DISEASE_CATEGORIES.forEach((cat) => {
-        row[CATEGORY_SHORT_NAMES[cat] || cat] = data.diseases[cat]?.pct || 0;
+        rawTotal += data.diseases[cat]?.pct || 0;
+      });
+
+      // Normalize each category
+      DISEASE_CATEGORIES.forEach((cat) => {
+        const rawPct = data.diseases[cat]?.pct || 0;
+        row[CATEGORY_SHORT_NAMES[cat] || cat] = rawTotal > 0 ? (rawPct / rawTotal) * 100 : 0;
       });
 
       return row;
@@ -41,12 +51,25 @@ export function CompositionChart({ yearData, colors }: CompositionChartProps) {
       return ncdB - ncdA;
     });
 
-  const categoryKeys = DISEASE_CATEGORIES.map(
-    (cat) => CATEGORY_SHORT_NAMES[cat] || cat
-  );
+  // Add World data if available
+  if (worldDiseaseMix && Object.keys(worldDiseaseMix).length > 0) {
+    const worldRow: Record<string, string | number> = { name: "World" };
+    let worldTotal = 0;
+    DISEASE_CATEGORIES.forEach((cat) => {
+      worldTotal += worldDiseaseMix[cat] || 0;
+    });
+    DISEASE_CATEGORIES.forEach((cat) => {
+      const rawPct = worldDiseaseMix[cat] || 0;
+      worldRow[CATEGORY_SHORT_NAMES[cat] || cat] = worldTotal > 0 ? (rawPct / worldTotal) * 100 : 0;
+    });
+    chartData.push(worldRow);
+  }
+
+  // Dynamic height based on number of entries
+  const chartHeight = Math.max(500, chartData.length * 32 + 60);
 
   return (
-    <ResponsiveContainer width="100%" height={500}>
+    <ResponsiveContainer width="100%" height={chartHeight}>
       <BarChart
         data={chartData}
         layout="vertical"

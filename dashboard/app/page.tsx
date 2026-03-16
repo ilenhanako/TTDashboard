@@ -104,8 +104,8 @@ export default function HomePage() {
                   Overview
                 </h3>
                 <p className="text-sm text-secondary mt-1">
-                  DALY rate charts, age distribution, gender comparison, and
-                  disease composition across the region.
+                  DALY charts, age distribution, gender comparison, and disease
+                  composition across the region.
                 </p>
               </div>
             </div>

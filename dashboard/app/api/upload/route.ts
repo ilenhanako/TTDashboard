@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { spawn } from "child_process";
-import { writeFile, mkdir, rm } from "fs/promises";
+import { writeFile, mkdir, rm, unlink, copyFile } from "fs/promises";
 import { join } from "path";
 import { tmpdir } from "os";
 import { existsSync } from "fs";
+
+// Paths
+const PROJECT_ROOT = process.cwd();
+const STREAMLIT_PATH = join(PROJECT_ROOT, "..", "streamlit_app");
+const DATA_PROCESSING_PATH = join(PROJECT_ROOT, "..", "data_processing");
+const OUTPUT_DATA_PATH = join(PROJECT_ROOT, "public", "data");
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,110 +24,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create a temporary directory for uploaded files
+    // Create temp directory for uploaded files
     const tempDir = join(tmpdir(), `daly-upload-${Date.now()}`);
     await mkdir(tempDir, { recursive: true });
 
-    const countryPaths: string[] = [];
-    let globalPath: string | null = null;
+    // Ensure output directory exists
+    await mkdir(OUTPUT_DATA_PATH, { recursive: true });
+
+    const processedFiles: string[] = [];
+    const errors: string[] = [];
 
     try {
-      // Save country files
+      // Save uploaded files to temp directory
+      const countryPaths: string[] = [];
       for (const file of countryFiles) {
         const buffer = Buffer.from(await file.arrayBuffer());
         const filePath = join(tempDir, file.name);
         await writeFile(filePath, buffer);
         countryPaths.push(filePath);
+        processedFiles.push(file.name);
       }
 
-      // Save global file
+      let globalPath: string | null = null;
       if (globalFile) {
         const buffer = Buffer.from(await globalFile.arrayBuffer());
         globalPath = join(tempDir, globalFile.name);
         await writeFile(globalPath, buffer);
+        processedFiles.push(globalFile.name);
       }
 
-      // Determine paths
-      const projectRoot = process.cwd();
-      const streamlitPath = join(projectRoot, "..", "streamlit_app");
-      const outputPath = join(projectRoot, "public", "data");
-
-      // Create output directory if it doesn't exist
-      await mkdir(outputPath, { recursive: true });
-
-      // Check if the Python processing script exists
-      const processingScriptPath = join(streamlitPath, "processing", "generator.py");
-
-      if (!existsSync(processingScriptPath)) {
-        // If Python processing is not available, return a message
-        return NextResponse.json(
-          {
-            error: "File processing not available. Please use the Streamlit app for file processing, or ensure the processing module is available.",
-            countryFiles: countryPaths.map(p => p.split("/").pop()),
-            globalFile: globalPath ? globalPath.split("/").pop() : null,
-          },
-          { status: 501 }
-        );
-      }
-
-      // Build the Python command
-      const pythonArgs = [
-        "-c",
-        `
-import sys
-sys.path.insert(0, '${streamlitPath}')
-from processing import DashboardDataGenerator
-import json
-
-generator = DashboardDataGenerator('${outputPath}')
-
-country_files = ${JSON.stringify(countryPaths)}
-global_file = ${globalPath ? `'${globalPath}'` : 'None'}
-
-years_processed = []
-for path in country_files:
-    data = generator.process_country_file(path)
-    years_processed.append(data.get('year', 'unknown'))
-
-if global_file:
-    generator.process_global_file(global_file)
-
-output_path = generator.save()
-print(json.dumps({'success': True, 'years': years_processed, 'output': output_path}))
-`
-      ];
-
-      // Execute Python processing
-      const result = await new Promise<{ success: boolean; years?: string[]; error?: string }>((resolve) => {
-        const python = spawn("python3", pythonArgs);
-        let stdout = "";
-        let stderr = "";
-
-        python.stdout.on("data", (data) => {
-          stdout += data.toString();
-        });
-
-        python.stderr.on("data", (data) => {
-          stderr += data.toString();
-        });
-
-        python.on("close", (code) => {
-          if (code === 0) {
-            try {
-              const output = JSON.parse(stdout.trim());
-              resolve(output);
-            } catch {
-              resolve({ success: true, years: [] });
-            }
-          } else {
-            resolve({ success: false, error: stderr || "Processing failed" });
-          }
-        });
-
-        python.on("error", (err) => {
-          resolve({ success: false, error: err.message });
-        });
-      });
+      // Generate dashboard data using Python
+      const result = await generateDashboardData(countryPaths, globalPath, OUTPUT_DATA_PATH);
 
       if (!result.success) {
         return NextResponse.json(
@@ -131,7 +64,8 @@ print(json.dumps({'success': True, 'years': years_processed, 'output': output_pa
       }
 
       return NextResponse.json({
-        message: `Successfully processed ${countryFiles.length} country file(s) for years: ${result.years?.join(", ") || "unknown"}`,
+        message: `Successfully processed ${processedFiles.length} file(s): ${processedFiles.join(", ")}. Years: ${result.years?.join(", ") || "unknown"}`,
+        processedFiles,
         years: result.years,
       });
 
@@ -147,7 +81,136 @@ print(json.dumps({'success': True, 'years': years_processed, 'output': output_pa
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json(
-      { error: "Failed to process upload" },
+      { error: `Failed to process upload: ${error instanceof Error ? error.message : "Unknown error"}` },
+      { status: 500 }
+    );
+  }
+}
+
+async function generateDashboardData(
+  countryFiles: string[],
+  globalFile: string | null,
+  outputPath: string
+): Promise<{ success: boolean; years?: string[]; error?: string }> {
+  return new Promise((resolve) => {
+    const countryFilesJson = JSON.stringify(countryFiles);
+    const globalFileStr = globalFile ? `"${globalFile}"` : "None";
+
+    const pythonCode = `
+import sys
+import json
+sys.path.insert(0, '${STREAMLIT_PATH}')
+
+try:
+    from processing import DashboardDataGenerator
+
+    # Initialize generator with output path
+    generator = DashboardDataGenerator('${outputPath}', load_existing=True)
+
+    # Process country files
+    country_files = json.loads('${countryFilesJson}')
+    years_processed = []
+
+    for file_path in country_files:
+        try:
+            data = generator.process_country_file(file_path)
+            year = data.get('year', 'unknown')
+            years_processed.append(year)
+            print(f"Processed country file for year: {year}", file=sys.stderr)
+        except Exception as e:
+            print(f"Error processing {file_path}: {e}", file=sys.stderr)
+
+    # Process global file if provided
+    global_file = ${globalFileStr}
+    if global_file:
+        try:
+            generator.process_global_file(global_file)
+            print("Processed global file", file=sys.stderr)
+        except Exception as e:
+            print(f"Error processing global file: {e}", file=sys.stderr)
+
+    # Save the data
+    output_file = generator.save()
+    print(f"Saved to: {output_file}", file=sys.stderr)
+
+    # Output result as JSON
+    print(json.dumps({
+        "success": True,
+        "years": years_processed,
+        "output": str(output_file)
+    }))
+
+except Exception as e:
+    import traceback
+    traceback.print_exc(file=sys.stderr)
+    print(json.dumps({
+        "success": False,
+        "error": str(e)
+    }))
+    sys.exit(1)
+`;
+
+    const python = spawn("python3", ["-c", pythonCode]);
+    let stdout = "";
+    let stderr = "";
+
+    python.stdout.on("data", (data) => {
+      stdout += data.toString();
+    });
+
+    python.stderr.on("data", (data) => {
+      stderr += data.toString();
+      console.log("Python stderr:", data.toString());
+    });
+
+    python.on("close", (code) => {
+      console.log("Python exit code:", code);
+      console.log("Python stdout:", stdout);
+      console.log("Python stderr:", stderr);
+
+      try {
+        // Find the JSON output in stdout (last line)
+        const lines = stdout.trim().split("\n");
+        const jsonLine = lines[lines.length - 1];
+        const result = JSON.parse(jsonLine);
+
+        if (result.success) {
+          resolve({ success: true, years: result.years });
+        } else {
+          resolve({ success: false, error: result.error || stderr });
+        }
+      } catch (e) {
+        resolve({
+          success: false,
+          error: `Failed to parse Python output: ${stderr || stdout || "No output"}`
+        });
+      }
+    });
+
+    python.on("error", (err) => {
+      resolve({ success: false, error: err.message });
+    });
+  });
+}
+
+// DELETE endpoint for removing uploaded data
+export async function DELETE() {
+  try {
+    const dataFile = join(OUTPUT_DATA_PATH, "dashboard_data.json");
+
+    if (existsSync(dataFile)) {
+      await unlink(dataFile);
+      return NextResponse.json({
+        message: "Dashboard data deleted successfully"
+      });
+    }
+
+    return NextResponse.json({ message: "No data to delete" });
+
+  } catch (error) {
+    console.error("Delete error:", error);
+    return NextResponse.json(
+      { error: `Failed to delete data: ${error instanceof Error ? error.message : "Unknown error"}` },
       { status: 500 }
     );
   }

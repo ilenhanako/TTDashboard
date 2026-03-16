@@ -6,10 +6,10 @@ import { DualPieChart } from "@/components/charts/DualPieChart";
 import { AgeStackedChart } from "@/components/charts/AgeStackedChart";
 import { GenderChart } from "@/components/charts/GenderChart";
 import { CompositionChart } from "@/components/charts/CompositionChart";
-import { WORLD_DALY_RATE } from "@/lib/constants";
 
 export default function OverviewPage() {
-  const { loading, selectedYear, getYearData, data } = useDashboard();
+  const { loading, selectedYear, getYearData, getWorldDalyRate, getWorldDiseaseMix, data } = useDashboard();
+  const worldDalyRate = getWorldDalyRate();
 
   if (loading) {
     return <div className="text-secondary">Loading...</div>;
@@ -17,7 +17,9 @@ export default function OverviewPage() {
 
   const yearData = getYearData();
   if (!yearData) {
-    return <div className="text-warning">No data available for {selectedYear}</div>;
+    return (
+      <div className="text-warning">No data available for {selectedYear}</div>
+    );
   }
 
   const countries = yearData.countries;
@@ -46,7 +48,7 @@ export default function OverviewPage() {
     if (pct > 0.05) regionalMix[cat] = parseFloat(pct.toFixed(1));
   });
 
-  const worldMix = data?.data?.worldDiseaseMix || yearData.worldDiseaseMix || {};
+  const worldMix = getWorldDiseaseMix();
 
   // Gender data
   const genderData = (data?.data?.byYear?.[selectedYear] as any)?.gender || {};
@@ -57,25 +59,31 @@ export default function OverviewPage() {
       <div>
         <h1 className="text-3xl font-bold text-trust-blue">Overview</h1>
         <p className="text-secondary mt-1">
-          WHO Global Health Estimates {selectedYear} — 14 Asian Countries · All values in DALYs (thousands)
+          WHO Global Health Estimates {selectedYear} — 15 Asian Countries · All
+          values in DALYs (thousands)
         </p>
       </div>
 
       {/* Graph 1: DALY Rate */}
       <div className="card">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-secondary mb-4">
-          DALYs per 1,000 population — compared to world average ({WORLD_DALY_RATE})
+          DALYs per 1,000 population — compared to world average (
+          {worldDalyRate.toFixed(1)})
         </h2>
         <div className="flex items-center gap-2 text-sm text-secondary mb-3 px-3 py-2 bg-trust-light/50 rounded-md border-l-3 border-trust-accent">
           <span>ℹ️</span>
           <span>
-            World average DALY rate: <strong className="text-primary">{WORLD_DALY_RATE} per 1,000</strong> ·
-            Bars are coloured red if above world average, blue if below
+            World average DALY:{" "}
+            <strong className="text-primary">
+              {worldDalyRate.toFixed(1)} per 1,000
+            </strong>{" "}
+            · Bars are coloured red if above world average, blue if below, purple for World
           </span>
         </div>
-        <DALYRateChart data={rateData} />
+        <DALYRateChart data={rateData} worldDalyRate={worldDalyRate} />
         <p className="text-xs text-secondary mt-3 italic">
-          Source: WHO GHE {selectedYear}. Population from UN World Population Prospects 2022.
+          Source: WHO GHE {selectedYear}. Population from UN World Population
+          Prospects 2022.
         </p>
       </div>
 
@@ -84,9 +92,14 @@ export default function OverviewPage() {
         <h2 className="text-xs font-semibold uppercase tracking-wide text-secondary mb-4">
           Proportion of DALYs by disease category
         </h2>
-        <DualPieChart regionalMix={regionalMix} worldMix={worldMix} colors={colors} />
+        <DualPieChart
+          regionalMix={regionalMix}
+          worldMix={worldMix}
+          colors={colors}
+        />
         <p className="text-xs text-secondary mt-3 italic">
-          Regional figures computed from the 14 countries in this dataset. Global figures from WHO GHE {selectedYear}.
+          Regional figures computed from the 15 countries in this dataset.
+          Global figures from WHO GHE {selectedYear}.
         </p>
       </div>
 
@@ -97,7 +110,8 @@ export default function OverviewPage() {
         </h2>
         <AgeStackedChart yearData={yearData} />
         <p className="text-xs text-secondary mt-3 italic">
-          Each bar represents 100% of that country's total DALYs distributed across age bands.
+          Each bar represents 100% of that country's total DALYs distributed
+          across age bands.
         </p>
       </div>
 
@@ -109,8 +123,9 @@ export default function OverviewPage() {
           </h2>
           <GenderChart genderData={genderData} countries={countryNames} />
           <p className="text-xs text-secondary mt-3 italic">
-            For each country, left bar = % split of DALYs. Right bar = % split of population.
-            Divergence highlights sex-based disparity in disease burden.
+            For each country, left bar = % split of DALYs. Right bar = % split
+            of population. Divergence highlights sex-based disparity in disease
+            burden.
           </p>
         </div>
       )}
@@ -118,9 +133,9 @@ export default function OverviewPage() {
       {/* Graph 5: Disease Composition */}
       <div className="card">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-secondary mb-4">
-          Disease category composition — all countries (% of total DALYs)
+          Disease category composition — all countries + World (% of total DALYs)
         </h2>
-        <CompositionChart yearData={yearData} colors={colors} />
+        <CompositionChart yearData={yearData} colors={colors} worldDiseaseMix={worldMix} />
       </div>
     </div>
   );

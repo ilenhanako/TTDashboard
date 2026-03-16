@@ -4,12 +4,18 @@ import { useState } from "react";
 import { useDashboard } from "@/lib/context";
 import { CategoryBar } from "@/components/charts/CategoryBar";
 import { CompositionChart } from "@/components/charts/CompositionChart";
-import { DISEASE_CATEGORIES, CATEGORY_SHORT_NAMES, shortenCountryName } from "@/lib/constants";
+import {
+  DISEASE_CATEGORIES,
+  CATEGORY_SHORT_NAMES,
+  shortenCountryName,
+} from "@/lib/constants";
 
 type DrillLevel = 0 | 1 | 2;
 
 export default function ByDiseasePage() {
-  const { loading, selectedYear, getYearData, data } = useDashboard();
+  const { loading, selectedYear, getYearData, getWorldDiseaseMix, data } =
+    useDashboard();
+  const worldMix = getWorldDiseaseMix();
   const [level, setLevel] = useState<DrillLevel>(0);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSub, setSelectedSub] = useState<string | null>(null);
@@ -28,7 +34,7 @@ export default function ByDiseasePage() {
   DISEASE_CATEGORIES.forEach((cat) => {
     catTotals[cat] = Object.values(countries).reduce(
       (sum, c) => sum + (c.diseases[cat]?.value || 0),
-      0
+      0,
     );
   });
 
@@ -67,7 +73,8 @@ export default function ByDiseasePage() {
         <div>
           <h1 className="text-3xl font-bold text-trust-blue">By Disease</h1>
           <p className="text-secondary mt-1">
-            Explore disease categories and drill down to sub-diseases and geography
+            Explore disease categories and drill down to sub-diseases and
+            geography
           </p>
         </div>
 
@@ -96,7 +103,7 @@ export default function ByDiseasePage() {
                   <div className="text-xl font-bold text-primary font-serif">
                     {totalM.toFixed(0)}M
                   </div>
-                  <div className="text-xs text-secondary">DALYs (thousands)</div>
+                  <div className="text-xs text-secondary">DALYs</div>
                 </div>
               );
             })}
@@ -104,10 +111,13 @@ export default function ByDiseasePage() {
 
           {/* Bar Chart - Right side */}
           <div className="card">
-            <h2 className="section-title">Click a category to drill down</h2>
+            <h2 className="section-title">Total DALYs by Category (Absolute Values)</h2>
+            <p className="text-xs text-secondary mb-3">
+              Absolute DALY values in thousands across all 15 countries
+            </p>
             <CategoryBar
               data={chartData}
-              title="Total DALYs by Category"
+              title=""
               horizontal
             />
           </div>
@@ -115,8 +125,12 @@ export default function ByDiseasePage() {
 
         {/* Composition Chart */}
         <div className="card">
-          <h2 className="section-title">Disease category mix by country</h2>
-          <CompositionChart yearData={yearData} colors={colors} />
+          <h2 className="section-title">Disease category mix by country + World</h2>
+          <CompositionChart
+            yearData={yearData}
+            colors={colors}
+            worldDiseaseMix={worldMix}
+          />
         </div>
       </div>
     );
@@ -141,8 +155,10 @@ export default function ByDiseasePage() {
     const countryTotals: Record<string, number> = {};
     const countryPct: Record<string, number> = {};
     Object.entries(countries).forEach(([name, c]) => {
-      countryTotals[shortenCountryName(name)] = c.diseases[selectedCategory]?.value || 0;
-      countryPct[shortenCountryName(name)] = c.diseases[selectedCategory]?.pct || 0;
+      countryTotals[shortenCountryName(name)] =
+        c.diseases[selectedCategory]?.value || 0;
+      countryPct[shortenCountryName(name)] =
+        c.diseases[selectedCategory]?.pct || 0;
     });
 
     const subChartData = Object.entries(subTotals)
@@ -161,7 +177,8 @@ export default function ByDiseasePage() {
       }))
       .sort((a, b) => b.value - a.value);
 
-    const categoryShort = CATEGORY_SHORT_NAMES[selectedCategory] || selectedCategory;
+    const categoryShort =
+      CATEGORY_SHORT_NAMES[selectedCategory] || selectedCategory;
 
     return (
       <div className="space-y-6">
@@ -180,7 +197,9 @@ export default function ByDiseasePage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Sub-diseases - LEFT (clickable bars) */}
           <div className="card">
-            <h2 className="section-title">Sub-diseases (click to see by country)</h2>
+            <h2 className="section-title">
+              Sub-diseases (click to see by country)
+            </h2>
             {subChartData.length > 0 ? (
               <div className="space-y-2">
                 {subChartData.map((item) => {
@@ -192,7 +211,10 @@ export default function ByDiseasePage() {
                       className="flex items-center gap-3 cursor-pointer hover:bg-trust-light p-2 rounded-md transition-colors"
                       onClick={() => goToLevel2(item.name)}
                     >
-                      <div className="w-32 text-sm text-primary truncate" title={item.name}>
+                      <div
+                        className="w-32 text-sm text-primary truncate"
+                        title={item.name}
+                      >
                         {item.name}
                       </div>
                       <div className="flex-1 bg-gray-100 rounded h-4 overflow-hidden">
@@ -284,7 +306,9 @@ export default function ByDiseasePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="card">
-            <h2 className="section-title">{selectedSub} — absolute DALYs by country</h2>
+            <h2 className="section-title">
+              {selectedSub} — absolute DALYs by country
+            </h2>
             <CategoryBar
               data={absChartData}
               title="DALYs (thousands)"
@@ -293,7 +317,9 @@ export default function ByDiseasePage() {
           </div>
 
           <div className="card">
-            <h2 className="section-title">{selectedSub} — % of country total</h2>
+            <h2 className="section-title">
+              {selectedSub} — % of country total
+            </h2>
             <CategoryBar
               data={pctChartData}
               title="% of Total DALYs"

@@ -1,4 +1,4 @@
-// Target countries for analysis
+// Target countries for analysis (15 countries)
 export const TARGET_COUNTRIES = [
   "Bangladesh",
   "Brunei Darussalam",
@@ -13,6 +13,7 @@ export const TARGET_COUNTRIES = [
   "Philippines",
   "Republic of Korea",
   "Singapore",
+  "Thailand",
   "Viet Nam",
 ];
 
@@ -72,8 +73,27 @@ export const AGE_COLORS = [
   "#8b5cf6", // 70+ (purple)
 ];
 
-// World average DALY rate per 1,000 population
+// World average DALY rate per 1,000 population (fallback - use actual data when available)
 export const WORLD_DALY_RATE = 380.0;
+
+// ASEAN member countries (10 countries)
+export const ASEAN_COUNTRIES = [
+  "Brunei Darussalam",
+  "Cambodia",
+  "Indonesia",
+  "Lao People's Democratic Republic",
+  "Malaysia",
+  "Myanmar",
+  "Philippines",
+  "Singapore",
+  "Thailand",
+  "Viet Nam",
+];
+
+// Check if a country is ASEAN member
+export function isASEANCountry(country: string): boolean {
+  return ASEAN_COUNTRIES.includes(country);
+}
 
 // Available years
 export const AVAILABLE_YEARS = ["2000", "2010", "2015", "2019", "2020", "2021"];

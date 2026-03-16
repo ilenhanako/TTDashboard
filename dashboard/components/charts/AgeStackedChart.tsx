@@ -15,9 +15,10 @@ import { YearData } from "@/lib/types";
 
 interface AgeStackedChartProps {
   yearData: YearData;
+  worldAgeData?: Record<string, number>;
 }
 
-export function AgeStackedChart({ yearData }: AgeStackedChartProps) {
+export function AgeStackedChart({ yearData, worldAgeData }: AgeStackedChartProps) {
   const countries = Object.keys(yearData.countries);
   const ageGroups = yearData.ageGroups || {};
 
@@ -28,15 +29,40 @@ export function AgeStackedChart({ yearData }: AgeStackedChartProps) {
       name: shortenCountryName(countryName),
     };
 
+    // Get raw values
+    let rawTotal = 0;
     AGE_GROUPS.forEach((band) => {
-      row[band] = ageGroups[band]?.[countryName] || 0;
+      rawTotal += ageGroups[band]?.[countryName] || 0;
+    });
+
+    // Normalize to exactly 100% to prevent floating point issues
+    AGE_GROUPS.forEach((band) => {
+      const rawValue = ageGroups[band]?.[countryName] || 0;
+      row[band] = rawTotal > 0 ? (rawValue / rawTotal) * 100 : 0;
     });
 
     return row;
   });
 
+  // Add world data if available
+  if (worldAgeData) {
+    const worldRow: Record<string, string | number> = { name: "World" };
+    let worldTotal = 0;
+    AGE_GROUPS.forEach((band) => {
+      worldTotal += worldAgeData[band] || 0;
+    });
+    AGE_GROUPS.forEach((band) => {
+      const rawValue = worldAgeData[band] || 0;
+      worldRow[band] = worldTotal > 0 ? (rawValue / worldTotal) * 100 : 0;
+    });
+    chartData.push(worldRow);
+  }
+
+  // Dynamic height based on number of entries
+  const chartHeight = Math.max(400, chartData.length * 28 + 60);
+
   return (
-    <ResponsiveContainer width="100%" height={400}>
+    <ResponsiveContainer width="100%" height={chartHeight}>
       <BarChart
         data={chartData}
         layout="vertical"

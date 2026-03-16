@@ -48,6 +48,14 @@ export interface DashboardConstants {
   ageColors: string[];
 }
 
+export interface GlobalData {
+  years: string[];
+  worldDiseaseMix: Record<string, Record<string, number>>;
+  worldDalyRates: Record<string, number>;
+  worldTrends?: Record<string, Record<string, number>>;
+  categoryTrends?: Record<string, Record<string, number>>;
+}
+
 export interface DashboardData {
   metadata: {
     created: string | null;
@@ -60,6 +68,7 @@ export interface DashboardData {
     byYear: Record<string, YearData>;
     timeSeries?: TimeSeriesData;
     worldDiseaseMix?: Record<string, number>;
+    global?: GlobalData;
   };
 }
 
