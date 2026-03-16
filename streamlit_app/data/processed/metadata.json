@@ -1,0 +1,42 @@
+{
+  "created": null,
+  "updated": null,
+  "years_processed": [
+    "2000",
+    "2015",
+    "2021"
+  ],
+  "source_files": [
+    {
+      "type": "country",
+      "path": "/var/folders/bp/7zfnn3_d3c77rd0qk19b3_1m0000gn/T/tmpf05_853b/ghe2021_daly_bycountry_2015.xlsx",
+      "year": "2015",
+      "processed": "2026-03-10T12:04:37.384780"
+    },
+    {
+      "type": "country",
+      "path": "/var/folders/bp/7zfnn3_d3c77rd0qk19b3_1m0000gn/T/tmp36remspr/ghe2021_daly_categorised_formatted.xlsx",
+      "year": "2021",
+      "processed": "2026-03-10T14:23:32.468514"
+    },
+    {
+      "type": "country",
+      "path": "/var/folders/bp/7zfnn3_d3c77rd0qk19b3_1m0000gn/T/tmpy10p348q/ghe2000_daly_categorised_formatted.xlsx",
+      "year": "2000",
+      "processed": "2026-03-10T14:27:21.925029"
+    },
+    {
+      "type": "global",
+      "path": "/var/folders/bp/7zfnn3_d3c77rd0qk19b3_1m0000gn/T/tmpa94wuapc/ghe2021_daly_global_new.xlsx",
+      "years": [
+        "2000",
+        "2010",
+        "2015",
+        "2019",
+        "2020",
+        "2021"
+      ],
+      "processed": "2026-03-10T14:52:08.372941"
+    }
+  ]
+}

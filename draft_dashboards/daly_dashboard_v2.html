@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DALY Burden Dashboard — Asia Pacific 2021</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --border: #21262d; --muted: #8b949e;
+    --text: #e6edf3; --accent: #58a6ff; --accent2: #3fb950;
+    --inf: #4472C4; --mpn: #C00000; --ncd: #70AD47; --inj: #FFC000;
+    --men: #7030A0; --sub: #9B59B6; --oth: #546E7A; --unc: #374151;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.6; }
+  h1, h2, h3 { font-family: 'DM Serif Display', serif; }
+
+  /* NAV */
+  .nav { position: sticky; top: 0; z-index: 100; background: #0d1117ee; backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0; padding: 0 32px; height: 56px; }
+  .nav-brand { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--text); margin-right: auto; letter-spacing: -0.3px; }
+  .nav-brand span { color: var(--accent); }
+  .nav-tab { padding: 0 20px; height: 56px; display: flex; align-items: center; cursor: pointer;
+    font-size: 13px; font-weight: 500; color: var(--muted); border-bottom: 2px solid transparent;
+    transition: all .2s; white-space: nowrap; }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* PAGES */
+  .page { display: none; padding: 32px; max-width: 1400px; margin: 0 auto; }
+  .page.active { display: block; }
+  .page-title { font-size: 28px; font-weight: normal; margin-bottom: 6px; }
+  .page-sub { color: var(--muted); font-size: 13px; margin-bottom: 32px; }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+  .card-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px;
+    color: var(--muted); margin-bottom: 16px; }
+  .card-note { font-size: 11px; color: var(--muted); margin-top: 10px; font-style: italic; }
+
+  /* GRID LAYOUTS */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .mb20 { margin-bottom: 20px; }
+  .mb32 { margin-bottom: 32px; }
+
+  /* CHART CONTAINERS */
+  .chart-wrap { position: relative; }
+  .chart-tall { height: 420px; }
+  .chart-med { height: 320px; }
+  .chart-short { height: 260px; }
+
+  /* BREADCRUMB */
+  .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+  .breadcrumb a { color: var(--accent); cursor: pointer; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .breadcrumb span { color: var(--border); }
+
+  /* COUNTRY PILLS */
+  .country-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .pill { padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 500;
+    border: 1px solid var(--border); color: var(--muted); transition: all .2s; }
+  .pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .pill:hover:not(.active) { border-color: var(--muted); color: var(--text); }
+
+  /* KPI CARDS */
+  .kpi { display: flex; flex-direction: column; gap: 6px; }
+  .kpi-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
+  .kpi-val { font-size: 26px; font-family: 'DM Serif Display', serif; }
+  .kpi-sub { font-size: 12px; color: var(--muted); }
+  .kpi-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+
+  /* WORLD REF LINE */
+  .world-ref { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted);
+    padding: 8px 12px; background: #1f242c; border-radius: 6px; margin-bottom: 12px; border-left: 3px solid #58a6ff; }
+
+  /* DUAL PIE LAYOUT */
+  .dual-pie { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .pie-panel { display: flex; flex-direction: column; }
+  .pie-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase;
+    letter-spacing: .6px; margin-bottom: 10px; text-align: center; }
+  .pie-inner { display: grid; grid-template-columns: 160px 1fr; gap: 16px; align-items: center; }
+  .pie-inner canvas { width: 160px !important; height: 160px !important; }
+  .pie-legend { display: flex; flex-direction: column; gap: 5px; }
+  .pie-legend-item { display: flex; align-items: center; gap: 7px; font-size: 11.5px; }
+  .pie-legend-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .pie-legend-name { flex: 1; color: var(--text); }
+  .pie-legend-pct { color: var(--muted); font-weight: 500; min-width: 36px; text-align: right; }
+
+  /* DISEASE NOTES SECTION */
+  .disease-notes { margin-top: 40px; border-top: 1px solid var(--border); padding-top: 32px; }
+  .disease-notes h3 { font-size: 20px; margin-bottom: 20px; color: var(--text); }
+  .notes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .note-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+  .note-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .note-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .note-cat { font-size: 13px; font-weight: 600; }
+  .note-desc { font-size: 12.5px; color: var(--muted); line-height: 1.7; }
+  .note-examples { font-size: 11.5px; color: #58a6ff; margin-top: 7px; }
+  .note-examples strong { color: var(--muted); }
+
+  /* DATA NOTES */
+  .data-note { background: #1c2128; border: 1px solid #30363d; border-radius: 8px;
+    padding: 12px 16px; font-size: 12px; color: var(--muted); margin-top: 12px; }
+  .data-note strong { color: var(--text); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">DALY <span>Dashboard</span> — Asia Pacific</div>
+  <div class="nav-tab active" onclick="showPage('overview')">Overview</div>
+  <div class="nav-tab" onclick="showPage('disease')">By Disease</div>
+  <div class="nav-tab" onclick="showPage('country')">By Country</div>
+</nav>
+
+<!-- ═══════════════════════ OVERVIEW PAGE ═══════════════════════ -->
+<div id="page-overview" class="page active">
+  <h1 class="page-title">Overview</h1>
+  <p class="page-sub">WHO Global Health Estimates 2021 — 14 Asian Countries &nbsp;·&nbsp; All values in DALYs (thousands)</p>
+
+  <!-- Graph 1: DALYs per 1,000 population vs world average -->
+  <div class="card mb20">
+    <div class="card-title">DALYs per 1,000 population — compared to world average (379.9)</div>
+    <div class="world-ref">
+      <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="#58a6ff" stroke-width="1.5"/><line x1="7" y1="3" x2="7" y2="7.5" stroke="#58a6ff" stroke-width="1.5"/><circle cx="7" cy="10" r="1" fill="#58a6ff"/></svg>
+      World average DALY rate: <strong style="color:var(--text)">379.9 per 1,000</strong> &nbsp;·&nbsp; Bars are coloured red if above world average, blue if below
+    </div>
+    <div class="chart-wrap" style="height:360px"><canvas id="chart-rate"></canvas></div>
+    <div class="card-note">Source: WHO GHE 2021. Population from UN World Population Prospects 2022. World average based on global total of 3,007,021 thousand DALYs across 7.9 billion population.</div>
+  </div>
+
+  <!-- Graph 2: Dual pie — regional vs global -->
+  <div class="card mb20">
+    <div class="card-title">Proportion of DALYs by disease category</div>
+    <div class="dual-pie">
+      <div class="pie-panel">
+        <div class="pie-label">14-Country Region (Combined)</div>
+        <div class="pie-inner">
+          <canvas id="chart-pie-regional" width="160" height="160"></canvas>
+          <div class="pie-legend" id="pie-legend-regional"></div>
+        </div>
+      </div>
+      <div class="pie-panel">
+        <div class="pie-label">Global (WHO 2021)</div>
+        <div class="pie-inner">
+          <canvas id="chart-pie-global" width="160" height="160"></canvas>
+          <div class="pie-legend" id="pie-legend-global"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-note">Regional figures computed from the 14 countries in this dataset. Global figures from WHO GHE 2021 global totals.</div>
+  </div>
+
+  <!-- Graph 3: Age band % per country -->
+  <div class="card mb20">
+    <div class="card-title">Age profile of DALY burden (% of each country's total)</div>
+    <div class="chart-wrap chart-tall"><canvas id="chart-age"></canvas></div>
+    <div class="card-note">Each bar represents 100% of that country's total DALYs distributed across age bands. Normalised to sum of all age-band DALYs for each country.</div>
+  </div>
+
+  <!-- Graph 4: Gender — DALY % + population % -->
+  <div class="card mb20">
+    <div class="card-title">DALY burden vs population by sex (%) — two bars per country</div>
+    <div class="chart-wrap" style="height:400px"><canvas id="chart-gender"></canvas></div>
+    <div class="card-note">For each country, left bar = % split of total DALYs between male and female. Right bar = % split of population between male and female. Divergence between the two bars highlights sex-based disparity in disease burden relative to population share.</div>
+  </div>
+
+  <!-- Graph 5: Disease composition 100% stacked -->
+  <div class="card mb20">
+    <div class="card-title">Disease category composition — all countries (% of total DALYs)</div>
+    <div class="chart-wrap chart-tall"><canvas id="chart-composition"></canvas></div>
+    <div class="data-note">
+      <strong>Note on data completeness:</strong> The 7 WHO disease categories (A–G) sum to 100% of All-Causes for most countries.
+      For some countries (e.g. India 5.6%, China 3.4%, Myanmar 4.9%), a small residual exists due to sub-disease rows in the WHO spreadsheet
+      that are not captured by the category parent rows. This residual is shown as <strong>"Unclassified"</strong> (dark grey) to ensure bars reach 100%.
+      <br><br>
+      <strong>Brunei NCD note:</strong> The raw WHO GHE spreadsheet contains a data anomaly where Brunei's NCD parent row (146.7k DALYs)
+      exceeds the All-Causes total (105.8k DALYs) — likely due to COPD prevalence estimates using a different population base.
+      Brunei's NCD value has been recalculated as the residual after all other categories, giving ~39%.
+    </div>
+  </div>
+
+  <!-- Disease Category Notes -->
+  <div class="disease-notes">
+    <h3>Disease Category Reference Guide</h3>
+    <div class="notes-grid">
+      <div class="note-card">
+        <div class="note-card-header">
+          <div class="note-dot" style="background:#4472C4"></div>
+          <div class="note-cat">A · Infectious & Parasitic Diseases</div>
+        </div>
+        <div class="note-desc">Diseases caused by pathogenic microorganisms — bacteria, viruses, parasites, and fungi — that can be transmitted directly or indirectly between individuals or from the environment.</div>
+        <div class="note-examples"><strong>Key examples:</strong> Tuberculosis (TB), diarrhoeal diseases, lower respiratory infections (pneumonia), HIV/AIDS, malaria, dengue fever, hepatitis B &amp; C, meningitis, encephalitis, childhood-cluster diseases (measles, whooping cough), intestinal worms</div>
+      </div>
+      <div class="note-card">
+        <div class="note-card-header">
+          <div class="note-dot" style="background:#C00000"></div>
+          <div class="note-cat">B · Maternal, Perinatal &amp; Nutritional</div>
+        </div>
+        <div class="note-desc">Conditions arising during pregnancy, childbirth, and the neonatal period, as well as nutritional deficiencies that impair healthy development and functioning across the life course.</div>
+        <div class="note-examples"><strong>Key examples:</strong> Maternal haemorrhage and sepsis, preterm birth complications, birth asphyxia, neonatal sepsis, protein-energy malnutrition, iron-deficiency anaemia, vitamin A &amp; iodine deficiency, sudden infant death syndrome (SIDS)</div>
+      </div>
+      <div class="note-card">
+        <div class="note-card-header">
+          <div class="note-dot" style="background:#70AD47"></div>
+          <div class="note-cat">C · Noncommunicable Diseases (NCDs)</div>
+        </div>
+        <div class="note-desc">Chronic, non-infectious conditions that typically progress slowly and persist over long periods. They are the leading cause of death and disability globally, driven heavily by lifestyle and ageing.</div>
+        <div class="note-examples"><strong>Key examples:</strong> Cardiovascular diseases (heart attack, coronary artery disease), stroke, <strong>cancers / malignant neoplasms</strong> (lung, liver, colorectal, breast, stomach), diabetes mellitus, chronic obstructive pulmonary disease (COPD), asthma, other chronic respiratory diseases</div>
+      </div>
+      <div class="note-card">
+        <div class="note-card-header">
+          <div class="note-dot" style="background:#FFC000"></div>
+          <div class="note-cat">D · Injuries (incl. War)</div>
+        </div>
+        <div class="note-desc">Health loss resulting from external causes — both unintentional accidents and deliberate acts of violence. Injuries disproportionately affect working-age adults and young people.</div>
+        <div class="note-examples"><strong>Key examples:</strong> Road traffic accidents, falls, drowning, burns, poisoning (unintentional); interpersonal violence, homicide, collective violence and war; occupational injuries</div>
+      </div>
+      <div class="note-card">
+        <div class="note-card-header">
+          <div class="note-dot" style="background:#7030A0"></div>
+          <div class="note-cat">E · Mental &amp; Substance Disorders</div>
+        </div>
+        <div class="note-desc">Conditions that affect mood, thinking, and behaviour, causing significant impairment in functioning. These conditions are often under-reported and under-treated, particularly in lower-income settings.</div>
+        <div class="note-examples"><strong>Key examples:</strong> Depressive disorders, anxiety disorders, self-harm and suicide, eating disorders (anorexia, bulimia), childhood behavioural disorders (ADHD, conduct disorder), schizophrenia, bipolar disorder</div>
+      </div>
+      <div class="note-card">
+        <div class="note-card-header">
+          <div class="note-dot" style="background:#9B59B6"></div>
+          <div class="note-cat">F · Substance Abuse</div>
+        </div>
+        <div class="note-desc">Health burden attributable specifically to the harmful use of psychoactive substances, including dependence, withdrawal, and substance-induced organ damage.</div>
+        <div class="note-examples"><strong>Key examples:</strong> Alcohol use disorders (cirrhosis, alcohol dependence), drug use disorders (opioid dependence, stimulant use, cannabis use disorder)</div>
+      </div>
+      <div class="note-card">
+        <div class="note-card-header">
+          <div class="note-dot" style="background:#546E7A"></div>
+          <div class="note-cat">G · Others</div>
+        </div>
+        <div class="note-desc">A residual category of diseases not captured in categories A–F, covering a wide range of chronic non-communicable and organ-specific conditions that nevertheless contribute substantially to the total burden.</div>
+        <div class="note-examples"><strong>Key examples:</strong> Neurological conditions (Alzheimer's, Parkinson's, epilepsy), musculoskeletal diseases (osteoarthritis, low back pain, rheumatoid arthritis), digestive diseases (cirrhosis, peptic ulcer), sense organ diseases (vision and hearing loss), genitourinary diseases (chronic kidney disease), skin diseases, endocrine &amp; blood disorders, STDs excl. HIV, leprosy</div>
+      </div>
+      <div class="note-card" style="border-color:#374151">
+        <div class="note-card-header">
+          <div class="note-dot" style="background:#374151"></div>
+          <div class="note-cat">Unclassified Residual</div>
+        </div>
+        <div class="note-desc">A small residual that appears for some countries (up to ~6% for India) where the sum of WHO category parent rows does not account for the All-Causes total. This is an artefact of the WHO GHE spreadsheet structure where some sub-disease rows are tabulated outside their parent category totals.</div>
+        <div class="note-examples"><strong>Affected countries &amp; share:</strong> India (5.6%), Myanmar (4.9%), China (3.4%), Viet Nam (3.1%), Lao PDR (3.7%)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ DISEASE PAGE ═══════════════════════ -->
+<div id="page-disease" class="page">
+  <h1 class="page-title">By Disease</h1>
+  <p class="page-sub">Explore disease categories and drill down to sub-diseases and geography</p>
+  <div id="disease-content"></div>
+</div>
+
+<!-- ═══════════════════════ COUNTRY PAGE ═══════════════════════ -->
+<div id="page-country" class="page">
+  <h1 class="page-title">By Country</h1>
+  <p class="page-sub">Select a country to explore its disease profile</p>
+  <div id="country-content"></div>
+</div>
+
+<script>
+// ═══════════════════ DATA ═══════════════════
+const D = {"countries":{"Bangladesh":{"total":47314.95,"population":167658.85,"dalyRate":282.21,"dalyRateVsWorld":74.3,"diseases":{"Infectious & Parasitic":{"value":8889.97,"pct":18.79,"sub":{"Tuberculosis":{"value":1600.13,"pct":3.382},"Diarrhoeal Diseases":{"value":1421.39,"pct":3.004},"Hepatitis":{"value":112.37,"pct":0.237},"Malaria":{"value":4.85,"pct":0.01},"Dengue":{"value":7.31,"pct":0.015},"Parasitic & Vector Diseases":{"value":94.82,"pct":0.2},"Other Infectious":{"value":211.68,"pct":0.447},"Respiratory Infectious":{"value":4350.58,"pct":9.195},"Meningitis":{"value":152.45,"pct":0.322},"Encephalitis":{"value":21.32,"pct":0.045},"Childhood-cluster Diseases":{"value":57.71,"pct":0.122},"Intestinal Nematode":{"value":77.79,"pct":0.164}}},"Maternal, Perinatal & Nutritional":{"value":7019.77,"pct":14.84,"sub":{"Maternal Conditions":{"value":282.63,"pct":0.597},"Preterm Birth Complications":{"value":3124.01,"pct":6.603},"Birth Asphyxia & Birth Trauma":{"value":1395.21,"pct":2.949},"Neonatal Sepsis":{"value":470.54,"pct":0.994},"Other Neonatal Conditions":{"value":508.23,"pct":1.074},"Protein-energy Malnutrition":{"value":59.59,"pct":0.126},"Iodine Deficiency":{"value":12.48,"pct":0.026},"Vitamin A Deficiency":{"value":14.75,"pct":0.031},"Iron-deficiency Anaemia":{"value":142.53,"pct":0.301},"Sudden Infant Death Syndrome":{"value":111.83,"pct":0.236}}},"Noncommunicable Diseases":{"value":12171.83,"pct":25.73,"sub":{"Diabetes Mellitus":{"value":1411.45,"pct":2.983},"Cardiovascular Diseases":{"value":7101.48,"pct":15.009},"Stroke":{"value":3119.73,"pct":6.594},"COPD":{"value":0.68,"pct":0.001},"Asthma":{"value":1.01,"pct":0.002},"Other Respiratory":{"value":0.22,"pct":0.0},"Cancers":{"value":3653.13,"pct":7.721}}},"Injuries":{"value":3840.49,"pct":8.12,"sub":{"Unintentional Injuries":{"value":3429.12,"pct":7.247},"Collective Violence":{"value":18.03,"pct":0.038},"Interpersonal Violence":{"value":393.34,"pct":0.831}}},"Mental & Substance Disorders":{"value":2767.67,"pct":5.85,"sub":{"Self-harm":{"value":283.94,"pct":0.6},"Depressive Disorders":{"value":1561.86,"pct":3.301},"Anxiety Disorders":{"value":735.83,"pct":1.555},"Eating Disorders":{"value":59.11,"pct":0.125},"Childhood Behavioural Disorders":{"value":126.93,"pct":0.268}}},"Substance Abuse":{"value":297.11,"pct":0.63,"sub":{"Alcohol Use Disorders":{"value":191.96,"pct":0.406},"Drug Use Disorders":{"value":105.15,"pct":0.222}}},"Others":{"value":12328.11,"pct":26.06,"sub":{"STDs excl. HIV":{"value":171.18,"pct":0.362},"HIV/AIDS":{"value":34.68,"pct":0.073},"Leprosy":{"value":0.44,"pct":0.001},"Endocrine, Blood & Immune":{"value":334.6,"pct":0.707},"Neurological Conditions":{"value":1558.56,"pct":3.294},"Sense Organ Diseases":{"value":1343.61,"pct":2.84},"Digestive Diseases":{"value":1480.35,"pct":3.129},"Genitourinary":{"value":1219.89,"pct":2.578},"Skin Diseases":{"value":764.18,"pct":1.615},"Musculoskeletal":{"value":3485.72,"pct":7.367},"Oral Conditions":{"value":376.34,"pct":0.795}}}}},"Brunei":{"total":105.8,"population":451.737,"dalyRate":234.2,"dalyRateVsWorld":61.7,"diseases":{"Infectious & Parasitic":{"value":8.12,"pct":7.67,"sub":{"Tuberculosis":{"value":0.66,"pct":0.627},"Diarrhoeal Diseases":{"value":0.22,"pct":0.204},"Hepatitis":{"value":0.35,"pct":0.326},"Malaria":{"value":0.0,"pct":0.0},"Dengue":{"value":0.01,"pct":0.006},"Parasitic & Vector Diseases":{"value":0.16,"pct":0.152},"Other Infectious":{"value":2.54,"pct":2.401},"Respiratory Infectious":{"value":4.12,"pct":3.899},"Meningitis":{"value":0.06,"pct":0.052},"Encephalitis":{"value":0.01,"pct":0.009},"Childhood-cluster Diseases":{"value":0.0,"pct":0.001},"Intestinal Nematode":{"value":0.0,"pct":0.0}}},"Maternal, Perinatal & Nutritional":{"value":4.11,"pct":3.88,"sub":{"Maternal Conditions":{"value":0.16,"pct":0.151},"Preterm Birth Complications":{"value":2.25,"pct":2.126},"Birth Asphyxia & Birth Trauma":{"value":0.42,"pct":0.397},"Neonatal Sepsis":{"value":0.47,"pct":0.44},"Other Neonatal Conditions":{"value":0.31,"pct":0.297},"Protein-energy Malnutrition":{"value":0.57,"pct":0.542},"Iodine Deficiency":{"value":0.12,"pct":0.116},"Vitamin A Deficiency":{"value":0.13,"pct":0.121},"Iron-deficiency Anaemia":{"value":5.27,"pct":4.984},"Sudden Infant Death Syndrome":{"value":0.09,"pct":0.085}}},"Noncommunicable Diseases":{"value":41.54,"pct":39.27,"sub":{"Diabetes Mellitus":{"value":9.02,"pct":8.528},"Cardiovascular Diseases":{"value":17.22,"pct":16.278},"Stroke":{"value":5.73,"pct":5.413},"COPD":{"value":87.27,"pct":82.485},"Asthma":{"value":9.26,"pct":8.75},"Other Respiratory":{"value":11.99,"pct":11.337},"Cancers":{"value":11.53,"pct":10.896}}},"Injuries":{"value":7.85,"pct":7.42,"sub":{"Unintentional Injuries":{"value":7.52,"pct":7.109},"Collective Violence":{"value":0.0,"pct":0.001},"Interpersonal Violence":{"value":0.33,"pct":0.312}}},"Mental & Substance Disorders":{"value":5.05,"pct":4.77,"sub":{"Self-harm":{"value":0.8,"pct":0.759},"Depressive Disorders":{"value":1.49,"pct":1.41},"Anxiety Disorders":{"value":1.89,"pct":1.785},"Eating Disorders":{"value":0.54,"pct":0.513},"Childhood Behavioural Disorders":{"value":0.32,"pct":0.304}}},"Substance Abuse":{"value":0.97,"pct":0.91,"sub":{"Alcohol Use Disorders":{"value":0.46,"pct":0.434},"Drug Use Disorders":{"value":0.51,"pct":0.479}}},"Others":{"value":38.17,"pct":36.08,"sub":{"STDs excl. HIV":{"value":0.12,"pct":0.11},"HIV/AIDS":{"value":0.09,"pct":0.086},"Leprosy":{"value":0.0,"pct":0.0},"Endocrine, Blood & Immune":{"value":3.0,"pct":2.831},"Neurological Conditions":{"value":5.57,"pct":5.263},"Sense Organ Diseases":{"value":2.24,"pct":2.12},"Digestive Diseases":{"value":2.41,"pct":2.274},"Genitourinary":{"value":4.44,"pct":4.202},"Skin Diseases":{"value":2.88,"pct":2.724},"Musculoskeletal":{"value":11.05,"pct":10.442},"Oral Conditions":{"value":0.81,"pct":0.764}}}}},"Cambodia":{"total":5928.52,"population":16974.313,"dalyRate":349.26,"dalyRateVsWorld":91.9,"diseases":{"Infectious & Parasitic":{"value":1107.74,"pct":18.68,"sub":{"Tuberculosis":{"value":164.19,"pct":2.769},"Diarrhoeal Diseases":{"value":100.56,"pct":1.696},"Hepatitis":{"value":16.32,"pct":0.275},"Malaria":{"value":1.43,"pct":0.024},"Dengue":{"value":3.51,"pct":0.059},"Parasitic & Vector Diseases":{"value":18.13,"pct":0.306},"Other Infectious":{"value":40.0,"pct":0.675},"Respiratory Infectious":{"value":610.17,"pct":10.292},"Meningitis":{"value":15.31,"pct":0.258},"Encephalitis":{"value":9.96,"pct":0.168},"Childhood-cluster Diseases":{"value":4.82,"pct":0.081},"Intestinal Nematode":{"value":1.9,"pct":0.032}}},"Maternal, Perinatal & Nutritional":{"value":553.3,"pct":9.33,"sub":{"Maternal Conditions":{"value":43.67,"pct":0.737},"Preterm Birth Complications":{"value":230.08,"pct":3.881},"Birth Asphyxia & Birth Trauma":{"value":99.34,"pct":1.676},"Neonatal Sepsis":{"value":30.26,"pct":0.51},"Other Neonatal Conditions":{"value":32.63,"pct":0.55},"Protein-energy Malnutrition":{"value":6.3,"pct":0.106},"Iodine Deficiency":{"value":5.2,"pct":0.088},"Vitamin A Deficiency":{"value":3.73,"pct":0.063},"Iron-deficiency Anaemia":{"value":146.41,"pct":2.47},"Sudden Infant Death Syndrome":{"value":6.44,"pct":0.109}}},"Noncommunicable Diseases":{"value":1705.9,"pct":28.77,"sub":{"Diabetes Mellitus":{"value":164.26,"pct":2.771},"Cardiovascular Diseases":{"value":884.97,"pct":14.927},"Stroke":{"value":464.88,"pct":7.841},"COPD":{"value":76.31,"pct":1.287},"Asthma":{"value":75.77,"pct":1.278},"Other Respiratory":{"value":22.73,"pct":0.383},"Cancers":{"value":481.11,"pct":8.115}}},"Injuries":{"value":558.95,"pct":9.43,"sub":{"Unintentional Injuries":{"value":499.88,"pct":8.432},"Collective Violence":{"value":32.31,"pct":0.545},"Interpersonal Violence":{"value":26.76,"pct":0.451}}},"Mental & Substance Disorders":{"value":242.15,"pct":4.08,"sub":{"Self-harm":{"value":39.44,"pct":0.665},"Depressive Disorders":{"value":90.56,"pct":1.527},"Anxiety Disorders":{"value":94.19,"pct":1.589},"Eating Disorders":{"value":4.05,"pct":0.068},"Childhood Behavioural Disorders":{"value":13.92,"pct":0.235}}},"Substance Abuse":{"value":30.21,"pct":0.51,"sub":{"Alcohol Use Disorders":{"value":19.49,"pct":0.329},"Drug Use Disorders":{"value":10.72,"pct":0.181}}},"Others":{"value":1644.88,"pct":27.75,"sub":{"STDs excl. HIV":{"value":4.95,"pct":0.083},"HIV/AIDS":{"value":62.44,"pct":1.053},"Leprosy":{"value":0.04,"pct":0.001},"Endocrine, Blood & Immune":{"value":67.74,"pct":1.143},"Neurological Conditions":{"value":182.38,"pct":3.076},"Sense Organ Diseases":{"value":145.66,"pct":2.457},"Digestive Diseases":{"value":450.4,"pct":7.597},"Genitourinary":{"value":174.04,"pct":2.936},"Skin Diseases":{"value":98.15,"pct":1.656},"Musculoskeletal":{"value":237.99,"pct":4.014},"Oral Conditions":{"value":38.72,"pct":0.653}}},"Unclassified":{"value":85.4,"pct":1.44,"sub":{}}}},"China":{"total":404385.23,"population":1426437.269,"dalyRate":283.49,"dalyRateVsWorld":74.6,"diseases":{"Infectious & Parasitic":{"value":10046.93,"pct":2.48,"sub":{"Tuberculosis":{"value":1397.33,"pct":0.346},"Diarrhoeal Diseases":{"value":508.5,"pct":0.126},"Hepatitis":{"value":171.08,"pct":0.042},"Malaria":{"value":0.0,"pct":0.0},"Dengue":{"value":0.63,"pct":0.0},"Parasitic & Vector Diseases":{"value":1178.93,"pct":0.292},"Other Infectious":{"value":336.3,"pct":0.083},"Respiratory Infectious":{"value":4745.97,"pct":1.174},"Meningitis":{"value":260.89,"pct":0.065},"Encephalitis":{"value":267.33,"pct":0.066},"Childhood-cluster Diseases":{"value":139.46,"pct":0.034},"Intestinal Nematode":{"value":742.65,"pct":0.184}}},"Maternal, Perinatal & Nutritional":{"value":6905.84,"pct":1.71,"sub":{"Maternal Conditions":{"value":188.08,"pct":0.047},"Preterm Birth Complications":{"value":1916.08,"pct":0.474},"Birth Asphyxia & Birth Trauma":{"value":1896.97,"pct":0.469},"Neonatal Sepsis":{"value":277.58,"pct":0.069},"Other Neonatal Conditions":{"value":283.34,"pct":0.07},"Protein-energy Malnutrition":{"value":229.03,"pct":0.057},"Iodine Deficiency":{"value":22.58,"pct":0.006},"Vitamin A Deficiency":{"value":12.39,"pct":0.003},"Iron-deficiency Anaemia":{"value":126.12,"pct":0.031},"Sudden Infant Death Syndrome":{"value":48.98,"pct":0.012}}},"Noncommunicable Diseases":{"value":185003.84,"pct":45.75,"sub":{"Diabetes Mellitus":{"value":11669.85,"pct":2.886},"Cardiovascular Diseases":{"value":99615.77,"pct":24.634},"Stroke":{"value":52906.88,"pct":13.083},"COPD":{"value":232.48,"pct":0.057},"Asthma":{"value":74.85,"pct":0.019},"Other Respiratory":{"value":73.09,"pct":0.018},"Cancers":{"value":73151.23,"pct":18.089}}},"Injuries":{"value":31857.5,"pct":7.88,"sub":{"Unintentional Injuries":{"value":30172.34,"pct":7.461},"Collective Violence":{"value":89.95,"pct":0.022},"Interpersonal Violence":{"value":1595.21,"pct":0.394}}},"Mental & Substance Disorders":{"value":19964.83,"pct":4.94,"sub":{"Self-harm":{"value":4517.72,"pct":1.117},"Depressive Disorders":{"value":7847.82,"pct":1.941},"Anxiety Disorders":{"value":6363.54,"pct":1.574},"Eating Disorders":{"value":369.56,"pct":0.091},"Childhood Behavioural Disorders":{"value":866.2,"pct":0.214}}},"Substance Abuse":{"value":4459.35,"pct":1.1,"sub":{"Alcohol Use Disorders":{"value":2737.01,"pct":0.677},"Drug Use Disorders":{"value":1722.33,"pct":0.426}}},"Others":{"value":132216.61,"pct":32.7,"sub":{"STDs excl. HIV":{"value":359.12,"pct":0.089},"HIV/AIDS":{"value":1886.23,"pct":0.466},"Leprosy":{"value":0.44,"pct":0.0},"Endocrine, Blood & Immune":{"value":3184.55,"pct":0.788},"Neurological Conditions":{"value":21851.01,"pct":5.404},"Sense Organ Diseases":{"value":19408.27,"pct":4.799},"Digestive Diseases":{"value":10548.63,"pct":2.609},"Genitourinary":{"value":11213.66,"pct":2.773},"Skin Diseases":{"value":7388.14,"pct":1.827},"Musculoskeletal":{"value":30189.96,"pct":7.466},"Oral Conditions":{"value":4335.61,"pct":1.072}}},"Unclassified":{"value":13930.33,"pct":3.44,"sub":{}}}},"India":{"total":587446.42,"population":1414203.898,"dalyRate":415.39,"dalyRateVsWorld":109.3,"diseases":{"Infectious & Parasitic":{"value":172045.7,"pct":29.29,"sub":{"Tuberculosis":{"value":14468.67,"pct":2.463},"Diarrhoeal Diseases":{"value":17976.52,"pct":3.06},"Hepatitis":{"value":1701.37,"pct":0.29},"Malaria":{"value":590.11,"pct":0.1},"Dengue":{"value":839.73,"pct":0.143},"Parasitic & Vector Diseases":{"value":2624.05,"pct":0.447},"Other Infectious":{"value":2774.31,"pct":0.472},"Respiratory Infectious":{"value":107370.23,"pct":18.277},"Meningitis":{"value":1768.42,"pct":0.301},"Encephalitis":{"value":2021.41,"pct":0.344},"Childhood-cluster Diseases":{"value":1533.66,"pct":0.261},"Intestinal Nematode":{"value":150.13,"pct":0.026}}},"Maternal, Perinatal & Nutritional":{"value":60089.63,"pct":10.23,"sub":{"Maternal Conditions":{"value":2092.52,"pct":0.356},"Preterm Birth Complications":{"value":23932.85,"pct":4.074},"Birth Asphyxia & Birth Trauma":{"value":9965.84,"pct":1.696},"Neonatal Sepsis":{"value":2595.88,"pct":0.442},"Other Neonatal Conditions":{"value":5274.72,"pct":0.898},"Protein-energy Malnutrition":{"value":1888.64,"pct":0.322},"Iodine Deficiency":{"value":952.11,"pct":0.162},"Vitamin A Deficiency":{"value":326.18,"pct":0.056},"Iron-deficiency Anaemia":{"value":11970.35,"pct":2.038},"Sudden Infant Death Syndrome":{"value":451.05,"pct":0.077}}},"Noncommunicable Diseases":{"value":128153.6,"pct":21.82,"sub":{"Diabetes Mellitus":{"value":14314.36,"pct":2.437},"Cardiovascular Diseases":{"value":78121.37,"pct":13.298},"Stroke":{"value":20653.1,"pct":3.516},"COPD":{"value":2082.31,"pct":0.354},"Asthma":{"value":972.77,"pct":0.166},"Other Respiratory":{"value":161.49,"pct":0.027},"Cancers":{"value":32443.53,"pct":5.523}}},"Injuries":{"value":39730.94,"pct":6.76,"sub":{"Unintentional Injuries":{"value":35827.79,"pct":6.099},"Collective Violence":{"value":228.1,"pct":0.039},"Interpersonal Violence":{"value":3675.05,"pct":0.626}}},"Mental & Substance Disorders":{"value":28227.11,"pct":4.81,"sub":{"Self-harm":{"value":9719.99,"pct":1.655},"Depressive Disorders":{"value":10808.5,"pct":1.84},"Anxiety Disorders":{"value":6109.65,"pct":1.04},"Eating Disorders":{"value":550.31,"pct":0.094},"Childhood Behavioural Disorders":{"value":1038.64,"pct":0.177}}},"Substance Abuse":{"value":3818.86,"pct":0.65,"sub":{"Alcohol Use Disorders":{"value":2593.55,"pct":0.441},"Drug Use Disorders":{"value":1225.31,"pct":0.209}}},"Others":{"value":122527.45,"pct":20.86,"sub":{"STDs excl. HIV":{"value":1110.02,"pct":0.189},"HIV/AIDS":{"value":2419.46,"pct":0.412},"Leprosy":{"value":10.09,"pct":0.002},"Endocrine, Blood & Immune":{"value":3447.86,"pct":0.587},"Neurological Conditions":{"value":15558.37,"pct":2.648},"Sense Organ Diseases":{"value":15696.06,"pct":2.672},"Digestive Diseases":{"value":18097.51,"pct":3.081},"Genitourinary":{"value":14272.62,"pct":2.43},"Skin Diseases":{"value":6343.18,"pct":1.08},"Musculoskeletal":{"value":26243.7,"pct":4.467},"Oral Conditions":{"value":3770.22,"pct":0.642}}},"Unclassified":{"value":32853.13,"pct":5.59,"sub":{}}}},"Indonesia":{"total":106943.51,"population":276758.047,"dalyRate":386.42,"dalyRateVsWorld":101.7,"diseases":{"Infectious & Parasitic":{"value":33999.22,"pct":31.79,"sub":{"Tuberculosis":{"value":4544.14,"pct":4.249},"Diarrhoeal Diseases":{"value":1749.34,"pct":1.636},"Hepatitis":{"value":156.26,"pct":0.146},"Malaria":{"value":94.44,"pct":0.088},"Dengue":{"value":398.16,"pct":0.372},"Parasitic & Vector Diseases":{"value":644.99,"pct":0.603},"Other Infectious":{"value":191.92,"pct":0.179},"Respiratory Infectious":{"value":18717.83,"pct":17.503},"Meningitis":{"value":229.1,"pct":0.214},"Encephalitis":{"value":100.11,"pct":0.094},"Childhood-cluster Diseases":{"value":230.75,"pct":0.216},"Intestinal Nematode":{"value":19.95,"pct":0.019}}},"Maternal, Perinatal & Nutritional":{"value":5903.51,"pct":5.52,"sub":{"Maternal Conditions":{"value":452.79,"pct":0.423},"Preterm Birth Complications":{"value":2339.7,"pct":2.188},"Birth Asphyxia & Birth Trauma":{"value":1066.26,"pct":0.997},"Neonatal Sepsis":{"value":387.93,"pct":0.363},"Other Neonatal Conditions":{"value":281.39,"pct":0.263},"Protein-energy Malnutrition":{"value":514.59,"pct":0.481},"Iodine Deficiency":{"value":11.62,"pct":0.011},"Vitamin A Deficiency":{"value":27.31,"pct":0.026},"Iron-deficiency Anaemia":{"value":651.8,"pct":0.609},"Sudden Infant Death Syndrome":{"value":102.09,"pct":0.095}}},"Noncommunicable Diseases":{"value":29545.93,"pct":27.63,"sub":{"Diabetes Mellitus":{"value":2622.54,"pct":2.452},"Cardiovascular Diseases":{"value":18571.87,"pct":17.366},"Stroke":{"value":9998.02,"pct":9.349},"COPD":{"value":285.31,"pct":0.267},"Asthma":{"value":158.57,"pct":0.148},"Other Respiratory":{"value":31.77,"pct":0.03},"Cancers":{"value":7862.79,"pct":7.352}}},"Injuries":{"value":5167.26,"pct":4.83,"sub":{"Unintentional Injuries":{"value":4351.2,"pct":4.069},"Collective Violence":{"value":49.31,"pct":0.046},"Interpersonal Violence":{"value":766.75,"pct":0.717}}},"Mental & Substance Disorders":{"value":3176.16,"pct":2.97,"sub":{"Self-harm":{"value":163.94,"pct":0.153},"Depressive Disorders":{"value":1250.54,"pct":1.169},"Anxiety Disorders":{"value":1458.57,"pct":1.364},"Eating Disorders":{"value":83.8,"pct":0.078},"Childhood Behavioural Disorders":{"value":219.32,"pct":0.205}}},"Substance Abuse":{"value":280.02,"pct":0.26,"sub":{"Alcohol Use Disorders":{"value":149.22,"pct":0.14},"Drug Use Disorders":{"value":130.8,"pct":0.122}}},"Others":{"value":25501.03,"pct":23.85,"sub":{"STDs excl. HIV":{"value":231.4,"pct":0.216},"HIV/AIDS":{"value":1401.01,"pct":1.31},"Leprosy":{"value":1.7,"pct":0.002},"Endocrine, Blood & Immune":{"value":668.11,"pct":0.625},"Neurological Conditions":{"value":3138.28,"pct":2.935},"Sense Organ Diseases":{"value":2665.9,"pct":2.493},"Digestive Diseases":{"value":4254.81,"pct":3.979},"Genitourinary":{"value":2766.65,"pct":2.587},"Skin Diseases":{"value":1692.28,"pct":1.582},"Musculoskeletal":{"value":4754.23,"pct":4.446},"Oral Conditions":{"value":788.39,"pct":0.737}}},"Unclassified":{"value":3370.37,"pct":3.15,"sub":{}}}},"Japan":{"total":38489.04,"population":125679.333,"dalyRate":306.25,"dalyRateVsWorld":80.6,"diseases":{"Infectious & Parasitic":{"value":1869.67,"pct":4.86,"sub":{"Tuberculosis":{"value":37.01,"pct":0.096},"Diarrhoeal Diseases":{"value":115.19,"pct":0.299},"Hepatitis":{"value":39.54,"pct":0.103},"Malaria":{"value":0.0,"pct":0.0},"Dengue":{"value":0.0,"pct":0.0},"Parasitic & Vector Diseases":{"value":0.31,"pct":0.001},"Other Infectious":{"value":275.94,"pct":0.717},"Respiratory Infectious":{"value":1387.1,"pct":3.604},"Meningitis":{"value":8.49,"pct":0.022},"Encephalitis":{"value":3.01,"pct":0.008},"Childhood-cluster Diseases":{"value":0.2,"pct":0.001},"Intestinal Nematode":{"value":2.87,"pct":0.007}}},"Maternal, Perinatal & Nutritional":{"value":347.62,"pct":0.9,"sub":{"Maternal Conditions":{"value":4.23,"pct":0.011},"Preterm Birth Complications":{"value":100.86,"pct":0.262},"Birth Asphyxia & Birth Trauma":{"value":66.24,"pct":0.172},"Neonatal Sepsis":{"value":12.7,"pct":0.033},"Other Neonatal Conditions":{"value":11.71,"pct":0.03},"Protein-energy Malnutrition":{"value":36.87,"pct":0.096},"Iodine Deficiency":{"value":3.84,"pct":0.01},"Vitamin A Deficiency":{"value":0.04,"pct":0.0},"Iron-deficiency Anaemia":{"value":96.69,"pct":0.251},"Sudden Infant Death Syndrome":{"value":6.5,"pct":0.017}}},"Noncommunicable Diseases":{"value":15510.59,"pct":40.3,"sub":{"Diabetes Mellitus":{"value":1336.72,"pct":3.473},"Cardiovascular Diseases":{"value":6219.74,"pct":16.16},"Stroke":{"value":2317.39,"pct":6.021},"COPD":{"value":16.26,"pct":0.042},"Asthma":{"value":17.08,"pct":0.044},"Other Respiratory":{"value":4.08,"pct":0.011},"Cancers":{"value":7673.95,"pct":19.938}}},"Injuries":{"value":2042.5,"pct":5.31,"sub":{"Unintentional Injuries":{"value":1991.56,"pct":5.174},"Collective Violence":{"value":0.22,"pct":0.001},"Interpersonal Violence":{"value":50.73,"pct":0.132}}},"Mental & Substance Disorders":{"value":2165.09,"pct":5.63,"sub":{"Self-harm":{"value":906.71,"pct":2.356},"Depressive Disorders":{"value":643.78,"pct":1.673},"Anxiety Disorders":{"value":470.22,"pct":1.222},"Eating Disorders":{"value":85.04,"pct":0.221},"Childhood Behavioural Disorders":{"value":59.34,"pct":0.154}}},"Substance Abuse":{"value":175.81,"pct":0.46,"sub":{"Alcohol Use Disorders":{"value":83.03,"pct":0.216},"Drug Use Disorders":{"value":92.79,"pct":0.241}}},"Others":{"value":16294.77,"pct":42.34,"sub":{"STDs excl. HIV":{"value":15.39,"pct":0.04},"HIV/AIDS":{"value":5.7,"pct":0.015},"Leprosy":{"value":0.05,"pct":0.0},"Endocrine, Blood & Immune":{"value":242.76,"pct":0.631},"Neurological Conditions":{"value":2584.28,"pct":6.714},"Sense Organ Diseases":{"value":1625.08,"pct":4.222},"Digestive Diseases":{"value":1408.45,"pct":3.659},"Genitourinary":{"value":1374.34,"pct":3.571},"Skin Diseases":{"value":771.86,"pct":2.005},"Musculoskeletal":{"value":5196.79,"pct":13.502},"Oral Conditions":{"value":485.78,"pct":1.262}}},"Unclassified":{"value":82.98,"pct":0.22,"sub":{}}}},"Lao PDR":{"total":2608.07,"population":7453.205,"dalyRate":349.93,"dalyRateVsWorld":92.1,"diseases":{"Infectious & Parasitic":{"value":505.98,"pct":19.4,"sub":{"Tuberculosis":{"value":96.47,"pct":3.699},"Diarrhoeal Diseases":{"value":82.26,"pct":3.154},"Hepatitis":{"value":3.15,"pct":0.121},"Malaria":{"value":0.65,"pct":0.025},"Dengue":{"value":1.99,"pct":0.076},"Parasitic & Vector Diseases":{"value":18.09,"pct":0.693},"Other Infectious":{"value":15.52,"pct":0.595},"Respiratory Infectious":{"value":216.47,"pct":8.3},"Meningitis":{"value":9.69,"pct":0.371},"Encephalitis":{"value":4.8,"pct":0.184},"Childhood-cluster Diseases":{"value":14.76,"pct":0.566},"Intestinal Nematode":{"value":10.44,"pct":0.4}}},"Maternal, Perinatal & Nutritional":{"value":366.09,"pct":14.04,"sub":{"Maternal Conditions":{"value":15.21,"pct":0.583},"Preterm Birth Complications":{"value":141.44,"pct":5.423},"Birth Asphyxia & Birth Trauma":{"value":87.24,"pct":3.345},"Neonatal Sepsis":{"value":21.71,"pct":0.832},"Other Neonatal Conditions":{"value":44.46,"pct":1.705},"Protein-energy Malnutrition":{"value":22.42,"pct":0.859},"Iodine Deficiency":{"value":0.29,"pct":0.011},"Vitamin A Deficiency":{"value":1.22,"pct":0.047},"Iron-deficiency Anaemia":{"value":27.85,"pct":1.068},"Sudden Infant Death Syndrome":{"value":2.9,"pct":0.111}}},"Noncommunicable Diseases":{"value":704.24,"pct":27.0,"sub":{"Diabetes Mellitus":{"value":67.7,"pct":2.596},"Cardiovascular Diseases":{"value":400.46,"pct":15.355},"Stroke":{"value":182.1,"pct":6.982},"COPD":{"value":8.75,"pct":0.336},"Asthma":{"value":2.7,"pct":0.103},"Other Respiratory":{"value":1.56,"pct":0.06},"Cancers":{"value":222.81,"pct":8.543}}},"Injuries":{"value":235.48,"pct":9.03,"sub":{"Unintentional Injuries":{"value":199.85,"pct":7.663},"Collective Violence":{"value":0.71,"pct":0.027},"Interpersonal Violence":{"value":34.92,"pct":1.339}}},"Mental & Substance Disorders":{"value":107.55,"pct":4.12,"sub":{"Self-harm":{"value":19.97,"pct":0.766},"Depressive Disorders":{"value":34.36,"pct":1.318},"Anxiety Disorders":{"value":44.67,"pct":1.713},"Eating Disorders":{"value":2.22,"pct":0.085},"Childhood Behavioural Disorders":{"value":6.32,"pct":0.242}}},"Substance Abuse":{"value":13.19,"pct":0.51,"sub":{"Alcohol Use Disorders":{"value":8.63,"pct":0.331},"Drug Use Disorders":{"value":4.56,"pct":0.175}}},"Others":{"value":578.38,"pct":22.18,"sub":{"STDs excl. HIV":{"value":6.44,"pct":0.247},"HIV/AIDS":{"value":22.38,"pct":0.858},"Leprosy":{"value":0.02,"pct":0.001},"Endocrine, Blood & Immune":{"value":24.96,"pct":0.957},"Neurological Conditions":{"value":74.19,"pct":2.845},"Sense Organ Diseases":{"value":47.89,"pct":1.836},"Digestive Diseases":{"value":86.83,"pct":3.329},"Genitourinary":{"value":87.81,"pct":3.367},"Skin Diseases":{"value":43.48,"pct":1.667},"Musculoskeletal":{"value":98.51,"pct":3.777},"Oral Conditions":{"value":11.66,"pct":0.447}}},"Unclassified":{"value":97.15,"pct":3.73,"sub":{}}}},"Malaysia":{"total":10119.09,"population":34282.412,"dalyRate":295.17,"dalyRateVsWorld":77.7,"diseases":{"Infectious & Parasitic":{"value":1905.54,"pct":18.83,"sub":{"Tuberculosis":{"value":90.63,"pct":0.896},"Diarrhoeal Diseases":{"value":70.15,"pct":0.693},"Hepatitis":{"value":10.84,"pct":0.107},"Malaria":{"value":0.02,"pct":0.0},"Dengue":{"value":20.31,"pct":0.201},"Parasitic & Vector Diseases":{"value":32.43,"pct":0.321},"Other Infectious":{"value":41.23,"pct":0.407},"Respiratory Infectious":{"value":1376.65,"pct":13.604},"Meningitis":{"value":17.12,"pct":0.169},"Encephalitis":{"value":22.75,"pct":0.225},"Childhood-cluster Diseases":{"value":3.17,"pct":0.031},"Intestinal Nematode":{"value":7.83,"pct":0.077}}},"Maternal, Perinatal & Nutritional":{"value":372.67,"pct":3.68,"sub":{"Maternal Conditions":{"value":12.93,"pct":0.128},"Preterm Birth Complications":{"value":135.56,"pct":1.34},"Birth Asphyxia & Birth Trauma":{"value":45.76,"pct":0.452},"Neonatal Sepsis":{"value":22.65,"pct":0.224},"Other Neonatal Conditions":{"value":24.42,"pct":0.241},"Protein-energy Malnutrition":{"value":20.82,"pct":0.206},"Iodine Deficiency":{"value":4.73,"pct":0.047},"Vitamin A Deficiency":{"value":0.12,"pct":0.001},"Iron-deficiency Anaemia":{"value":96.68,"pct":0.955},"Sudden Infant Death Syndrome":{"value":5.4,"pct":0.053}}},"Noncommunicable Diseases":{"value":3269.16,"pct":32.31,"sub":{"Diabetes Mellitus":{"value":352.43,"pct":3.483},"Cardiovascular Diseases":{"value":1961.9,"pct":19.388},"Stroke":{"value":688.2,"pct":6.801},"COPD":{"value":3.45,"pct":0.034},"Asthma":{"value":0.71,"pct":0.007},"Other Respiratory":{"value":0.49,"pct":0.005},"Cancers":{"value":943.59,"pct":9.325}}},"Injuries":{"value":682.1,"pct":6.74,"sub":{"Unintentional Injuries":{"value":615.9,"pct":6.087},"Collective Violence":{"value":1.45,"pct":0.014},"Interpersonal Violence":{"value":64.75,"pct":0.64}}},"Mental & Substance Disorders":{"value":577.22,"pct":5.7,"sub":{"Self-harm":{"value":95.19,"pct":0.941},"Depressive Disorders":{"value":220.67,"pct":2.181},"Anxiety Disorders":{"value":224.11,"pct":2.215},"Eating Disorders":{"value":14.84,"pct":0.147},"Childhood Behavioural Disorders":{"value":22.41,"pct":0.221}}},"Substance Abuse":{"value":55.08,"pct":0.54,"sub":{"Alcohol Use Disorders":{"value":28.11,"pct":0.278},"Drug Use Disorders":{"value":26.97,"pct":0.267}}},"Others":{"value":3064.38,"pct":30.28,"sub":{"STDs excl. HIV":{"value":8.11,"pct":0.08},"HIV/AIDS":{"value":120.58,"pct":1.192},"Leprosy":{"value":0.03,"pct":0.0},"Endocrine, Blood & Immune":{"value":103.39,"pct":1.022},"Neurological Conditions":{"value":412.9,"pct":4.08},"Sense Organ Diseases":{"value":293.78,"pct":2.903},"Digestive Diseases":{"value":369.62,"pct":3.653},"Genitourinary":{"value":447.83,"pct":4.426},"Skin Diseases":{"value":243.21,"pct":2.404},"Musculoskeletal":{"value":566.38,"pct":5.597},"Oral Conditions":{"value":85.65,"pct":0.846}}},"Unclassified":{"value":192.94,"pct":1.91,"sub":{}}}},"Myanmar":{"total":21610.8,"population":53387.116,"dalyRate":404.79,"dalyRateVsWorld":106.6,"diseases":{"Infectious & Parasitic":{"value":4749.78,"pct":21.98,"sub":{"Tuberculosis":{"value":1396.8,"pct":6.463},"Diarrhoeal Diseases":{"value":542.81,"pct":2.512},"Hepatitis":{"value":11.97,"pct":0.055},"Malaria":{"value":18.06,"pct":0.084},"Dengue":{"value":32.78,"pct":0.152},"Parasitic & Vector Diseases":{"value":122.9,"pct":0.569},"Other Infectious":{"value":221.05,"pct":1.023},"Respiratory Infectious":{"value":1793.95,"pct":8.301},"Meningitis":{"value":64.96,"pct":0.301},"Encephalitis":{"value":21.22,"pct":0.098},"Childhood-cluster Diseases":{"value":39.59,"pct":0.183},"Intestinal Nematode":{"value":14.59,"pct":0.068}}},"Maternal, Perinatal & Nutritional":{"value":2080.83,"pct":9.63,"sub":{"Maternal Conditions":{"value":91.19,"pct":0.422},"Preterm Birth Complications":{"value":843.34,"pct":3.902},"Birth Asphyxia & Birth Trauma":{"value":498.21,"pct":2.305},"Neonatal Sepsis":{"value":120.78,"pct":0.559},"Other Neonatal Conditions":{"value":181.44,"pct":0.84},"Protein-energy Malnutrition":{"value":41.55,"pct":0.192},"Iodine Deficiency":{"value":5.25,"pct":0.024},"Vitamin A Deficiency":{"value":6.31,"pct":0.029},"Iron-deficiency Anaemia":{"value":269.61,"pct":1.248},"Sudden Infant Death Syndrome":{"value":19.09,"pct":0.088}}},"Noncommunicable Diseases":{"value":5925.06,"pct":27.42,"sub":{"Diabetes Mellitus":{"value":905.71,"pct":4.191},"Cardiovascular Diseases":{"value":3213.88,"pct":14.872},"Stroke":{"value":1679.54,"pct":7.772},"COPD":{"value":13.28,"pct":0.061},"Asthma":{"value":9.77,"pct":0.045},"Other Respiratory":{"value":2.32,"pct":0.011},"Cancers":{"value":1778.03,"pct":8.227}}},"Injuries":{"value":1947.49,"pct":9.01,"sub":{"Unintentional Injuries":{"value":1484.88,"pct":6.871},"Collective Violence":{"value":324.91,"pct":1.503},"Interpersonal Violence":{"value":137.7,"pct":0.637}}},"Mental & Substance Disorders":{"value":655.09,"pct":3.03,"sub":{"Self-harm":{"value":81.09,"pct":0.375},"Depressive Disorders":{"value":217.62,"pct":1.007},"Anxiety Disorders":{"value":303.94,"pct":1.406},"Eating Disorders":{"value":14.42,"pct":0.067},"Childhood Behavioural Disorders":{"value":38.02,"pct":0.176}}},"Substance Abuse":{"value":283.94,"pct":1.31,"sub":{"Alcohol Use Disorders":{"value":249.1,"pct":1.153},"Drug Use Disorders":{"value":34.83,"pct":0.161}}},"Others":{"value":4916.22,"pct":22.75,"sub":{"STDs excl. HIV":{"value":43.3,"pct":0.2},"HIV/AIDS":{"value":354.4,"pct":1.64},"Leprosy":{"value":0.27,"pct":0.001},"Endocrine, Blood & Immune":{"value":199.22,"pct":0.922},"Neurological Conditions":{"value":601.39,"pct":2.783},"Sense Organ Diseases":{"value":522.15,"pct":2.416},"Digestive Diseases":{"value":835.95,"pct":3.868},"Genitourinary":{"value":559.67,"pct":2.59},"Skin Diseases":{"value":303.52,"pct":1.404},"Musculoskeletal":{"value":797.54,"pct":3.69},"Oral Conditions":{"value":97.41,"pct":0.451}}},"Unclassified":{"value":1052.39,"pct":4.87,"sub":{}}}},"Philippines":{"total":42225.88,"population":113100.948,"dalyRate":373.35,"dalyRateVsWorld":98.3,"diseases":{"Infectious & Parasitic":{"value":7248.29,"pct":17.17,"sub":{"Tuberculosis":{"value":1488.22,"pct":3.524},"Diarrhoeal Diseases":{"value":727.02,"pct":1.722},"Hepatitis":{"value":77.17,"pct":0.183},"Malaria":{"value":1.17,"pct":0.003},"Dengue":{"value":104.83,"pct":0.248},"Parasitic & Vector Diseases":{"value":257.69,"pct":0.61},"Other Infectious":{"value":482.75,"pct":1.143},"Respiratory Infectious":{"value":3923.47,"pct":9.292},"Meningitis":{"value":108.09,"pct":0.256},"Encephalitis":{"value":35.33,"pct":0.084},"Childhood-cluster Diseases":{"value":122.66,"pct":0.29},"Intestinal Nematode":{"value":25.9,"pct":0.061}}},"Maternal, Perinatal & Nutritional":{"value":3267.06,"pct":7.74,"sub":{"Maternal Conditions":{"value":193.43,"pct":0.458},"Preterm Birth Complications":{"value":1268.22,"pct":3.003},"Birth Asphyxia & Birth Trauma":{"value":500.01,"pct":1.184},"Neonatal Sepsis":{"value":249.68,"pct":0.591},"Other Neonatal Conditions":{"value":248.92,"pct":0.59},"Protein-energy Malnutrition":{"value":150.49,"pct":0.356},"Iodine Deficiency":{"value":36.56,"pct":0.087},"Vitamin A Deficiency":{"value":9.72,"pct":0.023},"Iron-deficiency Anaemia":{"value":533.16,"pct":1.263},"Sudden Infant Death Syndrome":{"value":54.54,"pct":0.129}}},"Noncommunicable Diseases":{"value":14261.48,"pct":33.77,"sub":{"Diabetes Mellitus":{"value":1313.61,"pct":3.111},"Cardiovascular Diseases":{"value":9034.38,"pct":21.395},"Stroke":{"value":2979.19,"pct":7.055},"COPD":{"value":239.86,"pct":0.568},"Asthma":{"value":141.72,"pct":0.336},"Other Respiratory":{"value":57.66,"pct":0.137},"Cancers":{"value":3254.24,"pct":7.707}}},"Injuries":{"value":3212.58,"pct":7.61,"sub":{"Unintentional Injuries":{"value":2234.85,"pct":5.293},"Collective Violence":{"value":102.46,"pct":0.243},"Interpersonal Violence":{"value":875.27,"pct":2.073}}},"Mental & Substance Disorders":{"value":1616.97,"pct":3.83,"sub":{"Self-harm":{"value":214.81,"pct":0.509},"Depressive Disorders":{"value":608.88,"pct":1.442},"Anxiety Disorders":{"value":653.76,"pct":1.548},"Eating Disorders":{"value":34.43,"pct":0.082},"Childhood Behavioural Disorders":{"value":105.09,"pct":0.249}}},"Substance Abuse":{"value":211.54,"pct":0.5,"sub":{"Alcohol Use Disorders":{"value":139.11,"pct":0.329},"Drug Use Disorders":{"value":72.43,"pct":0.172}}},"Others":{"value":11031.0,"pct":26.12,"sub":{"STDs excl. HIV":{"value":123.81,"pct":0.293},"HIV/AIDS":{"value":75.66,"pct":0.179},"Leprosy":{"value":2.08,"pct":0.005},"Endocrine, Blood & Immune":{"value":771.0,"pct":1.826},"Neurological Conditions":{"value":1411.72,"pct":3.343},"Sense Organ Diseases":{"value":989.53,"pct":2.343},"Digestive Diseases":{"value":1471.72,"pct":3.485},"Genitourinary":{"value":1963.83,"pct":4.651},"Skin Diseases":{"value":803.27,"pct":1.902},"Musculoskeletal":{"value":1753.9,"pct":4.154},"Oral Conditions":{"value":252.75,"pct":0.599}}},"Unclassified":{"value":1376.97,"pct":3.26,"sub":{}}}},"South Korea":{"total":12869.89,"population":51848.393,"dalyRate":248.22,"dalyRateVsWorld":65.3,"diseases":{"Infectious & Parasitic":{"value":769.89,"pct":5.98,"sub":{"Tuberculosis":{"value":35.36,"pct":0.275},"Diarrhoeal Diseases":{"value":20.04,"pct":0.156},"Hepatitis":{"value":18.48,"pct":0.144},"Malaria":{"value":0.01,"pct":0.0},"Dengue":{"value":0.0,"pct":0.0},"Parasitic & Vector Diseases":{"value":27.51,"pct":0.214},"Other Infectious":{"value":129.92,"pct":1.01},"Respiratory Infectious":{"value":506.2,"pct":3.933},"Meningitis":{"value":1.56,"pct":0.012},"Encephalitis":{"value":1.36,"pct":0.011},"Childhood-cluster Diseases":{"value":0.07,"pct":0.001},"Intestinal Nematode":{"value":29.39,"pct":0.228}}},"Maternal, Perinatal & Nutritional":{"value":140.63,"pct":1.09,"sub":{"Maternal Conditions":{"value":2.03,"pct":0.016},"Preterm Birth Complications":{"value":56.85,"pct":0.442},"Birth Asphyxia & Birth Trauma":{"value":27.83,"pct":0.216},"Neonatal Sepsis":{"value":14.95,"pct":0.116},"Other Neonatal Conditions":{"value":3.6,"pct":0.028},"Protein-energy Malnutrition":{"value":1.92,"pct":0.015},"Iodine Deficiency":{"value":1.53,"pct":0.012},"Vitamin A Deficiency":{"value":0.01,"pct":0.0},"Iron-deficiency Anaemia":{"value":25.79,"pct":0.2},"Sudden Infant Death Syndrome":{"value":1.95,"pct":0.015}}},"Noncommunicable Diseases":{"value":4426.41,"pct":34.39,"sub":{"Diabetes Mellitus":{"value":792.84,"pct":6.16},"Cardiovascular Diseases":{"value":1448.98,"pct":11.259},"Stroke":{"value":655.4,"pct":5.093},"COPD":{"value":14.12,"pct":0.11},"Asthma":{"value":3.51,"pct":0.027},"Other Respiratory":{"value":4.15,"pct":0.032},"Cancers":{"value":2121.4,"pct":16.483}}},"Injuries":{"value":949.53,"pct":7.38,"sub":{"Unintentional Injuries":{"value":916.34,"pct":7.12},"Collective Violence":{"value":0.08,"pct":0.001},"Interpersonal Violence":{"value":33.11,"pct":0.257}}},"Mental & Substance Disorders":{"value":1121.57,"pct":8.71,"sub":{"Self-harm":{"value":578.25,"pct":4.493},"Depressive Disorders":{"value":250.19,"pct":1.944},"Anxiety Disorders":{"value":232.84,"pct":1.809},"Eating Disorders":{"value":37.54,"pct":0.292},"Childhood Behavioural Disorders":{"value":22.74,"pct":0.177}}},"Substance Abuse":{"value":247.09,"pct":1.92,"sub":{"Alcohol Use Disorders":{"value":196.23,"pct":1.525},"Drug Use Disorders":{"value":50.85,"pct":0.395}}},"Others":{"value":5169.16,"pct":40.16,"sub":{"STDs excl. HIV":{"value":9.33,"pct":0.073},"HIV/AIDS":{"value":3.51,"pct":0.027},"Leprosy":{"value":0.04,"pct":0.0},"Endocrine, Blood & Immune":{"value":66.65,"pct":0.518},"Neurological Conditions":{"value":798.29,"pct":6.203},"Sense Organ Diseases":{"value":460.92,"pct":3.581},"Digestive Diseases":{"value":505.92,"pct":3.931},"Genitourinary":{"value":399.25,"pct":3.102},"Skin Diseases":{"value":281.48,"pct":2.187},"Musculoskeletal":{"value":1709.01,"pct":13.279},"Oral Conditions":{"value":136.46,"pct":1.06}}},"Unclassified":{"value":45.61,"pct":0.35,"sub":{}}}},"Singapore":{"total":1097.36,"population":5546.289,"dalyRate":197.85,"dalyRateVsWorld":52.1,"diseases":{"Infectious & Parasitic":{"value":87.93,"pct":8.01,"sub":{"Tuberculosis":{"value":0.62,"pct":0.056},"Diarrhoeal Diseases":{"value":0.73,"pct":0.067},"Hepatitis":{"value":0.48,"pct":0.044},"Malaria":{"value":0.0,"pct":0.0},"Dengue":{"value":4.6,"pct":0.419},"Parasitic & Vector Diseases":{"value":4.6,"pct":0.419},"Other Infectious":{"value":3.74,"pct":0.341},"Respiratory Infectious":{"value":77.49,"pct":7.061},"Meningitis":{"value":0.21,"pct":0.019},"Encephalitis":{"value":0.06,"pct":0.005},"Childhood-cluster Diseases":{"value":0.0,"pct":0.0},"Intestinal Nematode":{"value":0.0,"pct":0.0}}},"Maternal, Perinatal & Nutritional":{"value":14.43,"pct":1.31,"sub":{"Maternal Conditions":{"value":0.3,"pct":0.027},"Preterm Birth Complications":{"value":7.59,"pct":0.692},"Birth Asphyxia & Birth Trauma":{"value":2.52,"pct":0.229},"Neonatal Sepsis":{"value":1.16,"pct":0.106},"Other Neonatal Conditions":{"value":0.34,"pct":0.031},"Protein-energy Malnutrition":{"value":0.07,"pct":0.007},"Iodine Deficiency":{"value":0.16,"pct":0.015},"Vitamin A Deficiency":{"value":0.0,"pct":0.0},"Iron-deficiency Anaemia":{"value":2.27,"pct":0.207},"Sudden Infant Death Syndrome":{"value":0.02,"pct":0.001}}},"Noncommunicable Diseases":{"value":447.16,"pct":40.75,"sub":{"Diabetes Mellitus":{"value":46.99,"pct":4.282},"Cardiovascular Diseases":{"value":189.82,"pct":17.298},"Stroke":{"value":40.74,"pct":3.712},"COPD":{"value":27.91,"pct":2.543},"Asthma":{"value":6.93,"pct":0.632},"Other Respiratory":{"value":4.72,"pct":0.43},"Cancers":{"value":166.0,"pct":15.128}}},"Injuries":{"value":62.75,"pct":5.72,"sub":{"Unintentional Injuries":{"value":60.23,"pct":5.488},"Collective Violence":{"value":0.34,"pct":0.031},"Interpersonal Violence":{"value":2.19,"pct":0.2}}},"Mental & Substance Disorders":{"value":80.07,"pct":7.3,"sub":{"Self-harm":{"value":21.96,"pct":2.001},"Depressive Disorders":{"value":26.04,"pct":2.373},"Anxiety Disorders":{"value":22.35,"pct":2.037},"Eating Disorders":{"value":6.82,"pct":0.621},"Childhood Behavioural Disorders":{"value":2.89,"pct":0.263}}},"Substance Abuse":{"value":12.63,"pct":1.15,"sub":{"Alcohol Use Disorders":{"value":4.73,"pct":0.431},"Drug Use Disorders":{"value":7.91,"pct":0.72}}},"Others":{"value":402.75,"pct":36.7,"sub":{"STDs excl. HIV":{"value":0.67,"pct":0.061},"HIV/AIDS":{"value":0.57,"pct":0.052},"Leprosy":{"value":0.0,"pct":0.0},"Endocrine, Blood & Immune":{"value":3.65,"pct":0.333},"Neurological Conditions":{"value":45.86,"pct":4.179},"Sense Organ Diseases":{"value":40.94,"pct":3.73},"Digestive Diseases":{"value":26.44,"pct":2.409},"Genitourinary":{"value":42.87,"pct":3.907},"Skin Diseases":{"value":31.21,"pct":2.844},"Musculoskeletal":{"value":152.15,"pct":13.865},"Oral Conditions":{"value":12.53,"pct":1.142}}}}},"Viet Nam":{"total":29175.68,"population":98935.102,"dalyRate":294.9,"dalyRateVsWorld":77.6,"diseases":{"Infectious & Parasitic":{"value":2768.18,"pct":9.49,"sub":{"Tuberculosis":{"value":388.06,"pct":1.33},"Diarrhoeal Diseases":{"value":250.11,"pct":0.857},"Hepatitis":{"value":18.31,"pct":0.063},"Malaria":{"value":0.16,"pct":0.001},"Dengue":{"value":16.93,"pct":0.058},"Parasitic & Vector Diseases":{"value":90.79,"pct":0.311},"Other Infectious":{"value":83.2,"pct":0.285},"Respiratory Infectious":{"value":1592.64,"pct":5.459},"Meningitis":{"value":34.08,"pct":0.117},"Encephalitis":{"value":77.29,"pct":0.265},"Childhood-cluster Diseases":{"value":10.06,"pct":0.034},"Intestinal Nematode":{"value":57.71,"pct":0.198}}},"Maternal, Perinatal & Nutritional":{"value":1745.93,"pct":5.98,"sub":{"Maternal Conditions":{"value":47.43,"pct":0.163},"Preterm Birth Complications":{"value":767.13,"pct":2.629},"Birth Asphyxia & Birth Trauma":{"value":325.29,"pct":1.115},"Neonatal Sepsis":{"value":117.51,"pct":0.403},"Other Neonatal Conditions":{"value":95.77,"pct":0.328},"Protein-energy Malnutrition":{"value":19.09,"pct":0.065},"Iodine Deficiency":{"value":13.63,"pct":0.047},"Vitamin A Deficiency":{"value":3.38,"pct":0.012},"Iron-deficiency Anaemia":{"value":285.16,"pct":0.977},"Sudden Infant Death Syndrome":{"value":44.1,"pct":0.151}}},"Noncommunicable Diseases":{"value":10935.44,"pct":37.48,"sub":{"Diabetes Mellitus":{"value":1086.18,"pct":3.723},"Cardiovascular Diseases":{"value":5762.11,"pct":19.75},"Stroke":{"value":3703.32,"pct":12.693},"COPD":{"value":104.71,"pct":0.359},"Asthma":{"value":106.96,"pct":0.367},"Other Respiratory":{"value":21.23,"pct":0.073},"Cancers":{"value":3848.41,"pct":13.19}}},"Injuries":{"value":2740.8,"pct":9.39,"sub":{"Unintentional Injuries":{"value":2590.26,"pct":8.878},"Collective Violence":{"value":1.95,"pct":0.007},"Interpersonal Violence":{"value":148.59,"pct":0.509}}},"Mental & Substance Disorders":{"value":1179.83,"pct":4.04,"sub":{"Self-harm":{"value":328.46,"pct":1.126},"Depressive Disorders":{"value":439.88,"pct":1.508},"Anxiety Disorders":{"value":320.32,"pct":1.098},"Eating Disorders":{"value":25.88,"pct":0.089},"Childhood Behavioural Disorders":{"value":65.29,"pct":0.224}}},"Substance Abuse":{"value":307.38,"pct":1.05,"sub":{"Alcohol Use Disorders":{"value":164.62,"pct":0.564},"Drug Use Disorders":{"value":142.76,"pct":0.489}}},"Others":{"value":8591.98,"pct":29.45,"sub":{"STDs excl. HIV":{"value":35.02,"pct":0.12},"HIV/AIDS":{"value":232.51,"pct":0.797},"Leprosy":{"value":0.16,"pct":0.001},"Endocrine, Blood & Immune":{"value":299.93,"pct":1.028},"Neurological Conditions":{"value":1248.55,"pct":4.279},"Sense Organ Diseases":{"value":951.11,"pct":3.26},"Digestive Diseases":{"value":1086.67,"pct":3.725},"Genitourinary":{"value":1021.36,"pct":3.501},"Skin Diseases":{"value":566.82,"pct":1.943},"Musculoskeletal":{"value":1678.01,"pct":5.751},"Oral Conditions":{"value":223.29,"pct":0.765}}},"Unclassified":{"value":906.13,"pct":3.11,"sub":{}}}}},"ageGroups":{"0-4":{"Bangladesh":18.06,"Brunei":6.89,"Cambodia":18.7,"China":2.52,"India":16.45,"Indonesia":10.8,"Japan":0.65,"Lao PDR":31.68,"Malaysia":4.62,"Myanmar":22.1,"Philippines":15.22,"South Korea":0.96,"Singapore":1.14,"Viet Nam":12.2},"5-14":{"Bangladesh":5.6,"Brunei":3.24,"Cambodia":4.76,"China":2.01,"India":4.03,"Indonesia":3.63,"Japan":1.24,"Lao PDR":5.26,"Malaysia":3.25,"Myanmar":3.45,"Philippines":4.29,"South Korea":1.51,"Singapore":1.78,"Viet Nam":3.38},"15-29":{"Bangladesh":13.09,"Brunei":12.19,"Cambodia":11.52,"China":5.87,"India":10.51,"Indonesia":8.83,"Japan":4.43,"Lao PDR":12.26,"Malaysia":11.82,"Myanmar":10.61,"Philippines":12.32,"South Korea":7.15,"Singapore":12.0,"Viet Nam":8.54},"30-49":{"Bangladesh":21.0,"Brunei":29.11,"Cambodia":21.17,"China":18.74,"India":21.36,"Indonesia":20.87,"Japan":12.07,"Lao PDR":18.4,"Malaysia":25.1,"Myanmar":20.26,"Philippines":22.48,"South Korea":18.56,"Singapore":20.5,"Viet Nam":21.2},"50-59":{"Bangladesh":13.04,"Brunei":17.37,"Cambodia":14.49,"China":18.91,"India":15.11,"Indonesia":17.66,"Japan":10.76,"Lao PDR":11.31,"Malaysia":17.13,"Myanmar":14.76,"Philippines":15.56,"South Korea":17.15,"Singapore":15.99,"Viet Nam":16.84},"60-69":{"Bangladesh":13.6,"Brunei":15.22,"Cambodia":14.65,"China":19.63,"India":16.41,"Indonesia":18.51,"Japan":15.29,"Lao PDR":11.0,"Malaysia":18.31,"Myanmar":15.18,"Philippines":16.45,"South Korea":20.0,"Singapore":21.28,"Viet Nam":17.55},"70+":{"Bangladesh":15.63,"Brunei":15.97,"Cambodia":14.71,"China":32.33,"India":16.11,"Indonesia":19.69,"Japan":55.56,"Lao PDR":10.08,"Malaysia":19.76,"Myanmar":13.64,"Philippines":13.68,"South Korea":34.67,"Singapore":27.32,"Viet Nam":20.28}},"gender":{"Male":{"Bangladesh":24108.57,"Brunei":56.95,"Cambodia":3206.04,"China":220814.38,"India":328171.99,"Indonesia":56658.97,"Japan":19563.03,"Lao PDR":1546.05,"Malaysia":5718.19,"Myanmar":12728.18,"Philippines":24191.89,"South Korea":6711.27,"Singapore":569.06,"Viet Nam":16557.95},"Female":{"Bangladesh":23512.08,"Brunei":44.81,"Cambodia":2708.23,"China":175628.24,"India":267966.41,"Indonesia":49414.78,"Japan":17883.21,"Lao PDR":1148.89,"Malaysia":4220.6,"Myanmar":9311.95,"Philippines":17942.87,"South Korea":5764.52,"Singapore":481.13,"Viet Nam":12205.57},"malePct":{"Bangladesh":50.6,"Brunei":56.0,"Cambodia":54.2,"China":55.7,"India":55.0,"Indonesia":53.4,"Japan":52.2,"Lao PDR":57.4,"Malaysia":57.5,"Myanmar":57.8,"Philippines":57.4,"South Korea":53.8,"Singapore":54.2,"Viet Nam":57.6},"femalePct":{"Bangladesh":49.4,"Brunei":44.0,"Cambodia":45.8,"China":44.3,"India":45.0,"Indonesia":46.6,"Japan":47.8,"Lao PDR":42.6,"Malaysia":42.5,"Myanmar":42.2,"Philippines":42.6,"South Korea":46.2,"Singapore":45.8,"Viet Nam":42.4},"malePopPct":{"Bangladesh":49.3,"Brunei":53.2,"Cambodia":48.9,"China":51.0,"India":51.6,"Indonesia":50.2,"Japan":48.8,"Lao PDR":50.3,"Malaysia":52.5,"Myanmar":49.8,"Philippines":49.9,"South Korea":49.9,"Singapore":51.7,"Viet Nam":49.0},"femalePopPct":{"Bangladesh":50.7,"Brunei":46.8,"Cambodia":51.1,"China":49.0,"India":48.4,"Indonesia":49.8,"Japan":51.2,"Lao PDR":49.7,"Malaysia":47.5,"Myanmar":50.2,"Philippines":50.1,"South Korea":50.1,"Singapore":48.3,"Viet Nam":51.0}},"population":{"Bangladesh":167658.85,"Brunei":451.737,"Cambodia":16974.313,"China":1426437.269,"India":1414203.898,"Indonesia":276758.047,"Japan":125679.333,"Lao PDR":7453.205,"Malaysia":34282.412,"Myanmar":53387.116,"Philippines":113100.948,"South Korea":51848.393,"Singapore":5546.289,"Viet Nam":98935.102},"worldDalyRate":379.87,"colors":{"Infectious & Parasitic":"#4472C4","Maternal, Perinatal & Nutritional":"#C00000","Noncommunicable Diseases":"#70AD47","Injuries":"#FFC000","Mental & Substance Disorders":"#7030A0","Substance Abuse":"#9B59B6","Others":"#546E7A","Unclassified":"#374151"},"worldDiseaseMix":{"Infectious & Parasitic":16.8,"Maternal, Perinatal & Nutritional":8.8,"Noncommunicable Diseases":53.9,"Injuries":8.1,"Mental & Substance Disorders":5.0,"Substance Abuse":1.3,"Others":6.1}};
+
+const COUNTRIES = Object.keys(D.countries);
+const CATS = ['Infectious & Parasitic','Maternal, Perinatal & Nutritional','Noncommunicable Diseases','Injuries','Mental & Substance Disorders','Substance Abuse','Others','Unclassified'];
+const CAT_SHORT = {'Infectious & Parasitic':'Infectious','Maternal, Perinatal & Nutritional':'MPNc','Noncommunicable Diseases':'NCD','Injuries':'Injuries','Mental & Substance Disorders':'Mental','Substance Abuse':'Substance Abuse','Others':'Others','Unclassified':'Unclassified'};
+const WORLD_RATE = D.worldDalyRate;
+const AGES = ['0-4','5-14','15-29','30-49','50-59','60-69','70+'];
+const AGE_COLORS = ['#FF6384','#FF9F40','#FFCD56','#4BC0C0','#36A2EB','#9966FF','#C9CBCF'];
+
+const darkTheme = {
+  color: '#e6edf3',
+  grid: { color: '#21262d' },
+  title: { color: '#e6edf3' },
+};
+
+Chart.defaults.color = '#8b949e';
+Chart.defaults.borderColor = '#21262d';
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.font.size = 12;
+
+const charts = {};
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+// ═══════════════════════ PAGE NAVIGATION ═══════════════════════
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => {
+    if (t.getAttribute('onclick').includes(name)) t.classList.add('active');
+  });
+  if (name === 'disease') renderDiseasePage();
+  if (name === 'country') renderCountryPage();
+}
+
+// ═══════════════════ OVERVIEW CHARTS ═══════════════════
+function renderOverview() {
+  renderRateChart();
+  renderDualPie();
+  renderAgeChart();
+  renderGenderChart();
+  renderCompositionChart();
+}
+
+// ── Graph 1: DALY rate per 1,000 vs world average ──
+function renderRateChart() {
+  destroyChart('rate');
+  const sorted = [...COUNTRIES].sort((a,b) => D.countries[b].dalyRate - D.countries[a].dalyRate);
+  const rates = sorted.map(c => D.countries[c].dalyRate);
+  const colors = rates.map(r => r > WORLD_RATE ? '#f85149' : '#58a6ff');
+  const ctx = document.getElementById('chart-rate').getContext('2d');
+  charts['rate'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: sorted,
+      datasets: [{
+        label: 'DALYs per 1,000 pop',
+        data: rates,
+        backgroundColor: colors,
+        borderRadius: 4,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              const c = ctx.label;
+              const r = D.countries[c].dalyRate;
+              const vs = D.countries[c].dalyRateVsWorld;
+              const dir = r > WORLD_RATE ? 'above' : 'below';
+              return [`${r.toFixed(1)} per 1,000 pop`, `${vs}% of world avg (${dir} world)`];
+            }
+          }
+        },
+        annotation: undefined
+      },
+      scales: {
+        x: {
+          grid: { color: '#21262d' },
+          ticks: { color: '#8b949e' },
+          title: { display: true, text: 'DALYs per 1,000 population', color: '#8b949e' }
+        },
+        y: { grid: { display: false }, ticks: { color: '#e6edf3' } }
+      }
+    },
+    plugins: [{
+      id: 'worldLine',
+      afterDraw(chart) {
+        const ctx = chart.ctx;
+        const xScale = chart.scales.x;
+        const xPos = xScale.getPixelForValue(WORLD_RATE);
+        const top = chart.chartArea.top;
+        const bottom = chart.chartArea.bottom;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(xPos, top);
+        ctx.lineTo(xPos, bottom);
+        ctx.strokeStyle = '#58a6ff';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 4]);
+        ctx.stroke();
+        ctx.fillStyle = '#58a6ff';
+        ctx.font = 'bold 11px DM Sans';
+        ctx.fillText('World avg', xPos + 4, top + 14);
+        ctx.restore();
+      }
+    }]
+  });
+}
+
+// ── Graph 2: Dual pie — regional + global ──
+function buildPie(canvasId, legendId, data) {
+  destroyChart(canvasId);
+  const labels = Object.keys(data);
+  const values = Object.values(data);
+  const colors = labels.map(l => D.colors[l] || '#546E7A');
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  charts[canvasId] = new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 1, borderColor: '#161b22', hoverOffset: 4 }] },
+    options: {
+      responsive: false,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw.toFixed(1)}%` }
+      }}
+    }
+  });
+  const legend = document.getElementById(legendId);
+  legend.innerHTML = labels.map((l, i) => `
+    <div class="pie-legend-item">
+      <div class="pie-legend-swatch" style="background:${colors[i]}"></div>
+      <div class="pie-legend-name">${CAT_SHORT[l] || l}</div>
+      <div class="pie-legend-pct">${values[i].toFixed(1)}%</div>
+    </div>`).join('');
+}
+
+function renderDualPie() {
+  // Regional mix — sum all 14 countries
+  const catTotals = {};
+  CATS.forEach(cat => { catTotals[cat] = 0; });
+  let grandTotal = 0;
+  COUNTRIES.forEach(c => {
+    grandTotal += D.countries[c].total;
+    CATS.forEach(cat => {
+      if (D.countries[c].diseases[cat]) catTotals[cat] += D.countries[c].diseases[cat].value;
+    });
+  });
+  const regionalMix = {};
+  CATS.forEach(cat => { const p = catTotals[cat]/grandTotal*100; if(p>0.05) regionalMix[cat] = +p.toFixed(1); });
+
+  buildPie('chart-pie-regional', 'pie-legend-regional', regionalMix);
+  buildPie('chart-pie-global', 'pie-legend-global', D.worldDiseaseMix);
+}
+
+// ── Graph 3: Age % stacked bar ──
+function renderAgeChart() {
+  destroyChart('age');
+  const ctx = document.getElementById('chart-age').getContext('2d');
+  charts['age'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: COUNTRIES,
+      datasets: AGES.map((age, i) => ({
+        label: age,
+        data: COUNTRIES.map(c => D.ageGroups[age][c]),
+        backgroundColor: AGE_COLORS[i],
+        stack: 'age'
+      }))
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 14, boxWidth: 12 } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%` } }
+      },
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { color: '#e6edf3', maxRotation: 35 } },
+        y: { stacked: true, max: 100, grid: { color: '#21262d' }, ticks: { color: '#8b949e', callback: v => v + '%' },
+          title: { display: true, text: '% of Country Total DALYs', color: '#8b949e' } }
+      }
+    }
+  });
+}
+
+// ── Graph 4: Gender — DALY % + Pop % side-by-side per country ──
+function renderGenderChart() {
+  destroyChart('gender');
+  const ctx = document.getElementById('chart-gender').getContext('2d');
+
+  // For each country we show 2 grouped bars:
+  //   Left bar  = DALY % (male / female)
+  //   Right bar = Pop %  (male / female)
+  // We achieve this by creating x-axis labels as country + " (DALY)" and country + " (Pop)"
+  const labels = [];
+  COUNTRIES.forEach(c => { labels.push(c + '\n(DALY)'); labels.push(c + '\n(Pop)'); });
+
+  const maleDaly  = [], femaleDaly  = [];
+  const malePop   = [], femalePop   = [];
+
+  COUNTRIES.forEach(c => {
+    maleDaly.push(D.gender.malePct[c]);   femaleDaly.push(D.gender.femalePct[c]);
+    maleDaly.push(null);                   femaleDaly.push(null);
+    malePop.push(null);                    femalePop.push(null);
+    malePop.push(D.gender.malePopPct[c]); femalePop.push(D.gender.femalePopPct[c]);
+  });
+
+  // Better: use grouped approach with interleaved null data
+  // Build labels + data differently: 2 bars per country group
+  const groupLabels = COUNTRIES;
+  charts['gender'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: groupLabels,
+      datasets: [
+        {
+          label: 'Male — DALY %',
+          data: COUNTRIES.map(c => D.gender.malePct[c]),
+          backgroundColor: '#3b82f6aa',
+          stack: 'daly',
+          order: 1,
+        },
+        {
+          label: 'Female — DALY %',
+          data: COUNTRIES.map(c => D.gender.femalePct[c]),
+          backgroundColor: '#ec489999',
+          stack: 'daly',
+          order: 1,
+        },
+        {
+          label: 'Male — Pop %',
+          data: COUNTRIES.map(c => D.gender.malePopPct[c]),
+          backgroundColor: '#1d4ed8aa',
+          stack: 'pop',
+          order: 2,
+        },
+        {
+          label: 'Female — Pop %',
+          data: COUNTRIES.map(c => D.gender.femalePopPct[c]),
+          backgroundColor: '#be185d99',
+          stack: 'pop',
+          order: 2,
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 14, boxWidth: 12 } },
+        tooltip: {
+          callbacks: {
+            title: ([ctx]) => ctx.label,
+            label: ctx => ` ${ctx.dataset.label}: ${ctx.raw?.toFixed(1)}%`
+          }
+        }
+      },
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { color: '#e6edf3', maxRotation: 35 } },
+        y: { stacked: true, max: 100, grid: { color: '#21262d' },
+          ticks: { color: '#8b949e', callback: v => v + '%' },
+          title: { display: true, text: '% split (Male / Female)', color: '#8b949e' } }
+      }
+    }
+  });
+}
+
+// ── Graph 5: 100% stacked composition with Others + Unclassified ──
+function renderCompositionChart() {
+  destroyChart('composition');
+  const ctx = document.getElementById('chart-composition').getContext('2d');
+  charts['composition'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: COUNTRIES,
+      datasets: CATS.map(cat => ({
+        label: CAT_SHORT[cat],
+        data: COUNTRIES.map(c => D.countries[c].diseases[cat]?.pct || 0),
+        backgroundColor: D.colors[cat],
+        stack: 'comp'
+      }))
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 12, boxWidth: 12 } },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.dataset.label}: ${ctx.raw?.toFixed(1) || 0}%`,
+            footer: (items) => {
+              const c = items[0].label;
+              const sum = CATS.reduce((a,cat) => a + (D.countries[c].diseases[cat]?.pct||0), 0);
+              return `Total: ${sum.toFixed(1)}%`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { color: '#e6edf3', maxRotation: 35 } },
+        y: { stacked: true, max: 100, grid: { color: '#21262d' },
+          ticks: { color: '#8b949e', callback: v => v + '%' },
+          title: { display: true, text: '% of Total DALYs', color: '#8b949e' } }
+      }
+    }
+  });
+}
+
+// ═══════════════════ DISEASE PAGE ═══════════════════
+let diseaseLevel = 0, selectedCat = null, selectedSub = null;
+
+function renderDiseasePage() {
+  diseaseLevel = 0; selectedCat = null; selectedSub = null;
+  renderDiseaseLevel0();
+}
+
+function renderDiseaseLevel0() {
+  const c = document.getElementById('disease-content');
+  c.innerHTML = '';
+  const grid = document.createElement('div');
+  grid.className = 'grid-2';
+
+  const catData = CATS.filter(cat=>cat!=='Unclassified').map(cat => ({
+    cat,
+    total: COUNTRIES.reduce((s,cn) => s+(D.countries[cn].diseases[cat]?.value||0), 0),
+    color: D.colors[cat]
+  }));
+
+  // Left: clickable KPI cards
+  const kpiGrid = document.createElement('div');
+  kpiGrid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:12px;';
+  catData.forEach(({cat,total,color}) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.cursor = 'pointer';
+    card.style.borderColor = color + '55';
+    card.innerHTML = `<div style="font-size:10px;color:${color};font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">${CAT_SHORT[cat]}</div>
+      <div style="font-size:20px;font-family:'DM Serif Display',serif;">${(total/1000).toFixed(0)}M</div>
+      <div style="font-size:11px;color:#8b949e;">DALYs (thousands)</div>`;
+    card.onclick = () => { selectedCat = cat; renderDiseaseLevel1(); };
+    kpiGrid.appendChild(card);
+  });
+
+  // Right: horizontal bar
+  const barCard = document.createElement('div');
+  barCard.className = 'card';
+  barCard.innerHTML = '<div class="card-title">Click a category to drill down</div><div class="chart-wrap" style="height:340px"><canvas id="d-cat-bar"></canvas></div>';
+
+  grid.appendChild(kpiGrid);
+  grid.appendChild(barCard);
+  c.appendChild(grid);
+
+  // Country composition below
+  const compCard = document.createElement('div');
+  compCard.className = 'card mb20';
+  compCard.style.marginTop = '20px';
+  compCard.innerHTML = '<div class="card-title">Disease category mix by country</div><div class="chart-wrap chart-tall"><canvas id="d-country-comp"></canvas></div>';
+  c.appendChild(compCard);
+
+  setTimeout(() => {
+    destroyChart('d-cat-bar');
+    const sorted = [...catData].sort((a,b)=>b.total-a.total);
+    charts['d-cat-bar'] = new Chart(document.getElementById('d-cat-bar').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: sorted.map(d=>CAT_SHORT[d.cat]),
+        datasets: [{ data: sorted.map(d=>d.total), backgroundColor: sorted.map(d=>d.color), borderRadius:4 }]
+      },
+      options: {
+        indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>(c.raw/1000).toFixed(0)+'M DALYs'}}},
+        scales:{x:{grid:{color:'#21262d'},ticks:{color:'#8b949e'}},y:{grid:{display:false},ticks:{color:'#e6edf3'}}}
+      }
+    });
+
+    destroyChart('d-country-comp');
+    charts['d-country-comp'] = new Chart(document.getElementById('d-country-comp').getContext('2d'), {
+      type: 'bar',
+      data: { labels: COUNTRIES,
+        datasets: CATS.filter(c=>c!=='Unclassified').map(cat=>({
+          label: CAT_SHORT[cat],
+          data: COUNTRIES.map(cn=>D.countries[cn].diseases[cat]?.pct||0),
+          backgroundColor: D.colors[cat], stack:'s'
+        }))
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom',labels:{padding:12,boxWidth:12}}},
+        scales:{x:{stacked:true,grid:{display:false},ticks:{color:'#e6edf3',maxRotation:35}},
+          y:{stacked:true,max:100,grid:{color:'#21262d'},ticks:{color:'#8b949e',callback:v=>v+'%'}}}}
+    });
+  }, 50);
+}
+
+function renderDiseaseLevel1() {
+  const cat = selectedCat;
+  const c = document.getElementById('disease-content');
+  c.innerHTML = `<div class="breadcrumb"><a onclick="renderDiseaseLevel0()">All Categories</a><span>›</span><span>${cat}</span></div>`;
+
+  // Sub-disease totals
+  const subs = D.countries[COUNTRIES[0]].diseases[cat]?.sub || {};
+  const subNames = Object.keys(subs);
+
+  const subData = subNames.map(sub => ({
+    sub,
+    total: COUNTRIES.reduce((s,cn) => s+(D.countries[cn].diseases[cat]?.sub[sub]?.value||0), 0)
+  })).sort((a,b)=>b.total-a.total);
+
+  const grid = document.createElement('div');
+  grid.className = 'grid-2';
+  grid.style.marginBottom = '20px';
+
+  const barCard = document.createElement('div');
+  barCard.className = 'card';
+  barCard.innerHTML = `<div class="card-title">Sub-diseases (click to see by country)</div><div class="chart-wrap" style="height:${Math.max(280, subData.length*26)}px"><canvas id="d-sub-bar"></canvas></div>`;
+
+  const ctryCard = document.createElement('div');
+  ctryCard.className = 'card';
+  ctryCard.innerHTML = `<div class="card-title">${CAT_SHORT[cat]} burden by country</div><div class="chart-wrap" style="height:280px"><canvas id="d-cat-ctry"></canvas></div>`;
+
+  grid.appendChild(barCard);
+  grid.appendChild(ctryCard);
+  c.appendChild(grid);
+
+  setTimeout(() => {
+    destroyChart('d-sub-bar');
+    charts['d-sub-bar'] = new Chart(document.getElementById('d-sub-bar').getContext('2d'), {
+      type:'bar',
+      data:{labels:subData.map(d=>d.sub),
+        datasets:[{data:subData.map(d=>d.total),backgroundColor:D.colors[cat],borderRadius:4}]},
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw.toFixed(0)}k DALYs`}}},
+        scales:{x:{grid:{color:'#21262d'},ticks:{color:'#8b949e'}},y:{grid:{display:false},ticks:{color:'#e6edf3'}}},
+        onClick(_, els){if(els.length){selectedSub=subData[els[0].index].sub;renderDiseaseLevel2();}}
+      }
+    });
+    destroyChart('d-cat-ctry');
+    const ctryTotals = COUNTRIES.map(cn=>D.countries[cn].diseases[cat]?.value||0);
+    const ctryPcts = COUNTRIES.map(cn=>D.countries[cn].diseases[cat]?.pct||0);
+    charts['d-cat-ctry'] = new Chart(document.getElementById('d-cat-ctry').getContext('2d'), {
+      type:'bar',
+      data:{labels:COUNTRIES,datasets:[{data:ctryPcts,backgroundColor:D.colors[cat],borderRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>{const cn=COUNTRIES[c.dataIndex];return [`${c.raw.toFixed(1)}% of total DALYs`,`${(ctryTotals[c.dataIndex]/1000).toFixed(0)}k absolute`];}}}},
+        scales:{x:{grid:{display:false},ticks:{color:'#e6edf3',maxRotation:35}},
+          y:{grid:{color:'#21262d'},ticks:{color:'#8b949e',callback:v=>v+'%'}}}}
+    });
+  }, 50);
+}
+
+function renderDiseaseLevel2() {
+  const cat = selectedCat, sub = selectedSub;
+  const c = document.getElementById('disease-content');
+  c.innerHTML = `<div class="breadcrumb"><a onclick="renderDiseaseLevel0()">All Categories</a><span>›</span><a onclick="selectedCat='${cat}';renderDiseaseLevel1()">${cat}</a><span>›</span><span>${sub}</span></div>`;
+
+  const vals = COUNTRIES.map(cn=>D.countries[cn].diseases[cat]?.sub[sub]?.value||0);
+  const pcts = COUNTRIES.map(cn=>D.countries[cn].diseases[cat]?.sub[sub]?.pct||0);
+
+  const grid = document.createElement('div'); grid.className = 'grid-2';
+  const c1 = document.createElement('div'); c1.className='card';
+  c1.innerHTML=`<div class="card-title">${sub} — absolute DALYs by country</div><div class="chart-wrap chart-med"><canvas id="d-geo-abs"></canvas></div>`;
+  const c2 = document.createElement('div'); c2.className='card';
+  c2.innerHTML=`<div class="card-title">${sub} — % of country total</div><div class="chart-wrap chart-med"><canvas id="d-geo-pct"></canvas></div>`;
+  grid.appendChild(c1); grid.appendChild(c2);
+  c.appendChild(grid);
+
+  setTimeout(()=>{
+    const sortIdx=[...Array(14).keys()].sort((a,b)=>vals[b]-vals[a]);
+    const sLabels=sortIdx.map(i=>COUNTRIES[i]);
+    const sVals=sortIdx.map(i=>vals[i]);
+    const sPcts=sortIdx.map(i=>pcts[i]);
+    destroyChart('d-geo-abs');
+    charts['d-geo-abs']=new Chart(document.getElementById('d-geo-abs').getContext('2d'),{
+      type:'bar',data:{labels:sLabels,datasets:[{data:sVals,backgroundColor:D.colors[cat],borderRadius:4}]},
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw.toFixed(1)}k DALYs`}}},
+        scales:{x:{grid:{color:'#21262d'},ticks:{color:'#8b949e'}},y:{grid:{display:false},ticks:{color:'#e6edf3'}}}}
+    });
+    destroyChart('d-geo-pct');
+    charts['d-geo-pct']=new Chart(document.getElementById('d-geo-pct').getContext('2d'),{
+      type:'bar',data:{labels:sLabels,datasets:[{data:sPcts,backgroundColor:D.colors[cat]+'aa',borderRadius:4}]},
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw.toFixed(2)}% of country total`}}},
+        scales:{x:{grid:{color:'#21262d'},ticks:{color:'#8b949e',callback:v=>v+'%'}},y:{grid:{display:false},ticks:{color:'#e6edf3'}}}}
+    });
+  },50);
+}
+
+// ═══════════════════ COUNTRY PAGE ═══════════════════
+let selectedCountry = 'India', countryCat = null;
+
+function renderCountryPage() {
+  selectedCountry = 'India'; countryCat = null;
+  const c = document.getElementById('country-content');
+  c.innerHTML = '';
+
+  const pills = document.createElement('div');
+  pills.className = 'country-pills';
+  pills.id = 'country-pills';
+  COUNTRIES.forEach(cn=>{
+    const p = document.createElement('div');
+    p.className='pill'+(cn===selectedCountry?' active':'');
+    p.textContent=cn;
+    p.onclick=()=>{ selectedCountry=cn; countryCat=null; updateCountryPills(); renderCountryLevel0(); };
+    pills.appendChild(p);
+  });
+  c.appendChild(pills);
+  const content = document.createElement('div'); content.id='ctry-detail'; c.appendChild(content);
+  renderCountryLevel0();
+}
+
+function updateCountryPills(){
+  document.querySelectorAll('#country-pills .pill').forEach((p,i)=>{
+    p.classList.toggle('active', COUNTRIES[i]===selectedCountry);
+  });
+}
+
+function renderCountryLevel0(){
+  const cn=selectedCountry;
+  const cd=D.countries[cn];
+  const c=document.getElementById('ctry-detail');
+  c.innerHTML='';
+
+  const kpi=document.createElement('div'); kpi.className='card mb20';
+  kpi.innerHTML=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;">
+    <div class="kpi"><div class="kpi-label">Total DALYs</div><div class="kpi-val">${(cd.total/1000).toFixed(0)}M</div><div class="kpi-sub">thousands</div></div>
+    <div class="kpi"><div class="kpi-label">Population</div><div class="kpi-val">${(cd.population/1000).toFixed(1)}M</div><div class="kpi-sub">millions</div></div>
+    <div class="kpi"><div class="kpi-label">DALY Rate</div><div class="kpi-val">${cd.dalyRate.toFixed(0)}</div><div class="kpi-sub">per 1,000 pop · world avg: 380</div></div>
+    <div class="kpi"><div class="kpi-label">vs World Average</div><div class="kpi-val" style="color:${cd.dalyRate>WORLD_RATE?'#f85149':'#3fb950'}">${cd.dalyRateVsWorld}%</div><div class="kpi-sub">${cd.dalyRate>WORLD_RATE?'above':'below'} world average</div></div>
+  </div>`;
+  c.appendChild(kpi);
+
+  const grid=document.createElement('div'); grid.className='grid-2 mb20';
+  const pieCard=document.createElement('div'); pieCard.className='card';
+  pieCard.innerHTML=`<div class="card-title">Disease composition</div>
+    <div style="display:grid;grid-template-columns:180px 1fr;gap:16px;align-items:center;">
+      <canvas id="ctry-pie" width="180" height="180"></canvas>
+      <div id="ctry-pie-legend" class="pie-legend"></div>
+    </div>`;
+  const ageCard=document.createElement('div'); ageCard.className='card';
+  ageCard.innerHTML=`<div class="card-title">Age profile</div><div class="chart-wrap chart-med"><canvas id="ctry-age"></canvas></div>`;
+  grid.appendChild(pieCard); grid.appendChild(ageCard);
+  c.appendChild(grid);
+
+  const tableCard=document.createElement('div'); tableCard.className='card';
+  tableCard.innerHTML=`<div class="card-title">Click a disease category to drill down to sub-diseases</div>
+    <table style="width:100%;border-collapse:collapse;" id="ctry-table"></table>`;
+  c.appendChild(tableCard);
+
+  setTimeout(()=>{
+    // Pie
+    destroyChart('ctry-pie');
+    const pieLabels=CATS.filter(cat=>cd.diseases[cat]?.pct>0.1);
+    const pieVals=pieLabels.map(cat=>cd.diseases[cat].pct);
+    const pieColors=pieLabels.map(cat=>D.colors[cat]);
+    charts['ctry-pie']=new Chart(document.getElementById('ctry-pie').getContext('2d'),{
+      type:'doughnut',
+      data:{labels:pieLabels,datasets:[{data:pieVals,backgroundColor:pieColors,borderWidth:1,borderColor:'#161b22'}]},
+      options:{responsive:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw.toFixed(1)}%`}}}}
+    });
+    const leg=document.getElementById('ctry-pie-legend');
+    leg.innerHTML=pieLabels.map((l,i)=>`
+      <div class="pie-legend-item"><div class="pie-legend-swatch" style="background:${pieColors[i]}"></div>
+      <div class="pie-legend-name">${CAT_SHORT[l]||l}</div><div class="pie-legend-pct">${pieVals[i].toFixed(1)}%</div></div>`).join('');
+
+    // Age chart
+    destroyChart('ctry-age');
+    charts['ctry-age']=new Chart(document.getElementById('ctry-age').getContext('2d'),{
+      type:'bar',
+      data:{labels:AGES,datasets:[{data:AGES.map(ag=>D.ageGroups[ag][cn]),
+        backgroundColor:AGE_COLORS,borderRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw.toFixed(1)}%`}}},
+        scales:{x:{grid:{display:false},ticks:{color:'#e6edf3'}},
+          y:{grid:{color:'#21262d'},ticks:{color:'#8b949e',callback:v=>v+'%'},title:{display:true,text:'% of Total DALYs',color:'#8b949e'}}}}
+    });
+
+    // Table
+    const tbl=document.getElementById('ctry-table');
+    const maxVal=Math.max(...CATS.map(cat=>cd.diseases[cat]?.pct||0));
+    tbl.innerHTML=`<thead><tr style="border-bottom:1px solid #21262d;">
+      <th style="text-align:left;padding:10px 8px;color:#8b949e;font-size:11px;font-weight:600;">CATEGORY</th>
+      <th style="text-align:right;padding:10px 8px;color:#8b949e;font-size:11px;font-weight:600;">DALYS (k)</th>
+      <th style="text-align:right;padding:10px 8px;color:#8b949e;font-size:11px;font-weight:600;">%</th>
+      <th style="padding:10px 8px;width:40%"></th>
+    </tr></thead>`;
+    const tbody=document.createElement('tbody');
+    CATS.filter(cat=>cat!=='Unclassified').forEach(cat=>{
+      const dis=cd.diseases[cat]; if(!dis||!dis.pct) return;
+      const tr=document.createElement('tr');
+      tr.style.cssText='cursor:pointer;border-bottom:1px solid #21262d;transition:background .15s';
+      tr.onmouseenter=()=>tr.style.background='#1f2937';
+      tr.onmouseleave=()=>tr.style.background='';
+      tr.onclick=()=>{ countryCat=cat; renderCountryLevel1(); };
+      const barW=(dis.pct/maxVal*100).toFixed(1);
+      tr.innerHTML=`<td style="padding:10px 8px;"><span style="display:inline-block;width:10px;height:10px;background:${D.colors[cat]};border-radius:50%;margin-right:8px;"></span>${CAT_SHORT[cat]}</td>
+        <td style="text-align:right;padding:10px 8px;color:#8b949e;">${dis.value.toFixed(0)}</td>
+        <td style="text-align:right;padding:10px 8px;font-weight:500;">${dis.pct.toFixed(1)}%</td>
+        <td style="padding:10px 8px;"><div style="background:#21262d;border-radius:4px;height:8px;"><div style="background:${D.colors[cat]};width:${barW}%;height:8px;border-radius:4px;"></div></div></td>`;
+      tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);
+  },50);
+}
+
+function renderCountryLevel1(){
+  const cn=selectedCountry, cat=countryCat;
+  const cd=D.countries[cn];
+  const c=document.getElementById('ctry-detail');
+  c.innerHTML=`<div class="breadcrumb"><a onclick="countryCat=null;renderCountryLevel0()">${cn} Overview</a><span>›</span><span>${cat}</span></div>`;
+
+  const subs=cd.diseases[cat]?.sub||{};
+  const subArr=Object.entries(subs).map(([k,v])=>({name:k,...v})).sort((a,b)=>b.value-a.value);
+
+  const grid=document.createElement('div'); grid.className='grid-2';
+  const c1=document.createElement('div'); c1.className='card';
+  c1.innerHTML=`<div class="card-title">${cn} — ${CAT_SHORT[cat]} sub-disease breakdown</div><div class="chart-wrap" style="height:${Math.max(240,subArr.length*28)}px"><canvas id="ctry-sub-abs"></canvas></div>`;
+  const c2=document.createElement('div'); c2.className='card';
+  c2.innerHTML=`<div class="card-title">% of ${cn} total DALYs</div><div class="chart-wrap" style="height:${Math.max(240,subArr.length*28)}px"><canvas id="ctry-sub-pct"></canvas></div>`;
+  grid.appendChild(c1); grid.appendChild(c2);
+  c.appendChild(grid);
+
+  setTimeout(()=>{
+    destroyChart('ctry-sub-abs');
+    charts['ctry-sub-abs']=new Chart(document.getElementById('ctry-sub-abs').getContext('2d'),{
+      type:'bar',
+      data:{labels:subArr.map(s=>s.name),datasets:[{data:subArr.map(s=>s.value),backgroundColor:D.colors[cat],borderRadius:4}]},
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw.toFixed(1)}k DALYs`}}},
+        scales:{x:{grid:{color:'#21262d'},ticks:{color:'#8b949e'}},y:{grid:{display:false},ticks:{color:'#e6edf3'}}}}
+    });
+    destroyChart('ctry-sub-pct');
+    charts['ctry-sub-pct']=new Chart(document.getElementById('ctry-sub-pct').getContext('2d'),{
+      type:'bar',
+      data:{labels:subArr.map(s=>s.name),datasets:[{data:subArr.map(s=>s.pct),backgroundColor:D.colors[cat]+'aa',borderRadius:4}]},
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw.toFixed(2)}% of country total`}}},
+        scales:{x:{grid:{color:'#21262d'},ticks:{color:'#8b949e',callback:v=>v+'%'}},y:{grid:{display:false},ticks:{color:'#e6edf3'}}}}
+    });
+  },50);
+}
+
+// ═══════════════════ INIT ═══════════════════
+window.addEventListener('load', renderOverview);
+</script>
+</body>
+</html>

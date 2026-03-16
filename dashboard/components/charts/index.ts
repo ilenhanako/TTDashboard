@@ -1,0 +1,9 @@
+export { DALYRateChart } from "./DALYRateChart";
+export { DiseaseCompositionPieChart } from "./PieChart";
+export { AgeChart } from "./AgeChart";
+export { CompositionChart } from "./CompositionChart";
+export { CategoryBar } from "./CategoryBar";
+export { TrendChart } from "./TrendChart";
+export { DualPieChart } from "./DualPieChart";
+export { AgeStackedChart } from "./AgeStackedChart";
+export { GenderChart } from "./GenderChart";
