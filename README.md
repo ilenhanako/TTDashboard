@@ -1,4 +1,6 @@
-# Temasek Trust Data Dashboard
+# Health Data Dashboard
+
+## SUTD Computational Data Science
 
 A comprehensive data visualization platform built with Next.js, featuring interactive dashboards for global health metrics, socio-demographic indices, and climate indicators across Asia-Pacific countries.
 
@@ -16,42 +18,45 @@ This project provides data-driven insights organized around four key impact area
 ### People Dashboards
 
 #### WHO Global Health Estimates: Causes of DALYs
+
 - Disability-Adjusted Life Years (DALY) analysis
 - Country-by-country comparisons
 - Disease category breakdowns
 - Time series trends
 
 #### Socio-Demographic Index (SDI) Dashboard
+
 Interactive 5-tab dashboard analyzing SDI across 15 Asia-Pacific countries:
 
-| Tab | Description |
-|-----|-------------|
-| Overview | Regional snapshot with KPI cards, world region trends, APAC benchmarks |
-| World Context | Global ranking of 186 countries, SDI distribution, tier analysis |
-| APAC Trends | 34-year time series (1990-2023) with filtering and growth analysis |
-| ASEAN vs Non-ASEAN | Group comparison trajectories, averages, and summary tables |
-| Upload Data | File upload interface for updating SDI data |
+| Tab                | Description                                                            |
+| ------------------ | ---------------------------------------------------------------------- |
+| Overview           | Regional snapshot with KPI cards, world region trends, APAC benchmarks |
+| World Context      | Global ranking of 186 countries, SDI distribution, tier analysis       |
+| APAC Trends        | 34-year time series (1990-2023) with filtering and growth analysis     |
+| ASEAN vs Non-ASEAN | Group comparison trajectories, averages, and summary tables            |
+| Upload Data        | File upload interface for updating SDI data                            |
 
 ### Planet Dashboards
 
 #### Heat Index 35 Dashboard
+
 Climate heat exposure analysis with World Bank API integration:
 
-| Tab | Description |
-|-----|-------------|
-| Overview | KPIs, country rankings, summary tables |
-| Heat Trends | Multi-country time series with smoothing options |
-| ASEAN Comparison | Group-level heat exposure analysis |
+| Tab              | Description                                      |
+| ---------------- | ------------------------------------------------ |
+| Overview         | KPIs, country rankings, summary tables           |
+| Heat Trends      | Multi-country time series with smoothing options |
+| ASEAN Comparison | Group-level heat exposure analysis               |
 
 ## Tech Stack
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Next.js | 14.2 | React framework with App Router |
-| React | 18 | UI library |
-| TypeScript | 5 | Type safety |
-| Tailwind CSS | 3.4 | Styling |
-| Recharts | 2.12 | Data visualization |
+| Technology   | Version | Purpose                         |
+| ------------ | ------- | ------------------------------- |
+| Next.js      | 14.2    | React framework with App Router |
+| React        | 18      | UI library                      |
+| TypeScript   | 5       | Type safety                     |
+| Tailwind CSS | 3.4     | Styling                         |
+| Recharts     | 2.12    | Data visualization              |
 
 ## Project Structure
 
@@ -107,11 +112,11 @@ npm start
 
 ## Data Sources
 
-| Dataset | Source | Coverage |
-|---------|--------|----------|
-| SDI | [IHME Global Burden of Disease 2023](https://ghdx.healthdata.org/) | 186 countries, 1990-2023 |
-| DALY | [WHO Global Health Estimates](https://www.who.int/data/gho/) | 15 APAC countries |
-| Heat Index | [World Bank Climate API](https://data.worldbank.org/) | 15 APAC countries, 1970-2020 |
+| Dataset    | Source                                                             | Coverage                     |
+| ---------- | ------------------------------------------------------------------ | ---------------------------- |
+| SDI        | [IHME Global Burden of Disease 2023](https://ghdx.healthdata.org/) | 186 countries, 1990-2023     |
+| DALY       | [WHO Global Health Estimates](https://www.who.int/data/gho/)       | 15 APAC countries            |
+| Heat Index | [World Bank Climate API](https://data.worldbank.org/)              | 15 APAC countries, 1970-2020 |
 
 ### Focus Countries (15 APAC)
 
@@ -121,12 +126,12 @@ npm start
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint |
+| Command         | Description              |
+| --------------- | ------------------------ |
+| `npm run dev`   | Start development server |
+| `npm run build` | Build for production     |
+| `npm run start` | Start production server  |
+| `npm run lint`  | Run ESLint               |
 
 ## Data Processing
 

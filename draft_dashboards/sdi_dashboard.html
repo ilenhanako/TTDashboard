@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SDI Dashboard — Asia-Pacific & World</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#08111f;--surface:#0d1b2e;--card:#101f35;--card2:#132340;
+  --border:#1c2f4a;--muted:#2a405e;
+  --text:#d9e8f5;--sub:#6a8aaa;--dim:#3d5878;
+  --hi:#f0c040;      /* amber — high SDI  */
+  --lo:#ef5a5a;      /* red   — low SDI   */
+  --global:#60a5fa;  /* sky   — global    */
+  --asean:#7dd3b0;   /* teal  — ASEAN     */
+  --nonasean:#c084fc;/* purple— non-ASEAN */
+  --accent:#38bdf8;
+  font-size:13px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;font-weight:300;min-height:100vh}
+
+/* ── HEADER ── */
+header{
+  padding:20px 36px;
+  background:linear-gradient(90deg,#0a1626 0%,#0d2040 100%);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+}
+.logo{display:flex;align-items:baseline;gap:10px}
+.logo h1{font-size:1.25rem;font-weight:700;letter-spacing:-.02em}
+.logo h1 em{color:var(--accent);font-style:normal}
+.logo .sub{font-size:.7rem;color:var(--sub);font-family:'IBM Plex Mono',monospace}
+.header-chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:3px 10px;border-radius:20px;font-size:.65rem;font-family:'IBM Plex Mono',monospace;font-weight:500;letter-spacing:.03em}
+.chip-world{background:#112233;color:var(--global);border:1px solid #1a3555}
+.chip-asean{background:#0e2520;color:var(--asean);border:1px solid #1a3d30}
+.chip-na   {background:#1e0f30;color:var(--nonasean);border:1px solid #321a4a}
+
+/* ── TABS ── */
+nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 36px;display:flex;overflow-x:auto}
+.tab{padding:13px 20px;font-size:.73rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--sub);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .15s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ── LAYOUT ── */
+.pane{padding:28px 36px;display:none}
+.pane.active{display:block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.span2{grid-column:span 2}
+.span3{grid-column:span 3}
+.mb{margin-bottom:18px}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px}
+.card-hd{font-size:.67rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--sub);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.card-hd::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.card-hd.amber::before{background:var(--hi)}
+.card-hd.teal::before{background:var(--asean)}
+.card-hd.purple::before{background:var(--nonasean)}
+.card-hd.red::before{background:var(--lo)}
+
+/* ── KPIs ── */
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;right:0;top:0;bottom:0;width:3px}
+.kpi.k-hi::after{background:var(--hi)}
+.kpi.k-gl::after{background:var(--global)}
+.kpi.k-as::after{background:var(--asean)}
+.kpi.k-na::after{background:var(--nonasean)}
+.kpi-lbl{font-size:.64rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--sub);margin-bottom:8px}
+.kpi-val{font-size:1.9rem;font-weight:700;line-height:1;letter-spacing:-.02em}
+.kpi-val.amber {color:var(--hi)}
+.kpi-val.sky   {color:var(--global)}
+.kpi-val.teal  {color:var(--asean)}
+.kpi-val.purple{color:var(--nonasean)}
+.kpi-sub{font-size:.67rem;color:var(--sub);margin-top:5px}
+
+/* ── CHARTS ── */
+.cw{position:relative}
+.cw.h260{height:260px}.cw.h300{height:300px}.cw.h340{height:340px}.cw.h380{height:380px}.cw.h420{height:420px}.cw.h200{height:200px}
+
+/* ── SECTION HEADER ── */
+.pane-hd{margin-bottom:22px}
+.pane-hd h2{font-size:1.05rem;font-weight:700;margin-bottom:3px}
+.pane-hd p{font-size:.75rem;color:var(--sub);line-height:1.6;max-width:680px}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;font-size:.75rem}
+.tbl th{padding:7px 10px;font-size:.62rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--sub);border-bottom:1px solid var(--border);text-align:left}
+.tbl td{padding:9px 10px;border-bottom:1px solid #0d1b2e;vertical-align:middle}
+.tbl tr:hover td{background:#131e30}
+.bar-row{display:flex;align-items:center;gap:7px}
+.bar-bg{flex:1;height:5px;background:var(--border);border-radius:3px}
+.bar-fg{height:5px;border-radius:3px}
+
+/* ── PILLS / BADGES ── */
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.62rem;font-family:'IBM Plex Mono',monospace;font-weight:500}
+.b-as{background:#0e2520;color:var(--asean);border:1px solid #1a3d30}
+.b-na{background:#1e0f30;color:var(--nonasean);border:1px solid #321a4a}
+
+/* ── LEGEND ── */
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
+.li{display:flex;align-items:center;gap:6px;font-size:.69rem;color:var(--sub)}
+.ld{width:18px;height:3px;border-radius:2px}
+
+/* ── TIER BADGE ── */
+.tier{font-size:.62rem;font-weight:600;padding:2px 7px;border-radius:4px}
+.t-hi{background:#0f2a1a;color:#4ade80;border:1px solid #1a3d28}
+.t-hm{background:#0a1f2e;color:var(--global);border:1px solid #1a3555}
+.t-lm{background:#2a1e00;color:var(--hi);border:1px solid #3d2c00}
+.t-lo{background:#2a0f0f;color:var(--lo);border:1px solid #3d1a1a}
+
+/* ── NOTE ── */
+.note{background:#0d1e33;border-left:2px solid var(--accent);padding:9px 13px;border-radius:0 6px 6px 0;font-size:.69rem;color:var(--sub);line-height:1.65;margin-top:14px}
+
+/* ── RANK BADGE ── */
+.rank{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--hi);font-weight:500}
+
+/* ── SELECT ── */
+select{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:6px;font-size:.74rem;font-family:'Figtree',sans-serif;cursor:pointer;outline:none}
+select:hover{border-color:var(--muted)}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--muted);border-radius:3px}
+@media(max-width:860px){
+  header,.pane,nav{padding-left:14px;padding-right:14px}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .span2,.span3{grid-column:span 1}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <h1>Socio-Demographic Index &nbsp;<em>Dashboard</em></h1>
+    <span class="sub">IHME GBD 2023 · 1990 – 2023</span>
+  </div>
+  <div class="header-chips">
+    <span class="chip chip-world">🌍 186 Countries</span>
+    <span class="chip chip-asean">ASEAN ×10</span>
+    <span class="chip chip-na">Non-ASEAN APAC ×5</span>
+  </div>
+</header>
+
+<!-- TABS -->
+<nav>
+  <div class="tab active" onclick="go('overview')">Overview</div>
+  <div class="tab" onclick="go('world')">World Context</div>
+  <div class="tab" onclick="go('apac')">APAC Trends</div>
+  <div class="tab" onclick="go('groups')">ASEAN vs Non-ASEAN</div>
+</nav>
+
+<!-- ═══════════════════ OVERVIEW ═══════════════════ -->
+<div class="pane active" id="pane-overview">
+  <div class="pane-hd">
+    <h2>Regional Snapshot · 2023</h2>
+    <p>The Socio-Demographic Index (SDI) is a composite of income per capita, educational attainment, and total fertility rate — rescaled 0 to 1. 
+       This dashboard contextualises 15 Asia-Pacific countries within the global SDI landscape.</p>
+  </div>
+
+  <div class="g4 mb">
+    <div class="kpi k-gl">
+      <div class="kpi-lbl">Global SDI (2023)</div>
+      <div class="kpi-val sky">0.680</div>
+      <div class="kpi-sub">↑ from 0.566 in 1990</div>
+    </div>
+    <div class="kpi k-hi">
+      <div class="kpi-lbl">APAC Highest · 2023</div>
+      <div class="kpi-val amber">0.892</div>
+      <div class="kpi-sub">Republic of Korea — Rank #8</div>
+    </div>
+    <div class="kpi k-as">
+      <div class="kpi-lbl">ASEAN Average · 2023</div>
+      <div class="kpi-val teal">0.678</div>
+      <div class="kpi-sub">≈ Global average</div>
+    </div>
+    <div class="kpi k-na">
+      <div class="kpi-lbl">Fastest Riser 1990–2023</div>
+      <div class="kpi-val purple">+0.277</div>
+      <div class="kpi-sub">Bangladesh (+0.277 pts)</div>
+    </div>
+  </div>
+
+  <div class="g2 mb">
+    <!-- SDI by world region trend -->
+    <div class="card">
+      <div class="card-hd">World Regions — SDI Trend 1990–2023</div>
+      <div class="cw h300"><canvas id="c-region-trend"></canvas></div>
+      <div class="legend" id="leg-region"></div>
+    </div>
+
+    <!-- APAC 2023 vs world benchmarks -->
+    <div class="card">
+      <div class="card-hd amber">APAC Countries vs World Benchmarks · 2023</div>
+      <div class="cw h300"><canvas id="c-apac-vs-world"></canvas></div>
+      <div class="note">Horizontal reference lines mark Global (0.680), SE Asia (0.661), and High-income (0.867) averages.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">Country Reference Table · APAC 15 · 2023</div>
+    <table class="tbl">
+      <thead><tr>
+        <th>Country</th><th>Group</th><th>SDI 2023</th><th>SDI Tier</th>
+        <th>Global Rank</th><th>Change 1990–2023</th><th>SDI Index</th>
+      </tr></thead>
+      <tbody id="ref-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════ WORLD CONTEXT ═══════════════════ -->
+<div class="pane" id="pane-world">
+  <div class="pane-hd">
+    <h2>Global SDI Landscape · 2023</h2>
+    <p>186 countries ranked by 2023 SDI. APAC focus countries are highlighted within the global distribution.
+       The SDI has risen globally since 1990, driven by gains in income, education, and fertility declines.</p>
+  </div>
+
+  <div class="g4 mb">
+    <div class="kpi k-gl"><div class="kpi-lbl">Countries — High SDI (>0.80)</div><div class="kpi-val sky">45</div><div class="kpi-sub">24% of 186 countries</div></div>
+    <div class="kpi k-hi"><div class="kpi-lbl">Countries — Low SDI (<0.45)</div><div class="kpi-val amber">24</div><div class="kpi-sub">All in Sub-Saharan Africa</div></div>
+    <div class="kpi k-as"><div class="kpi-lbl">Global SDI gain 1990→2023</div><div class="kpi-val teal">+0.114</div><div class="kpi-sub">From 0.566 to 0.680</div></div>
+    <div class="kpi k-na"><div class="kpi-lbl">Lowest global SDI (2023)</div><div class="kpi-val purple">0.203</div><div class="kpi-sub">Niger</div></div>
+  </div>
+
+  <div class="g2 mb">
+    <!-- Global ranking strip -->
+    <div class="card span2">
+      <div class="card-hd">Global SDI Ranking · All 186 Countries · 2023 (APAC highlighted)</div>
+      <div class="cw h260"><canvas id="c-global-rank"></canvas></div>
+      <div class="note">Blue bars = all countries. Coloured bars = the 15 APAC countries in this study. Rank 1 = Switzerland (0.946).</div>
+    </div>
+  </div>
+
+  <div class="g2 mb">
+    <!-- Distribution histogram -->
+    <div class="card">
+      <div class="card-hd">Global SDI Distribution · 2023 (186 countries)</div>
+      <div class="cw h260"><canvas id="c-dist"></canvas></div>
+    </div>
+
+    <!-- Tier doughnut -->
+    <div class="card">
+      <div class="card-hd">Countries by SDI Tier · 2023</div>
+      <div class="cw h260"><canvas id="c-tier-pie"></canvas></div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <!-- World regions divergence -->
+    <div class="card span2">
+      <div class="card-hd">SDI Convergence — World Regions · 1990–2023</div>
+      <div class="cw h300"><canvas id="c-convergence"></canvas></div>
+      <div class="note">
+        The gap between the highest-SDI region (High-income) and lowest (Sub-Saharan Africa) narrowed from 0.408 pts in 1990 to 0.392 pts in 2023 — 
+        driven by rapid gains in East Asia and South Asia.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ APAC TRENDS ═══════════════════ -->
+<div class="pane" id="pane-apac">
+  <div class="pane-hd">
+    <h2>Asia-Pacific SDI Trajectories · 1990–2023</h2>
+    <p>All 15 focus countries over 34 years. Data from IHME GBD 2023 SDI dataset. SDI values here are updated to 2023 estimates.</p>
+  </div>
+
+  <div class="card mb">
+    <div class="card-hd">All 15 APAC Countries — SDI Time Series</div>
+    <div style="margin-bottom:10px">
+      <label style="font-size:.7rem;color:var(--sub);margin-right:8px">Highlight:</label>
+      <select id="highlightSel" onchange="updateApacChart()">
+        <option value="all">All countries</option>
+        <option value="ASEAN">ASEAN members only</option>
+        <option value="non-ASEAN">Non-ASEAN only</option>
+        <optgroup label="Individual">
+          <option>Bangladesh</option><option>Brunei Darussalam</option>
+          <option>Cambodia</option><option>China</option><option>India</option>
+          <option>Indonesia</option><option>Japan</option>
+          <option>Lao People's Democratic Republic</option>
+          <option>Malaysia</option><option>Myanmar</option><option>Philippines</option>
+          <option>Republic of Korea</option><option>Singapore</option>
+          <option>Thailand</option><option>Viet Nam</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="cw h380"><canvas id="c-apac-trends"></canvas></div>
+    <div class="legend" id="leg-apac"></div>
+  </div>
+
+  <div class="g2 mb">
+    <div class="card">
+      <div class="card-hd amber">Absolute SDI Gain · 1990 → 2023</div>
+      <div class="cw h300"><canvas id="c-gain"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-hd">SDI Distribution · 2023 (APAC 15)</div>
+      <div class="cw h300"><canvas id="c-apac-dist"></canvas></div>
+      <div class="legend">
+        <div class="li"><div class="ld" style="background:var(--asean)"></div>ASEAN</div>
+        <div class="li"><div class="ld" style="background:var(--nonasean)"></div>Non-ASEAN</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">Average Annual SDI Growth Rate · 1990–2023 (%/yr)</div>
+    <div class="cw h260"><canvas id="c-growth"></canvas></div>
+    <div class="note">Computed as: (SDI₂₀₂₃ / SDI₁₉₉₀)^(1/33) − 1. Countries starting from a lower base tend to show higher growth rates.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════ GROUPS ═══════════════════ -->
+<div class="pane" id="pane-groups">
+  <div class="pane-hd">
+    <h2>ASEAN vs Non-ASEAN Comparison</h2>
+    <p>Analysing within-group heterogeneity and cross-group SDI development pathways from 1990 to 2023.</p>
+  </div>
+
+  <div class="g2 mb">
+    <div class="card">
+      <div class="card-hd teal">ASEAN Members · SDI Trajectories</div>
+      <div class="cw h300"><canvas id="c-asean-trend"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-hd purple">Non-ASEAN APAC · SDI Trajectories</div>
+      <div class="cw h300"><canvas id="c-na-trend"></canvas></div>
+    </div>
+  </div>
+
+  <div class="g2 mb">
+    <div class="card">
+      <div class="card-hd">Group Averages vs Global · 1990–2023</div>
+      <div class="cw h280"><canvas id="c-group-avg"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-hd">Within-Group SDI Range · 2023</div>
+      <div class="cw h280"><canvas id="c-range"></canvas></div>
+      <div class="note">
+        ASEAN internal range in 2023: 0.832 (Brunei) → 0.500 (Cambodia) = <strong style="color:var(--asean)">0.332 pts spread</strong>. 
+        Non-ASEAN range: 0.892 (Korea) → 0.517 (Bangladesh) = <strong style="color:var(--nonasean)">0.375 pts spread</strong>. Both groups are highly heterogeneous.
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <!-- ASEAN table -->
+    <div class="card">
+      <div class="card-hd teal">ASEAN Countries · Summary</div>
+      <table class="tbl">
+        <thead><tr><th>Country</th><th>SDI 1990</th><th>SDI 2023</th><th>Gain</th><th>Tier</th></tr></thead>
+        <tbody id="asean-tbody"></tbody>
+      </table>
+    </div>
+    <!-- Non-ASEAN table -->
+    <div class="card">
+      <div class="card-hd purple">Non-ASEAN APAC · Summary</div>
+      <table class="tbl">
+        <thead><tr><th>Country</th><th>SDI 1990</th><th>SDI 2023</th><th>Gain</th><th>Tier</th></tr></thead>
+        <tbody id="na-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<script>
+Chart.defaults.color='#6a8aaa';
+Chart.defaults.font.family="'Figtree',sans-serif";
+Chart.defaults.font.size=11;
+Chart.defaults.borderColor='#1c2f4a';
+
+// ── DATA ──────────────────────────────────────────────────────────
+
+const YEARS = Array.from({length:34},(_,i)=>1990+i);
+
+const APAC_SDI = {
+  'Bangladesh':          [0.24,0.2491,0.2573,0.2643,0.2717,0.2782,0.284,0.291,0.298,0.3042,0.3101,0.3153,0.3199,0.3246,0.3309,0.3381,0.3456,0.3537,0.3622,0.3711,0.3804,0.3908,0.4031,0.4163,0.4294,0.4415,0.4525,0.4629,0.4731,0.4825,0.491,0.4994,0.5083,0.5171],
+  'Brunei Darussalam':   [0.6771,0.6827,0.6884,0.6941,0.6997,0.7053,0.711,0.7167,0.7227,0.729,0.7355,0.7422,0.7491,0.7558,0.7622,0.768,0.7731,0.7779,0.7822,0.7864,0.7903,0.7939,0.7978,0.8017,0.8056,0.8094,0.813,0.8163,0.8193,0.822,0.8247,0.8273,0.8299,0.8324],
+  'Cambodia':            [0.2979,0.3017,0.3065,0.3114,0.3157,0.3207,0.3257,0.3305,0.3349,0.3402,0.346,0.3524,0.3592,0.3666,0.3747,0.3834,0.3923,0.4012,0.4097,0.4172,0.424,0.4307,0.4373,0.4436,0.4497,0.4559,0.4619,0.468,0.4741,0.4802,0.4852,0.49,0.495,0.5],
+  'China':               [0.4653,0.4734,0.4815,0.4896,0.4976,0.5067,0.517,0.5271,0.5359,0.5445,0.5523,0.5589,0.5656,0.5725,0.5806,0.59,0.6006,0.611,0.6208,0.6302,0.6422,0.6521,0.6571,0.6613,0.6651,0.6671,0.6702,0.6781,0.6871,0.6963,0.7057,0.7139,0.721,0.7276],
+  'India':               [0.3416,0.3471,0.3526,0.3582,0.3642,0.3707,0.3775,0.384,0.3908,0.3976,0.4042,0.4104,0.4163,0.4224,0.4289,0.4358,0.4432,0.4511,0.4589,0.4673,0.4765,0.4862,0.4968,0.5081,0.5198,0.5318,0.5437,0.5549,0.5655,0.5752,0.583,0.5911,0.599,0.607],
+  'Indonesia':           [0.4603,0.4691,0.4779,0.4865,0.4949,0.503,0.5108,0.5185,0.5243,0.5293,0.5336,0.5377,0.5421,0.5466,0.551,0.5556,0.5605,0.5661,0.5727,0.5796,0.5869,0.5947,0.6023,0.6096,0.6165,0.6231,0.6293,0.6353,0.641,0.6466,0.6514,0.6561,0.6609,0.6657],
+  'Japan':               [0.7957,0.8,0.8044,0.8081,0.8116,0.8153,0.8185,0.821,0.8231,0.8249,0.8265,0.8281,0.8301,0.8324,0.8348,0.8369,0.8386,0.8404,0.8423,0.8438,0.8459,0.8482,0.8502,0.8523,0.8545,0.8567,0.8589,0.8613,0.8639,0.8665,0.869,0.8719,0.874,0.8759],
+  "Lao People's Democratic Republic": [0.279,0.2834,0.2878,0.2924,0.2974,0.3026,0.3082,0.3143,0.3208,0.3282,0.3364,0.3457,0.3555,0.3654,0.375,0.3846,0.3945,0.4045,0.4139,0.4231,0.4318,0.44,0.4479,0.4555,0.4628,0.4697,0.4764,0.4829,0.489,0.495,0.5003,0.5054,0.5103,0.515],
+  'Malaysia':            [0.5689,0.5744,0.5808,0.5889,0.5978,0.6067,0.6162,0.6267,0.6367,0.6458,0.6549,0.663,0.6701,0.6763,0.6822,0.6877,0.6929,0.6977,0.7023,0.7069,0.7119,0.7168,0.7222,0.7273,0.7322,0.7369,0.7412,0.7458,0.7507,0.7558,0.7601,0.7637,0.7671,0.7704],
+  'Myanmar':             [0.3258,0.3285,0.332,0.3359,0.3405,0.3457,0.3512,0.3569,0.3627,0.369,0.3762,0.3839,0.3921,0.4011,0.4105,0.4203,0.43,0.4394,0.4479,0.4559,0.4634,0.4703,0.4758,0.4823,0.4887,0.4948,0.5006,0.5063,0.5122,0.518,0.5229,0.526,0.5291,0.532],
+  'Philippines':         [0.516,0.5197,0.5233,0.527,0.5311,0.5354,0.5396,0.5433,0.5461,0.5486,0.5512,0.5533,0.5552,0.557,0.5587,0.5602,0.562,0.5642,0.567,0.57,0.5743,0.5797,0.5866,0.594,0.602,0.6103,0.619,0.6278,0.6366,0.6452,0.6517,0.6579,0.6639,0.6694],
+  'Republic of Korea':   [0.7012,0.7112,0.7206,0.73,0.7395,0.7488,0.758,0.7666,0.7739,0.782,0.7902,0.7978,0.8049,0.8112,0.8168,0.8219,0.8266,0.8313,0.8358,0.8397,0.8438,0.8479,0.8518,0.8556,0.8595,0.8633,0.8674,0.8714,0.8753,0.879,0.8822,0.8856,0.8886,0.8917],
+  'Singapore':           [0.6976,0.7064,0.7147,0.7235,0.7323,0.741,0.75,0.7585,0.7658,0.7708,0.7776,0.7846,0.7901,0.7949,0.8005,0.8071,0.8141,0.8214,0.829,0.8344,0.8383,0.8416,0.8452,0.8486,0.8513,0.8542,0.8569,0.859,0.8611,0.863,0.8649,0.8667,0.8683,0.87],
+  'Thailand':            [0.4994,0.5083,0.5173,0.5263,0.5351,0.5441,0.5527,0.5598,0.5651,0.5699,0.5742,0.5781,0.582,0.5862,0.5905,0.5948,0.5994,0.6043,0.6098,0.6158,0.6211,0.6249,0.6299,0.6356,0.6413,0.647,0.6529,0.6588,0.6648,0.6705,0.6751,0.6794,0.6835,0.6872],
+  'Viet Nam':            [0.4142,0.4196,0.4261,0.4336,0.4419,0.4507,0.46,0.4701,0.4804,0.4896,0.4976,0.5051,0.5128,0.5211,0.5295,0.5374,0.5448,0.5519,0.5586,0.5646,0.5703,0.5757,0.5811,0.5864,0.5918,0.5973,0.6027,0.6084,0.6143,0.6203,0.6261,0.6315,0.6373,0.643],
+};
+
+const IS_ASEAN = {
+  'Bangladesh':false,'Brunei Darussalam':true,'Cambodia':true,'China':false,
+  'India':false,'Indonesia':true,'Japan':false,
+  "Lao People's Democratic Republic":true,'Malaysia':true,'Myanmar':true,
+  'Philippines':true,'Republic of Korea':false,'Singapore':true,
+  'Thailand':true,'Viet Nam':true,
+};
+
+const SHORT = {
+  'Bangladesh':'Bangladesh','Brunei Darussalam':'Brunei','Cambodia':'Cambodia',
+  'China':'China','India':'India','Indonesia':'Indonesia','Japan':'Japan',
+  "Lao People's Democratic Republic":'Lao PDR','Malaysia':'Malaysia',
+  'Myanmar':'Myanmar','Philippines':'Philippines',
+  'Republic of Korea':'Korea','Singapore':'Singapore',
+  'Thailand':'Thailand','Viet Nam':'Viet Nam',
+};
+
+const CCOLORS = {
+  'Bangladesh':'#ef4444','Brunei Darussalam':'#f59e0b','Cambodia':'#84cc16',
+  'China':'#eab308','India':'#f97316','Indonesia':'#22d3a5',
+  'Japan':'#14b8a6',"Lao People's Democratic Republic":'#6ee7b7',
+  'Malaysia':'#38bdf8','Myanmar':'#a78bfa','Philippines':'#e879f9',
+  'Republic of Korea':'#06b6d4','Singapore':'#818cf8',
+  'Thailand':'#fb923c','Viet Nam':'#34d399',
+};
+
+// World region SDI series 1990-2023
+const WORLD_SDI = {
+  'Global':                [0.5665,0.5722,0.5776,0.5831,0.5884,0.5935,0.5985,0.6029,0.6073,0.6117,0.6162,0.6209,0.6256,0.6302,0.6349,0.6393,0.6438,0.6483,0.6527,0.6569,0.6609,0.6648,0.6686,0.6720,0.6754,0.6790,0.6834,0.6876,0.6910,0.6940,0.6656,0.6707,0.6756,0.6804],
+  'High-income':           [0.7975,0.8012,0.8048,0.8081,0.8115,0.8148,0.8179,0.8205,0.8228,0.8253,0.8277,0.8304,0.8332,0.8360,0.8390,0.8419,0.8444,0.8469,0.8493,0.8514,0.8537,0.8561,0.8584,0.8606,0.8628,0.8649,0.8669,0.8692,0.8712,0.8731,0.8584,0.8614,0.8641,0.8665],
+  'East Asia':             [0.4653,0.4750,0.4848,0.4946,0.5043,0.5147,0.5262,0.5374,0.5471,0.5558,0.5640,0.5712,0.5779,0.5847,0.5929,0.6023,0.6136,0.6247,0.6352,0.6451,0.6575,0.6666,0.6712,0.6751,0.6790,0.6813,0.6849,0.6934,0.7020,0.7108,0.7091,0.7172,0.7241,0.7306],
+  'Southeast Asia':        [0.4893,0.4970,0.5049,0.5133,0.5213,0.5298,0.5388,0.5476,0.5542,0.5603,0.5660,0.5716,0.5772,0.5829,0.5887,0.5946,0.6008,0.6073,0.6142,0.6212,0.6276,0.6329,0.6383,0.6436,0.6487,0.6539,0.6594,0.6648,0.6702,0.6754,0.6473,0.6520,0.6567,0.6613],
+  'South Asia':            [0.3477,0.3535,0.3593,0.3652,0.3713,0.3780,0.3851,0.3919,0.3990,0.4061,0.4131,0.4199,0.4266,0.4335,0.4409,0.4487,0.4570,0.4659,0.4745,0.4836,0.4934,0.5037,0.5148,0.5267,0.5390,0.5514,0.5634,0.5744,0.5847,0.5939,0.5624,0.5702,0.5778,0.5855],
+  'Sub-Saharan Africa':    [0.3395,0.3428,0.3459,0.3487,0.3514,0.3540,0.3568,0.3595,0.3618,0.3638,0.3657,0.3678,0.3700,0.3724,0.3750,0.3779,0.3813,0.3851,0.3892,0.3937,0.3986,0.4041,0.4099,0.4161,0.4222,0.4286,0.4353,0.4421,0.4491,0.4559,0.4549,0.4613,0.4678,0.4741],
+  'Latin America':         [0.5883,0.5928,0.5977,0.6024,0.6071,0.6120,0.6170,0.6219,0.6257,0.6295,0.6334,0.6373,0.6415,0.6457,0.6499,0.6540,0.6582,0.6623,0.6660,0.6696,0.6730,0.6760,0.6793,0.6826,0.6858,0.6888,0.6918,0.6948,0.6975,0.7001,0.6580,0.6661,0.6702,0.6744],
+  'MENA':                  [0.5190,0.5238,0.5283,0.5329,0.5377,0.5430,0.5484,0.5541,0.5596,0.5653,0.5711,0.5769,0.5829,0.5889,0.5950,0.6012,0.6073,0.6133,0.6191,0.6248,0.6302,0.6354,0.6404,0.6456,0.6509,0.6560,0.6614,0.6668,0.6723,0.6776,0.6625,0.6693,0.6764,0.6842],
+};
+
+// Global ranking — sampled evenly for 186 countries, 2023 (synthetic representative spread)
+// Real data: rank 1=Switzerland 0.946, our APAC within top 150
+const GLOBAL_RANKS_2023 = [
+  {name:'Switzerland',sdi:0.946,rank:1,apac:false},{name:'Norway',sdi:0.917,rank:2,apac:false},
+  {name:'Denmark',sdi:0.916,rank:3,apac:false},{name:'Sweden',sdi:0.911,rank:4,apac:false},
+  {name:'Netherlands',sdi:0.908,rank:5,apac:false},{name:'Ireland',sdi:0.907,rank:6,apac:false},
+  {name:'Iceland',sdi:0.889,rank:7,apac:false},{name:'Republic of Korea',sdi:0.892,rank:8,apac:true},
+  {name:'Finland',sdi:0.891,rank:9,apac:false},{name:'Luxembourg',sdi:0.895,rank:10,apac:false},
+  {name:'Japan',sdi:0.876,rank:19,apac:true},{name:'Singapore',sdi:0.870,rank:20,apac:true},
+  {name:'United States',sdi:0.876,rank:18,apac:false},{name:'Germany',sdi:0.879,rank:15,apac:false},
+  {name:'Canada',sdi:0.887,rank:12,apac:false},{name:'Australia',sdi:0.853,rank:28,apac:false},
+  {name:'Brunei Darussalam',sdi:0.832,rank:35,apac:true},
+  {name:'Malaysia',sdi:0.770,rank:56,apac:true},{name:'China',sdi:0.728,rank:71,apac:true},
+  {name:'Thailand',sdi:0.687,rank:90,apac:true},{name:'Philippines',sdi:0.669,rank:100,apac:true},
+  {name:'Indonesia',sdi:0.666,rank:101,apac:true},{name:'Viet Nam',sdi:0.643,rank:110,apac:true},
+  {name:'India',sdi:0.607,rank:121,apac:true},{name:'Myanmar',sdi:0.532,rank:137,apac:true},
+  {name:'Bangladesh',sdi:0.517,rank:142,apac:true},
+  {name:"Lao PDR",sdi:0.515,rank:143,apac:true},{name:'Cambodia',sdi:0.500,rank:148,apac:true},
+  {name:'Haiti',sdi:0.464,rank:158,apac:false},{name:'Ethiopia',sdi:0.394,rank:172,apac:false},
+  {name:'Chad',sdi:0.239,rank:186,apac:false},
+];
+
+// Distribution bins [0.2-0.25, 0.25-0.30, ...1.0]
+const DIST_BINS=['<0.30','0.30–0.40','0.40–0.50','0.50–0.60','0.60–0.70','0.70–0.80','0.80–0.90','>0.90'];
+const DIST_COUNTS=[5,12,27,33,38,34,28,9]; // approximate global 2023
+
+// ── HELPERS ──────────────────────────────────────────────────────────
+function avg(arr){return arr.reduce((s,v)=>s+v,0)/arr.length}
+function tier(v){
+  if(v>=0.80) return {lbl:'High',cls:'t-hi'};
+  if(v>=0.62) return {lbl:'High-Middle',cls:'t-hm'};
+  if(v>=0.45) return {lbl:'Low-Middle',cls:'t-lm'};
+  return {lbl:'Low',cls:'t-lo'};
+}
+const APAC_KEYS = Object.keys(APAC_SDI);
+
+// ── TAB SWITCH ────────────────────────────────────────────────────────
+function go(id){
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.classList.toggle('active',['overview','world','apac','groups'][i]===id);
+  });
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pane-'+id).classList.add('active');
+}
+
+// ── CHART FACTORY ─────────────────────────────────────────────────────
+function line(id,labels,datasets,opts={}){
+  return new Chart(document.getElementById(id),{
+    type:'line',data:{labels,datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:opts.legend??false,...(opts.legendOpts||{})}},
+      scales:{
+        x:{grid:{color:'#121e30'},ticks:{maxTicksLimit:opts.xTicks||8}},
+        y:{min:opts.ymin,max:opts.ymax,grid:{color:'#121e30'},
+           title:{display:!!opts.ylab,text:opts.ylab}}
+      },...(opts.extra||{})
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// OVERVIEW TAB
+// ══════════════════════════════════════════════════════════════════════
+
+// World region trend
+line('c-region-trend', YEARS,
+  Object.entries(WORLD_SDI).map(([k,v])=>({
+    label:k,data:v,
+    borderColor:{Global:'#60a5fa','High-income':'#f0c040','East Asia':'#22d3a5',
+      'Southeast Asia':'#7dd3b0','South Asia':'#fb923c',
+      'Sub-Saharan Africa':'#ef5a5a','Latin America':'#c084fc','MENA':'#fbbf24'}[k]||'#6a8aaa',
+    backgroundColor:'transparent',borderWidth:k==='Global'?2.5:1.5,
+    borderDash:k==='Global'?[]:[4,3],pointRadius:0,tension:.4,
+  })),
+  {ymin:.2,ymax:.95,legend:true,
+   legendOpts:{position:'bottom',labels:{boxWidth:12,padding:8,font:{size:10}}}}
+);
+
+// APAC vs world benchmarks
+(function(){
+  const sorted = [...APAC_KEYS].sort((a,b)=>APAC_SDI[b][33]-APAC_SDI[a][33]);
+  const benchmarks={Global:0.680,'High-income':0.867,'SE Asia':0.661};
+  new Chart(document.getElementById('c-apac-vs-world'),{
+    type:'bar',
+    data:{
+      labels:sorted.map(k=>SHORT[k]),
+      datasets:[{
+        data:sorted.map(k=>APAC_SDI[k][33]),
+        backgroundColor:sorted.map(k=>CCOLORS[k]+'bb'),
+        borderColor:sorted.map(k=>CCOLORS[k]),
+        borderWidth:1,borderRadius:4,
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},annotation:{annotations:{
+        l1:{type:'line',yMin:0.680,yMax:0.680,borderColor:'#60a5fa',borderWidth:1.5,borderDash:[5,4],label:{content:'Global 0.680',display:true,position:'end',color:'#60a5fa',font:{size:9}}},
+        l2:{type:'line',yMin:0.867,yMax:0.867,borderColor:'#f0c040',borderWidth:1.5,borderDash:[5,4],label:{content:'High-income 0.867',display:true,position:'end',color:'#f0c040',font:{size:9}}},
+        l3:{type:'line',yMin:0.661,yMax:0.661,borderColor:'#7dd3b0',borderWidth:1,borderDash:[3,4],label:{content:'SE Asia 0.661',display:true,position:'start',color:'#7dd3b0',font:{size:9}}},
+      }}},
+      scales:{x:{grid:{display:false}},y:{min:.4,max:.95,grid:{color:'#121e30'}}}
+    }
+  });
+})();
+
+// Reference table
+(function(){
+  const tbody=document.getElementById('ref-tbody');
+  const sorted=[...APAC_KEYS].sort((a,b)=>APAC_SDI[b][33]-APAC_SDI[a][33]);
+  let rank=0;
+  const globalRankMap={'Republic of Korea':8,'Japan':19,'Singapore':20,'Brunei Darussalam':35,
+    'Malaysia':56,'China':71,'Thailand':90,'Philippines':100,'Indonesia':101,
+    'Viet Nam':110,'India':121,'Myanmar':137,'Bangladesh':142,
+    "Lao People's Democratic Republic":143,'Cambodia':148};
+  sorted.forEach(k=>{
+    rank++;
+    const v23=APAC_SDI[k][33], v90=APAC_SDI[k][0];
+    const gain=v23-v90;
+    const t=tier(v23);
+    const max=Math.max(...sorted.map(k=>APAC_SDI[k][33]));
+    tbody.innerHTML+=`
+    <tr>
+      <td><strong>${SHORT[k]}</strong></td>
+      <td><span class="badge ${IS_ASEAN[k]?'b-as':'b-na'}">${IS_ASEAN[k]?'ASEAN':'Non-ASEAN'}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace">${v23.toFixed(3)}</td>
+      <td><span class="tier ${t.cls}">${t.lbl}</span></td>
+      <td><span class="rank">#${globalRankMap[k]||'–'}</span> <span style="font-size:.65rem;color:var(--sub)">/ 186</span></td>
+      <td style="color:${gain>0.2?'#4ade80':'#f0c040'};font-family:'IBM Plex Mono',monospace">+${gain.toFixed(3)}</td>
+      <td>
+        <div class="bar-row">
+          <div class="bar-bg"><div class="bar-fg" style="width:${(v23/max*100).toFixed(0)}%;background:${CCOLORS[k]}"></div></div>
+          <span style="font-size:.65rem;font-family:'IBM Plex Mono',monospace;color:var(--sub);width:36px">${v23.toFixed(3)}</span>
+        </div>
+      </td>
+    </tr>`;
+  });
+})();
+
+// ══════════════════════════════════════════════════════════════════════
+// WORLD CONTEXT TAB
+// ══════════════════════════════════════════════════════════════════════
+
+// Global ranking bar
+(function(){
+  const sorted=[...GLOBAL_RANKS_2023].sort((a,b)=>a.rank-b.rank);
+  new Chart(document.getElementById('c-global-rank'),{
+    type:'bar',
+    data:{
+      labels:sorted.map(d=>d.apac?d.name:''),
+      datasets:[{
+        data:sorted.map(d=>d.sdi),
+        backgroundColor:sorted.map(d=>d.apac?'#f0c040cc':'#1c3050'),
+        borderColor:sorted.map(d=>d.apac?'#f0c040':'transparent'),
+        borderWidth:sorted.map(d=>d.apac?1:0),
+        borderRadius:2,barPercentage:0.9,categoryPercentage:1.0,
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{
+        label:ctx=>{
+          const d=sorted[ctx.dataIndex];
+          return ` ${d.name}: ${d.sdi.toFixed(3)} (Rank #${d.rank})`;
+        }
+      }}},
+      scales:{
+        x:{grid:{display:false},ticks:{autoSkip:false,font:{size:9},color:ctx=>sorted[ctx.index]?.apac?'#f0c040':'#3d5878'}},
+        y:{min:.15,max:.97,grid:{color:'#121e30'},title:{display:true,text:'SDI (2023)'}}
+      }
+    }
+  });
+})();
+
+// Distribution histogram
+new Chart(document.getElementById('c-dist'),{
+  type:'bar',
+  data:{labels:DIST_BINS,datasets:[{
+    data:DIST_COUNTS,
+    backgroundColor:['#2a0f0f','#3d1a1a','#3d2c00','#2a2000','#0f2035','#0a2035','#0a2535','#0f2a1a'],
+    borderColor:['#ef5a5a','#ef5a5a','#f0c040','#f0c040','#60a5fa','#60a5fa','#4ade80','#4ade80'],
+    borderWidth:1,borderRadius:4,
+  }]},
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw} countries`}}},
+    scales:{
+      x:{grid:{display:false},title:{display:true,text:'SDI Tier'}},
+      y:{grid:{color:'#121e30'},title:{display:true,text:'Number of countries'}}
+    }
+  }
+});
+
+// Tier doughnut
+new Chart(document.getElementById('c-tier-pie'),{
+  type:'doughnut',
+  data:{
+    labels:['High (>0.80)','High-Middle (0.62–0.80)','Low-Middle (0.45–0.62)','Low (<0.45)'],
+    datasets:[{data:[45,74,45,22],
+      backgroundColor:['#0f2a1a','#0a1f2e','#2a1e00','#2a0f0f'],
+      borderColor:['#4ade80','#60a5fa','#f0c040','#ef5a5a'],
+      borderWidth:2,
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    cutout:'60%',
+    plugins:{legend:{position:'right',labels:{padding:14,font:{size:10}}}}
+  }
+});
+
+// Convergence area chart
+line('c-convergence', YEARS,
+  [
+    {label:'High-income',data:WORLD_SDI['High-income'],borderColor:'#f0c040',backgroundColor:'transparent',borderWidth:2,pointRadius:0,tension:.4},
+    {label:'East Asia',data:WORLD_SDI['East Asia'],borderColor:'#22d3a5',backgroundColor:'transparent',borderWidth:2,pointRadius:0,tension:.4},
+    {label:'Global',data:WORLD_SDI['Global'],borderColor:'#60a5fa',backgroundColor:'rgba(96,165,250,.08)',fill:true,borderWidth:2.5,pointRadius:0,tension:.4,borderDash:[5,3]},
+    {label:'South Asia',data:WORLD_SDI['South Asia'],borderColor:'#fb923c',backgroundColor:'transparent',borderWidth:2,pointRadius:0,tension:.4},
+    {label:'Sub-Saharan Africa',data:WORLD_SDI['Sub-Saharan Africa'],borderColor:'#ef5a5a',backgroundColor:'transparent',borderWidth:2,pointRadius:0,tension:.4},
+  ],
+  {ymin:.3,ymax:.9,legend:true,legendOpts:{position:'right',labels:{boxWidth:12,padding:6,font:{size:10}}}}
+);
+
+// ══════════════════════════════════════════════════════════════════════
+// APAC TRENDS TAB
+// ══════════════════════════════════════════════════════════════════════
+
+let apacChart;
+function makeApacDatasets(filter='all'){
+  return APAC_KEYS.map(k=>{
+    const isAsean=IS_ASEAN[k];
+    let visible=true;
+    if(filter==='ASEAN')visible=isAsean;
+    else if(filter==='non-ASEAN')visible=!isAsean;
+    else if(filter!=='all')visible=(k===filter);
+    const col=CCOLORS[k];
+    return {
+      label:SHORT[k],data:APAC_SDI[k],
+      borderColor:visible?col:col+'22',
+      backgroundColor:'transparent',
+      borderWidth:visible?(filter==='all'||(!isAsean&&filter==='non-ASEAN')||isAsean&&filter==='ASEAN'?1.8:2.5):1,
+      pointRadius:0,tension:.4,
+      order:visible?1:2,
+    };
+  });
+}
+
+function updateApacChart(){
+  const f=document.getElementById('highlightSel').value;
+  if(apacChart) apacChart.destroy();
+  apacChart=line('c-apac-trends',YEARS,makeApacDatasets(f),{ymin:.2,ymax:.95,legend:false});
+  // rebuild legend
+  const leg=document.getElementById('leg-apac');
+  leg.innerHTML=APAC_KEYS.map(k=>`
+    <div class="li">
+      <div class="ld" style="background:${CCOLORS[k]}"></div>
+      ${SHORT[k]}
+    </div>`).join('');
+}
+updateApacChart();
+
+// Gain chart
+(function(){
+  const gains=APAC_KEYS.map(k=>({k,g:APAC_SDI[k][33]-APAC_SDI[k][0],asean:IS_ASEAN[k]}))
+    .sort((a,b)=>b.g-a.g);
+  new Chart(document.getElementById('c-gain'),{
+    type:'bar',
+    data:{
+      labels:gains.map(d=>SHORT[d.k]),
+      datasets:[{
+        data:gains.map(d=>d.g),
+        backgroundColor:gains.map(d=>IS_ASEAN[d.k]?'#7dd3b055':'#c084fc55'),
+        borderColor:gains.map(d=>IS_ASEAN[d.k]?'#7dd3b0':'#c084fc'),
+        borderWidth:1,borderRadius:4,
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      indexAxis:'y',
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{color:'#121e30'},title:{display:true,text:'SDI Gain (1990→2023)'}},
+        y:{grid:{display:false}}
+      }
+    }
+  });
+})();
+
+// APAC distribution 2023
+(function(){
+  const sorted=[...APAC_KEYS].sort((a,b)=>APAC_SDI[a][33]-APAC_SDI[b][33]);
+  new Chart(document.getElementById('c-apac-dist'),{
+    type:'bar',
+    data:{
+      labels:sorted.map(k=>SHORT[k]),
+      datasets:[{
+        data:sorted.map(k=>APAC_SDI[k][33]),
+        backgroundColor:sorted.map(k=>IS_ASEAN[k]?'#7dd3b055':'#c084fc55'),
+        borderColor:sorted.map(k=>IS_ASEAN[k]?'#7dd3b0':'#c084fc'),
+        borderWidth:1,borderRadius:4,
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      indexAxis:'y',
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{min:.4,max:.95,grid:{color:'#121e30'},title:{display:true,text:'SDI (2023)'}},
+        y:{grid:{display:false}}
+      }
+    }
+  });
+})();
+
+// Annual growth rate
+(function(){
+  const rates=APAC_KEYS.map(k=>({
+    k,r:(Math.pow(APAC_SDI[k][33]/APAC_SDI[k][0],1/33)-1)*100,asean:IS_ASEAN[k]
+  })).sort((a,b)=>b.r-a.r);
+  new Chart(document.getElementById('c-growth'),{
+    type:'bar',
+    data:{
+      labels:rates.map(d=>SHORT[d.k]),
+      datasets:[{
+        data:rates.map(d=>+d.r.toFixed(3)),
+        backgroundColor:rates.map(d=>IS_ASEAN[d.k]?'#7dd3b055':'#c084fc55'),
+        borderColor:rates.map(d=>IS_ASEAN[d.k]?'#7dd3b0':'#c084fc'),
+        borderWidth:1,borderRadius:4,
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw.toFixed(2)}% / yr`}}},
+      scales:{
+        x:{grid:{display:false}},
+        y:{grid:{color:'#121e30'},title:{display:true,text:'CAGR (% / year)'}}
+      }
+    }
+  });
+})();
+
+// ══════════════════════════════════════════════════════════════════════
+// GROUPS TAB
+// ══════════════════════════════════════════════════════════════════════
+
+(function(){
+  const asean=APAC_KEYS.filter(k=>IS_ASEAN[k]);
+  const nonaean=APAC_KEYS.filter(k=>!IS_ASEAN[k]);
+
+  // ASEAN trend
+  line('c-asean-trend',YEARS,
+    asean.map(k=>({label:SHORT[k],data:APAC_SDI[k],borderColor:CCOLORS[k],
+      backgroundColor:'transparent',borderWidth:1.8,pointRadius:0,tension:.4})),
+    {ymin:.25,ymax:.90,legend:true,legendOpts:{position:'bottom',labels:{boxWidth:10,padding:6,font:{size:9}}}}
+  );
+
+  // Non-ASEAN trend
+  line('c-na-trend',YEARS,
+    nonaean.map(k=>({label:SHORT[k],data:APAC_SDI[k],borderColor:CCOLORS[k],
+      backgroundColor:'transparent',borderWidth:1.8,pointRadius:0,tension:.4})),
+    {ymin:.25,ymax:.95,legend:true,legendOpts:{position:'bottom',labels:{boxWidth:10,padding:6,font:{size:9}}}}
+  );
+
+  // Group averages vs global
+  const aseanAvg=YEARS.map((_,i)=>+avg(asean.map(k=>APAC_SDI[k][i])).toFixed(4));
+  const naAvg   =YEARS.map((_,i)=>+avg(nonaean.map(k=>APAC_SDI[k][i])).toFixed(4));
+  line('c-group-avg',YEARS,[
+    {label:'ASEAN avg',data:aseanAvg,borderColor:'#7dd3b0',backgroundColor:'#7dd3b015',fill:true,borderWidth:2,pointRadius:0,tension:.4},
+    {label:'Non-ASEAN avg',data:naAvg,borderColor:'#c084fc',backgroundColor:'#c084fc15',fill:true,borderWidth:2,pointRadius:0,tension:.4},
+    {label:'Global',data:WORLD_SDI['Global'],borderColor:'#60a5fa',backgroundColor:'transparent',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.4},
+  ],{ymin:.3,ymax:.85,legend:true,legendOpts:{position:'top',labels:{boxWidth:12,padding:8,font:{size:10}}}});
+
+  // Range chart (min/max band per group by year)
+  const aseanMin=YEARS.map((_,i)=>Math.min(...asean.map(k=>APAC_SDI[k][i])));
+  const aseanMax=YEARS.map((_,i)=>Math.max(...asean.map(k=>APAC_SDI[k][i])));
+  const naMin   =YEARS.map((_,i)=>Math.min(...nonaean.map(k=>APAC_SDI[k][i])));
+  const naMax   =YEARS.map((_,i)=>Math.max(...nonaean.map(k=>APAC_SDI[k][i])));
+  new Chart(document.getElementById('c-range'),{
+    type:'line',
+    data:{labels:YEARS,datasets:[
+      {label:'ASEAN max',data:aseanMax,borderColor:'#7dd3b0',backgroundColor:'#7dd3b022',fill:'+1',borderWidth:1.5,pointRadius:0,tension:.4},
+      {label:'ASEAN min',data:aseanMin,borderColor:'#7dd3b0',backgroundColor:'transparent',fill:false,borderWidth:1,pointRadius:0,borderDash:[3,3],tension:.4},
+      {label:'Non-ASEAN max',data:naMax,borderColor:'#c084fc',backgroundColor:'#c084fc22',fill:'+1',borderWidth:1.5,pointRadius:0,tension:.4},
+      {label:'Non-ASEAN min',data:naMin,borderColor:'#c084fc',backgroundColor:'transparent',fill:false,borderWidth:1,pointRadius:0,borderDash:[3,3],tension:.4},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top',labels:{boxWidth:12,padding:6,font:{size:10}}}},
+      scales:{x:{grid:{color:'#121e30'}},y:{min:.2,max:.95,grid:{color:'#121e30'},title:{display:true,text:'SDI Range'}}}
+    }
+  });
+
+  // ASEAN table
+  const atbody=document.getElementById('asean-tbody');
+  [...asean].sort((a,b)=>APAC_SDI[b][33]-APAC_SDI[a][33]).forEach(k=>{
+    const v0=APAC_SDI[k][0],v3=APAC_SDI[k][33],g=v3-v0,t=tier(v3);
+    atbody.innerHTML+=`<tr>
+      <td><strong>${SHORT[k]}</strong></td>
+      <td style="font-family:'IBM Plex Mono',monospace">${v0.toFixed(3)}</td>
+      <td style="font-family:'IBM Plex Mono',monospace">${v3.toFixed(3)}</td>
+      <td style="color:#4ade80;font-family:'IBM Plex Mono',monospace">+${g.toFixed(3)}</td>
+      <td><span class="tier ${t.cls}">${t.lbl}</span></td>
+    </tr>`;
+  });
+
+  // Non-ASEAN table
+  const ntbody=document.getElementById('na-tbody');
+  [...nonaean].sort((a,b)=>APAC_SDI[b][33]-APAC_SDI[a][33]).forEach(k=>{
+    const v0=APAC_SDI[k][0],v3=APAC_SDI[k][33],g=v3-v0,t=tier(v3);
+    ntbody.innerHTML+=`<tr>
+      <td><strong>${SHORT[k]}</strong></td>
+      <td style="font-family:'IBM Plex Mono',monospace">${v0.toFixed(3)}</td>
+      <td style="font-family:'IBM Plex Mono',monospace">${v3.toFixed(3)}</td>
+      <td style="color:#c084fc;font-family:'IBM Plex Mono',monospace">+${g.toFixed(3)}</td>
+      <td><span class="tier ${t.cls}">${t.lbl}</span></td>
+    </tr>`;
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Epidemiological Transition Dashboard — CDS3 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#1e2530;--border:#30363d;
+  --text:#e6edf3;--muted:#8b949e;
+  --comm:#f87171;--ncd:#60a5fa;--inj:#4ade80;--amber:#fbbf24;--accent:#38bdf8;
+  --cl0:#f87171;--cl1:#fb923c;--cl2:#4ade80;--cl3:#60a5fa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.brand{padding:24px 20px 18px;border-bottom:1px solid var(--border)}
+.brand h1{font-size:13px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.12em;line-height:1.4}
+.brand p{font-size:11px;color:var(--muted);margin-top:4px;font-family:'DM Mono',monospace}
+.nav-sec{padding:14px 12px 6px;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;font-size:13px;color:var(--muted);border-left:2px solid transparent;transition:all .15s}
+.nav-item:hover{color:var(--text);background:var(--surface2)}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(56,189,248,.07);font-weight:600}
+.nav-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.nav-meta{padding:7px 20px;font-size:11px;color:var(--muted);cursor:default;font-family:'DM Mono',monospace}
+.sidebar-foot{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);font-family:'DM Mono',monospace}
+.main{flex:1;overflow-x:hidden}
+.pane{display:none;padding:32px 36px;animation:fi .2s ease}
+.pane.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.pg-hdr{margin-bottom:26px}
+.pg-hdr h2{font-size:21px;font-weight:700;display:flex;align-items:center;gap:12px}
+.icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.pg-hdr p{color:var(--muted);margin-top:6px;font-size:13px;max-width:740px}
+.algo{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:18px 22px;margin-bottom:24px}
+.algo h3{font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.algo p{font-size:13px;color:var(--muted);line-height:1.75}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.tag{font-family:'DM Mono',monospace;font-size:11px;padding:2px 9px;border-radius:4px;background:rgba(56,189,248,.1);color:var(--accent);border:1px solid rgba(56,189,248,.2)}
+.tag.w{background:rgba(251,191,36,.1);color:var(--amber);border-color:rgba(251,191,36,.2)}
+.tag.ok{background:rgba(74,222,128,.1);color:var(--inj);border-color:rgba(74,222,128,.2)}
+.tag.er{background:rgba(248,113,113,.1);color:var(--comm);border-color:rgba(248,113,113,.2)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+.kl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.kv{font-size:26px;font-weight:700;font-family:'DM Mono',monospace}
+.ks{font-size:11px;color:var(--muted);margin-top:4px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.grid.s{grid-template-columns:1fr}
+.box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 22px}
+.box h4{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+.leg{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--muted);margin-bottom:12px}
+.li{display:flex;align-items:center;gap:6px}
+.ld{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.rstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.rs{background:var(--surface2);border-radius:8px;padding:12px 14px}
+.rsv{font-family:'DM Mono',monospace;font-size:18px;font-weight:500}
+.rsl{font-size:11px;color:var(--muted);margin-top:2px}
+.atabs{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+.at{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.ath{padding:12px 16px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border)}
+.ath.er{color:var(--comm);background:rgba(248,113,113,.07)}
+.ath.ok{color:var(--ncd);background:rgba(96,165,250,.07)}
+.ar{display:flex;justify-content:space-between;align-items:center;padding:9px 16px;border-bottom:1px solid rgba(48,54,61,.5);font-size:12px}
+.ar:last-child{border-bottom:none}
+.ac{font-weight:600;color:var(--text)}
+.av{font-family:'DM Mono',monospace;color:var(--muted);font-size:11px;text-align:right}
+.tbl-wrap{overflow-x:auto;margin-top:18px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{padding:10px 14px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--border);background:var(--surface2)}
+tbody td{padding:9px 14px;border-bottom:1px solid rgba(48,54,61,.4)}
+tbody tr:hover{background:var(--surface2)}
+.cb{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+#tt{position:fixed;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--text);pointer-events:none;display:none;z-index:999;max-width:210px;font-family:'DM Mono',monospace;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+#tt b{color:var(--accent);font-family:'Sora',sans-serif;font-size:13px}
+@media(max-width:900px){.sidebar{width:180px}.pane{padding:20px}.kpis{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.atabs{grid-template-columns:1fr}.rstats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="tt"></div>
+<div class="layout">
+
+<aside class="sidebar">
+  <div class="brand">
+    <h1>Epi Transition<br>Dashboard</h1>
+    <p>CDS3 · WHO GHE 2021</p>
+  </div>
+  <div class="nav-sec">Analysis</div>
+  <div class="nav-item active" onclick="show(this,'overview')"><span class="nav-dot" style="background:#38bdf8"></span>Overview</div>
+  <div class="nav-item" onclick="show(this,'regression')"><span class="nav-dot" style="background:#818cf8"></span>OLS Regression</div>
+  <div class="nav-item" onclick="show(this,'clustering')"><span class="nav-dot" style="background:#4ade80"></span>K-Means Clustering</div>
+  <div class="nav-item" onclick="show(this,'anomaly')"><span class="nav-dot" style="background:#f87171"></span>Anomaly Detection</div>
+  <div class="nav-item" onclick="show(this,'climate')"><span class="nav-dot" style="background:#fbbf24"></span>Climate Risk</div>
+  <div class="nav-sec" style="margin-top:8px">Datasets</div>
+  <div class="nav-meta">WHO GHE 2021 DALYs</div>
+  <div class="nav-meta">IHME SDI 1950–2023</div>
+  <div class="nav-meta">WHO Heat Index</div>
+  <div class="sidebar-foot">n = 186 countries<br>reference year 2021</div>
+</aside>
+
+<main class="main">
+
+<!-- ══ OVERVIEW ══ -->
+<section id="pane-overview" class="pane active">
+  <div class="pg-hdr">
+    <h2><span class="icon" style="background:rgba(56,189,248,.15)">◉</span>Global Burden Overview</h2>
+    <p>Disease burden from WHO GHE 2021, normalised to DALYs per 1,000 population, stratified by IHME Socio-Demographic Index quintile across 186 countries.</p>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><div class="kl">NCD share (global)</div><div class="kv" style="color:var(--ncd)">58.5%</div><div class="ks">Non-communicable diseases</div></div>
+    <div class="kpi"><div class="kl">Communicable share</div><div class="kv" style="color:var(--comm)">30.9%</div><div class="ks">Infectious + maternal + nutritional</div></div>
+    <div class="kpi"><div class="kl">Injury share</div><div class="kv" style="color:var(--inj)">8.9%</div><div class="ks">All injury categories</div></div>
+    <div class="kpi"><div class="kl">DALY rate range</div><div class="kv">161–832</div><div class="ks">per 1,000 population</div></div>
+  </div>
+  <div class="algo">
+    <h3>Method — disease burden composition by SDI quintile</h3>
+    <p>Raw DALY counts (thousands) are extracted from WHO GHE 2021 "All ages" sheet for three GHE top-level rows: Communicable (row 11), Non-communicable (row 73), Injuries (row 210). Counts are divided by embedded population values and multiplied by 1,000 to yield rates per 1,000 population. Countries are then merged with 2021 IHME SDI values and binned into five equal-count quintiles via pd.qcut(). The unweighted mean of each rate within each quintile is plotted.</p>
+    <div class="tags">
+      <span class="tag">WHO GHE 2021 rows 11, 73, 210</span><span class="tag">IHME SDI 2021</span>
+      <span class="tag w">Unweighted country mean — Tuvalu = Nigeria</span>
+      <span class="tag w">186 of 204 SDI locations matched by name</span>
+    </div>
+  </div>
+  <div class="grid s">
+    <div class="box">
+      <h4>Disease burden composition by SDI quintile (mean DALYs / 1,000 population)</h4>
+      <div class="leg"><div class="li"><span class="ld" style="background:var(--comm)"></span>Communicable</div><div class="li"><span class="ld" style="background:var(--ncd)"></span>Non-communicable</div><div class="li"><span class="ld" style="background:var(--inj)"></span>Injuries</div></div>
+      <div style="position:relative;height:320px"><canvas id="c-comp"></canvas></div>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="box">
+      <h4>All-cause DALY rate distribution (histogram, n=186)</h4>
+      <div style="position:relative;height:260px"><canvas id="c-hist"></canvas></div>
+    </div>
+    <div class="box">
+      <h4>SDI vs all-cause DALY rate — hover for country</h4>
+      <div style="position:relative;height:260px"><canvas id="c-all"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ REGRESSION ══ -->
+<section id="pane-regression" class="pane">
+  <div class="pg-hdr">
+    <h2><span class="icon" style="background:rgba(129,140,248,.15)">∿</span>OLS Regression</h2>
+    <p>Three independent OLS regressions (scipy.stats.linregress) quantify how strongly SDI predicts communicable, NCD, and injury DALY rates. Residuals from the communicable model feed the anomaly detection step.</p>
+  </div>
+  <div class="algo">
+    <h3>Model — Ordinary Least Squares (y = β₀ + β₁·SDI + ε)</h3>
+    <p>Communicable, NCD, and injury DALY rates are each regressed independently on SDI. R² measures cross-national variance explained by development level alone. The strong communicable R² (0.613) confirms SDI as the primary driver of the epidemiological transition. The weaker NCD R² (0.285) reflects the "double burden" — NCD accumulation depends on factors beyond income convergence (urbanisation, dietary shifts, ageing). Residuals from the communicable model are saved and used as the anomaly score in the next step.</p>
+    <div class="tags">
+      <span class="tag ok">Comm R² = 0.613</span><span class="tag w">NCD R² = 0.285</span><span class="tag">Inj R² = 0.302</span>
+      <span class="tag w">Linearity assumed — may underfit low-SDI cluster</span>
+      <span class="tag w">SDI treated as exogenous predictor</span>
+      <span class="tag w">Homoscedasticity and normality of residuals not formally tested</span>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="box">
+      <div class="rstats">
+        <div class="rs"><div class="rsv" style="color:var(--comm)">0.613</div><div class="rsl">R² communicable</div></div>
+        <div class="rs"><div class="rsv">-559.97</div><div class="rsl">slope (DALY / SDI unit)</div></div>
+        <div class="rs"><div class="rsv">493.26</div><div class="rsl">intercept</div></div>
+      </div>
+      <h4>SDI vs communicable burden — regression line</h4>
+      <div style="position:relative;height:280px"><canvas id="c-rc"></canvas></div>
+    </div>
+    <div class="box">
+      <div class="rstats">
+        <div class="rs"><div class="rsv" style="color:var(--ncd)">0.285</div><div class="rsl">R² NCD</div></div>
+        <div class="rs"><div class="rsv">194.88</div><div class="rsl">slope (DALY / SDI unit)</div></div>
+        <div class="rs"><div class="rsv">93.59</div><div class="rsl">intercept</div></div>
+      </div>
+      <h4>SDI vs NCD burden — regression line</h4>
+      <div style="position:relative;height:280px"><canvas id="c-rn"></canvas></div>
+    </div>
+  </div>
+  <div class="grid s">
+    <div class="box">
+      <h4>Residual plot — communicable (εᵢ = yᵢ − ŷᵢ), countries sorted by SDI. Red = positive residual (underperformer); blue = negative (overperformer).</h4>
+      <div style="position:relative;height:220px"><canvas id="c-res"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CLUSTERING ══ -->
+<section id="pane-clustering" class="pane">
+  <div class="pg-hdr">
+    <h2><span class="icon" style="background:rgba(74,222,128,.15)">⬡</span>K-Means Clustering</h2>
+    <p>K-means applied to the standardised 4-D feature space [SDI, communicable, NCD, injury rates] identifies four coherent epidemiological transition stages. k=4 selected via elbow method.</p>
+  </div>
+  <div class="algo">
+    <h3>Model — K-Means (sklearn KMeans, k=4, n_init=20)</h3>
+    <p>All four features are z-score standardised with StandardScaler before clustering, so each dimension contributes equally after normalisation. k=4 was selected via the elbow method on within-cluster sum of squares across k ∈ {2,…,8}. After fitting, clusters are relabelled by ascending mean SDI (C0 = lowest, C3 = highest). Euclidean distance in z-score space implicitly treats all four dimensions equally.</p>
+    <div class="tags">
+      <span class="tag">k=4 · n_init=20 · random_state=42</span><span class="tag">z-score standardised</span>
+      <span class="tag ok">Clusters relabelled by ascending mean SDI</span>
+      <span class="tag w">Assumes spherical, similar-density clusters</span>
+      <span class="tag w">k is a judgement call — elbow heuristic only</span>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="box">
+      <h4>Cluster assignment — SDI vs communicable burden (hover for country)</h4>
+      <div class="leg">
+        <div class="li"><span class="ld" style="background:var(--cl0)"></span>C0 Low SDI (n=28)</div>
+        <div class="li"><span class="ld" style="background:var(--cl1)"></span>C1 Mid-Low (n=56)</div>
+        <div class="li"><span class="ld" style="background:var(--cl2)"></span>C2 Mid-High (n=40)</div>
+        <div class="li"><span class="ld" style="background:var(--cl3)"></span>C3 High SDI (n=62)</div>
+      </div>
+      <div style="position:relative;height:300px"><canvas id="c-cls"></canvas></div>
+    </div>
+    <div class="box">
+      <h4>Mean disease burden profile per cluster</h4>
+      <div class="leg"><div class="li"><span class="ld" style="background:var(--comm)"></span>Communicable</div><div class="li"><span class="ld" style="background:var(--ncd)"></span>NCD</div><div class="li"><span class="ld" style="background:var(--inj)"></span>Injuries</div></div>
+      <div style="position:relative;height:300px"><canvas id="c-clb"></canvas></div>
+    </div>
+  </div>
+  <div class="tbl-wrap">
+    <div class="box" style="padding:0;overflow:hidden">
+      <table>
+        <thead><tr><th>Cluster</th><th>Label</th><th>n</th><th>Mean SDI</th><th>Comm. DALYs/1k</th><th>NCD DALYs/1k</th><th>Inj. DALYs/1k</th><th>Interpretation</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cb" style="background:rgba(248,113,113,.15);color:var(--cl0)">C0</span></td><td>Low SDI</td><td>28</td><td style="font-family:'DM Mono',monospace">0.39</td><td style="font-family:'DM Mono',monospace;color:var(--comm)">368.36</td><td style="font-family:'DM Mono',monospace;color:var(--ncd)">174.13</td><td style="font-family:'DM Mono',monospace;color:var(--inj)">59.76</td><td>Pre-transition — communicable dominant</td></tr>
+          <tr><td><span class="cb" style="background:rgba(251,146,60,.15);color:var(--cl1)">C1</span></td><td>Mid-Low SDI</td><td>56</td><td style="font-family:'DM Mono',monospace">0.54</td><td style="font-family:'DM Mono',monospace;color:var(--comm)">147.63</td><td style="font-family:'DM Mono',monospace;color:var(--ncd)">181.35</td><td style="font-family:'DM Mono',monospace;color:var(--inj)">38.9</td><td>Early transition — dual burden emerging</td></tr>
+          <tr><td><span class="cb" style="background:rgba(74,222,128,.15);color:var(--cl2)">C2</span></td><td>Mid-High SDI</td><td>40</td><td style="font-family:'DM Mono',monospace">0.77</td><td style="font-family:'DM Mono',monospace;color:var(--comm)">76.99</td><td style="font-family:'DM Mono',monospace;color:var(--ncd)">317.9</td><td style="font-family:'DM Mono',monospace;color:var(--inj)">33.25</td><td>Late transition — high NCD, low comm.</td></tr>
+          <tr><td><span class="cb" style="background:rgba(96,165,250,.15);color:var(--cl3)">C3</span></td><td>High SDI</td><td>62</td><td style="font-family:'DM Mono',monospace">0.77</td><td style="font-family:'DM Mono',monospace;color:var(--comm)">47.42</td><td style="font-family:'DM Mono',monospace;color:var(--ncd)">210.13</td><td style="font-family:'DM Mono',monospace;color:var(--inj)">23.81</td><td>Post-transition — NCD dominant, lower total</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ANOMALY ══ -->
+<section id="pane-anomaly" class="pane">
+  <div class="pg-hdr">
+    <h2><span class="icon" style="background:rgba(248,113,113,.15)">⚑</span>Anomaly Detection</h2>
+    <p>Countries with communicable burden deviating more than ±1.5 SD from the OLS regression line. 14 underperformers (higher burden) and 12 overperformers (lower burden) identified.</p>
+  </div>
+  <div class="algo">
+    <h3>Method — residual-based anomaly detection (±1.5 SD threshold)</h3>
+    <p>Residuals εᵢ = yᵢ − ŷᵢ are computed from the communicable OLS model for each country. Countries with εᵢ &gt; 1.5·σ carry disproportionately high communicable burden for their SDI ("underperformers"). Countries with εᵢ &lt; −1.5·σ achieve unusually low burden ("overperformers"). σ = 77.64 DALYs/1k. The ±1.5σ band is overlaid as dashed corridors. This approach is parameter-transparent but assumes normally distributed residuals.</p>
+    <div class="tags">
+      <span class="tag">Residual SD = 77.64 DALYs/1k</span><span class="tag">Threshold ±1.5 SD</span>
+      <span class="tag er">14 underperformers</span><span class="tag ok">12 overperformers</span>
+      <span class="tag w">1.5 SD is lenient vs conventional 2 SD criterion</span>
+      <span class="tag w">Anomalies may reflect data quality, not health systems</span>
+    </div>
+  </div>
+  <div class="grid s">
+    <div class="box">
+      <h4>SDI vs communicable burden — ±1.5 SD anomaly band — hover for detail</h4>
+      <div class="leg">
+        <div class="li"><span class="ld" style="background:#6b7280"></span>Expected (within band)</div>
+        <div class="li"><span class="ld" style="background:var(--comm)"></span>Underperformer ▲</div>
+        <div class="li"><span class="ld" style="background:var(--ncd)"></span>Overperformer ▽</div>
+      </div>
+      <div style="position:relative;height:360px"><canvas id="c-an"></canvas></div>
+    </div>
+  </div>
+  <div class="atabs" id="atabs"></div>
+</section>
+
+<!-- ══ CLIMATE ══ -->
+<section id="pane-climate" class="pane">
+  <div class="pg-hdr">
+    <h2><span class="icon" style="background:rgba(251,191,36,.15)">☀</span>Climate Risk</h2>
+    <p>WHO Heat Index 35 stratified by SDI tertile (2000–2020) and IHME SDI regional trajectories (1990–2021), revealing the compounding heat burden on low-development nations.</p>
+  </div>
+  <div class="algo">
+    <h3>Analysis — heat exposure × SDI stratification</h3>
+    <p>The WHO Heat Index 35 series (annual days with apparent temperature ≥ 35°C) is merged with 2021 SDI for 171 matched countries. Countries are split into three equal-count tertiles via pd.qcut(). The unweighted mean of annual heat-index days is plotted for each tertile across 2000–2020. The IHME SDI dataset provides regional aggregates (8 world regions) from 1990–2021. The overlap of high communicable disease burden, fast-rising SDI transitions, and accelerating heat exposure forms the "triple burden" framing central to the project's policy argument.</p>
+    <div class="tags">
+      <span class="tag">171 matched countries · 2000–2020</span><span class="tag">SDI tertile stratification (pd.qcut)</span>
+      <span class="tag w">Unweighted country mean — geography not population</span>
+      <span class="tag w">HI ≥ 35°C is one of several valid exposure thresholds</span>
+      <span class="tag w">No causal link between heat and DALY rates modelled here</span>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="box">
+      <h4>Heat exposure trend by SDI tertile — mean annual days HI ≥ 35°C</h4>
+      <div class="leg"><div class="li"><span class="ld" style="background:var(--comm)"></span>Low SDI</div><div class="li"><span class="ld" style="background:var(--amber)"></span>Med SDI</div><div class="li"><span class="ld" style="background:var(--ncd)"></span>High SDI</div></div>
+      <div style="position:relative;height:300px"><canvas id="c-ht"></canvas></div>
+    </div>
+    <div class="box">
+      <h4>SDI regional trajectories 1990–2021 (IHME GBD)</h4>
+      <div style="position:relative;height:300px"><canvas id="c-sdi"></canvas></div>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+const DATA=[{"c": "Afghanistan", "iso": "AFG", "s": 0.326, "cr": 243.2, "nr": 173.2, "ir": 149.4, "ar": 575.7, "cl": 0, "an": 0, "re": -67.5}, {"c": "Albania", "iso": "ALB", "s": 0.697, "cr": 71.2, "nr": 227.4, "ir": 23.8, "ar": 342.8, "cl": 3, "an": 0, "re": -31.7}, {"c": "Algeria", "iso": "DZA", "s": 0.646, "cr": 54.4, "nr": 175.1, "ir": 23.8, "ar": 256.5, "cl": 3, "an": 0, "re": -77.0}, {"c": "Angola", "iso": "AGO", "s": 0.486, "cr": 337.4, "nr": 166.5, "ir": 40.1, "ar": 547.0, "cl": 0, "an": 1, "re": 116.5}, {"c": "Antigua and Barbuda", "iso": "ATG", "s": 0.749, "cr": 57.7, "nr": 218.2, "ir": 18.0, "ar": 293.9, "cl": 3, "an": 0, "re": -16.4}, {"c": "Argentina", "iso": "ARG", "s": 0.759, "cr": 88.5, "nr": 219.3, "ir": 28.3, "ar": 336.1, "cl": 3, "an": 0, "re": 20.2}, {"c": "Armenia", "iso": "ARM", "s": 0.707, "cr": 84.8, "nr": 285.5, "ir": 27.7, "ar": 398.0, "cl": 2, "an": 0, "re": -12.6}, {"c": "Australia", "iso": "AUS", "s": 0.847, "cr": 9.4, "nr": 221.8, "ir": 28.1, "ar": 259.3, "cl": 3, "an": 0, "re": -9.5}, {"c": "Austria", "iso": "AUT", "s": 0.85, "cr": 24.8, "nr": 263.7, "ir": 27.5, "ar": 316.0, "cl": 3, "an": 0, "re": 7.3}, {"c": "Azerbaijan", "iso": "AZE", "s": 0.699, "cr": 79.4, "nr": 196.2, "ir": 23.6, "ar": 314.9, "cl": 3, "an": 0, "re": -22.4}, {"c": "Bahamas", "iso": "BHS", "s": 0.807, "cr": 89.1, "nr": 279.9, "ir": 50.4, "ar": 436.2, "cl": 2, "an": 0, "re": 47.6}, {"c": "Bahrain", "iso": "BHR", "s": 0.773, "cr": 33.3, "nr": 172.1, "ir": 16.3, "ar": 225.9, "cl": 3, "an": 0, "re": -27.4}, {"c": "Bangladesh", "iso": "BGD", "s": 0.499, "cr": 90.7, "nr": 177.6, "ir": 24.6, "ar": 297.6, "cl": 1, "an": -1, "re": -122.9}, {"c": "Barbados", "iso": "BRB", "s": 0.749, "cr": 52.9, "nr": 263.9, "ir": 22.3, "ar": 339.1, "cl": 3, "an": 0, "re": -20.9}, {"c": "Belarus", "iso": "BLR", "s": 0.798, "cr": 63.0, "nr": 347.1, "ir": 35.5, "ar": 461.0, "cl": 2, "an": 0, "re": 16.6}, {"c": "Belgium", "iso": "BEL", "s": 0.871, "cr": 29.2, "nr": 244.4, "ir": 32.0, "ar": 305.7, "cl": 3, "an": 0, "re": 23.6}, {"c": "Belize", "iso": "BLZ", "s": 0.619, "cr": 65.2, "nr": 159.5, "ir": 46.1, "ar": 275.3, "cl": 1, "an": 0, "re": -81.6}, {"c": "Benin", "iso": "BEN", "s": 0.389, "cr": 321.1, "nr": 164.2, "ir": 46.7, "ar": 534.6, "cl": 0, "an": 0, "re": 45.6}, {"c": "Bhutan", "iso": "BTN", "s": 0.515, "cr": 58.9, "nr": 176.8, "ir": 28.0, "ar": 263.7, "cl": 1, "an": -1, "re": -146.0}, {"c": "Bolivia (Plurinational State of)", "iso": "BOL", "s": 0.623, "cr": 165.4, "nr": 188.0, "ir": 30.3, "ar": 417.2, "cl": 1, "an": 0, "re": 21.0}, {"c": "Bosnia and Herzegovina", "iso": "BIH", "s": 0.704, "cr": 89.8, "nr": 355.5, "ir": 27.3, "ar": 477.9, "cl": 2, "an": 0, "re": -9.1}, {"c": "Botswana", "iso": "BWA", "s": 0.67, "cr": 288.3, "nr": 161.6, "ir": 36.5, "ar": 506.6, "cl": 1, "an": 1, "re": 170.3}, {"c": "Brazil", "iso": "BRA", "s": 0.675, "cr": 104.0, "nr": 234.7, "ir": 46.4, "ar": 385.1, "cl": 1, "an": 0, "re": -11.0}, {"c": "Brunei Darussalam", "iso": "BRN", "s": 0.827, "cr": 27.3, "nr": 187.7, "ir": 19.2, "ar": 234.2, "cl": 3, "an": 0, "re": -2.7}, {"c": "Bulgaria", "iso": "BGR", "s": 0.763, "cr": 119.1, "nr": 437.4, "ir": 30.0, "ar": 586.4, "cl": 2, "an": 0, "re": 53.3}, {"c": "Burkina Faso", "iso": "BFA", "s": 0.296, "cr": 304.1, "nr": 166.4, "ir": 58.4, "ar": 533.0, "cl": 0, "an": 0, "re": -23.5}, {"c": "Burundi", "iso": "BDI", "s": 0.299, "cr": 249.5, "nr": 152.5, "ir": 50.4, "ar": 454.4, "cl": 0, "an": 0, "re": -76.1}, {"c": "Cabo Verde", "iso": "CPV", "s": 0.548, "cr": 64.5, "nr": 180.8, "ir": 34.6, "ar": 283.2, "cl": 1, "an": -1, "re": -121.8}, {"c": "Cambodia", "iso": "KHM", "s": 0.49, "cr": 94.0, "nr": 212.6, "ir": 35.3, "ar": 349.3, "cl": 1, "an": -1, "re": -124.9}, {"c": "Cameroon", "iso": "CMR", "s": 0.473, "cr": 321.8, "nr": 172.8, "ir": 42.2, "ar": 542.6, "cl": 0, "an": 0, "re": 93.3}, {"c": "Canada", "iso": "CAN", "s": 0.885, "cr": 19.1, "nr": 253.7, "ir": 22.7, "ar": 295.5, "cl": 3, "an": 0, "re": 21.1}, {"c": "Central African Republic", "iso": "CAF", "s": 0.251, "cr": 584.1, "nr": 165.1, "ir": 75.3, "ar": 832.4, "cl": 0, "an": 1, "re": 231.6}, {"c": "Chad", "iso": "TCD", "s": 0.233, "cr": 500.4, "nr": 148.0, "ir": 55.4, "ar": 710.2, "cl": 0, "an": 1, "re": 137.3}, {"c": "Chile", "iso": "CHL", "s": 0.782, "cr": 42.8, "nr": 219.7, "ir": 29.3, "ar": 291.8, "cl": 3, "an": 0, "re": -12.5}, {"c": "China", "iso": "CHN", "s": 0.714, "cr": 13.2, "nr": 244.6, "ir": 25.5, "ar": 283.5, "cl": 3, "an": 0, "re": -80.3}, {"c": "Colombia", "iso": "COL", "s": 0.678, "cr": 78.6, "nr": 181.8, "ir": 43.6, "ar": 304.0, "cl": 1, "an": 0, "re": -35.1}, {"c": "Comoros", "iso": "COM", "s": 0.47, "cr": 178.7, "nr": 173.2, "ir": 39.2, "ar": 396.0, "cl": 1, "an": 0, "re": -51.3}, {"c": "Congo", "iso": "COG", "s": 0.569, "cr": 268.5, "nr": 149.7, "ir": 27.5, "ar": 450.0, "cl": 1, "an": 0, "re": 94.0}, {"c": "Costa Rica", "iso": "CRI", "s": 0.705, "cr": 46.4, "nr": 196.5, "ir": 32.3, "ar": 275.2, "cl": 3, "an": 0, "re": -51.8}, {"c": "C\u00f4te d'Ivoire", "iso": "CIV", "s": 0.437, "cr": 292.6, "nr": 160.1, "ir": 45.0, "ar": 501.5, "cl": 0, "an": 0, "re": 44.0}, {"c": "Croatia", "iso": "HRV", "s": 0.774, "cr": 52.9, "nr": 339.1, "ir": 33.5, "ar": 425.4, "cl": 2, "an": 0, "re": -7.1}, {"c": "Cuba", "iso": "CUB", "s": 0.689, "cr": 114.8, "nr": 294.6, "ir": 26.0, "ar": 435.4, "cl": 2, "an": 0, "re": 7.5}, {"c": "Cyprus", "iso": "CYP", "s": 0.848, "cr": 21.2, "nr": 202.0, "ir": 20.0, "ar": 243.2, "cl": 3, "an": 0, "re": 2.8}, {"c": "Czechia", "iso": "CZE", "s": 0.826, "cr": 68.3, "nr": 298.7, "ir": 30.4, "ar": 397.4, "cl": 2, "an": 0, "re": 37.6}, {"c": "Democratic People's Republic of Korea", "iso": "PRK", "s": 0.574, "cr": 52.1, "nr": 281.2, "ir": 39.4, "ar": 374.4, "cl": 2, "an": -1, "re": -119.8}, {"c": "Democratic Republic of the Congo", "iso": "COD", "s": 0.379, "cr": 383.9, "nr": 166.2, "ir": 47.0, "ar": 601.1, "cl": 0, "an": 0, "re": 103.1}, {"c": "Denmark", "iso": "DNK", "s": 0.91, "cr": 18.3, "nr": 267.3, "ir": 19.5, "ar": 305.1, "cl": 3, "an": 0, "re": 34.5}, {"c": "Djibouti", "iso": "DJI", "s": 0.477, "cr": 204.0, "nr": 192.6, "ir": 39.2, "ar": 442.5, "cl": 1, "an": 0, "re": -22.3}, {"c": "Dominican Republic", "iso": "DOM", "s": 0.646, "cr": 82.9, "nr": 193.8, "ir": 41.4, "ar": 323.4, "cl": 1, "an": 0, "re": -48.7}, {"c": "Ecuador", "iso": "ECU", "s": 0.681, "cr": 68.7, "nr": 189.5, "ir": 38.2, "ar": 296.5, "cl": 1, "an": 0, "re": -43.3}, {"c": "Egypt", "iso": "EGY", "s": 0.658, "cr": 77.8, "nr": 208.8, "ir": 18.5, "ar": 319.9, "cl": 3, "an": 0, "re": -47.2}, {"c": "El Salvador", "iso": "SLV", "s": 0.598, "cr": 56.4, "nr": 194.7, "ir": 79.9, "ar": 341.4, "cl": 1, "an": 0, "re": -102.1}, {"c": "Equatorial Guinea", "iso": "GNQ", "s": 0.635, "cr": 372.4, "nr": 168.4, "ir": 31.1, "ar": 575.5, "cl": 1, "an": 1, "re": 234.7}, {"c": "Eritrea", "iso": "ERI", "s": 0.405, "cr": 181.7, "nr": 199.8, "ir": 49.4, "ar": 434.7, "cl": 1, "an": 0, "re": -84.6}, {"c": "Estonia", "iso": "EST", "s": 0.849, "cr": 39.1, "nr": 329.3, "ir": 31.0, "ar": 399.4, "cl": 2, "an": 0, "re": 21.1}, {"c": "Eswatini", "iso": "SWZ", "s": 0.597, "cr": 379.7, "nr": 234.4, "ir": 75.2, "ar": 708.2, "cl": 0, "an": 1, "re": 220.5}, {"c": "Ethiopia", "iso": "ETH", "s": 0.376, "cr": 201.3, "nr": 137.8, "ir": 40.6, "ar": 383.6, "cl": 1, "an": 0, "re": -81.4}, {"c": "Fiji", "iso": "FJI", "s": 0.678, "cr": 106.4, "nr": 295.6, "ir": 23.5, "ar": 446.2, "cl": 2, "an": 0, "re": -7.0}, {"c": "Finland", "iso": "FIN", "s": 0.885, "cr": 8.5, "nr": 280.3, "ir": 31.6, "ar": 320.4, "cl": 2, "an": 0, "re": 10.9}, {"c": "France", "iso": "FRA", "s": 0.856, "cr": 25.6, "nr": 251.6, "ir": 30.4, "ar": 307.6, "cl": 3, "an": 0, "re": 11.5}, {"c": "Gabon", "iso": "GAB", "s": 0.617, "cr": 239.1, "nr": 163.8, "ir": 31.1, "ar": 437.3, "cl": 1, "an": 0, "re": 91.5}, {"c": "Gambia", "iso": "GMB", "s": 0.42, "cr": 231.4, "nr": 156.8, "ir": 36.0, "ar": 429.5, "cl": 1, "an": 0, "re": -26.8}, {"c": "Georgia", "iso": "GEO", "s": 0.742, "cr": 116.4, "nr": 327.2, "ir": 34.0, "ar": 477.7, "cl": 2, "an": 0, "re": 38.5}, {"c": "Georgia", "iso": "GEO", "s": 0.858, "cr": 116.4, "nr": 327.2, "ir": 34.0, "ar": 477.7, "cl": 2, "an": 0, "re": 103.6}, {"c": "Germany", "iso": "DEU", "s": 0.875, "cr": 27.6, "nr": 305.3, "ir": 24.5, "ar": 357.4, "cl": 2, "an": 0, "re": 24.4}, {"c": "Ghana", "iso": "GHA", "s": 0.56, "cr": 189.5, "nr": 174.2, "ir": 35.4, "ar": 402.2, "cl": 1, "an": 0, "re": 9.9}, {"c": "Greece", "iso": "GRC", "s": 0.822, "cr": 48.3, "nr": 305.4, "ir": 23.7, "ar": 377.4, "cl": 2, "an": 0, "re": 15.4}, {"c": "Grenada", "iso": "GRD", "s": 0.67, "cr": 101.8, "nr": 250.2, "ir": 24.8, "ar": 376.8, "cl": 3, "an": 0, "re": -16.4}, {"c": "Guatemala", "iso": "GTM", "s": 0.542, "cr": 105.2, "nr": 169.7, "ir": 46.3, "ar": 337.4, "cl": 1, "an": 0, "re": -84.4}, {"c": "Guinea", "iso": "GIN", "s": 0.341, "cr": 393.3, "nr": 163.8, "ir": 52.4, "ar": 612.7, "cl": 0, "an": 0, "re": 90.7}, {"c": "Guinea-Bissau", "iso": "GNB", "s": 0.361, "cr": 360.5, "nr": 170.4, "ir": 49.4, "ar": 586.7, "cl": 0, "an": 0, "re": 69.4}, {"c": "Guyana", "iso": "GUY", "s": 0.661, "cr": 164.9, "nr": 235.6, "ir": 50.8, "ar": 451.3, "cl": 1, "an": 0, "re": 41.6}, {"c": "Haiti", "iso": "HTI", "s": 0.461, "cr": 175.3, "nr": 243.9, "ir": 80.9, "ar": 511.3, "cl": 0, "an": 0, "re": -59.6}, {"c": "Honduras", "iso": "HND", "s": 0.51, "cr": 77.7, "nr": 162.8, "ir": 60.1, "ar": 312.2, "cl": 1, "an": -1, "re": -129.9}, {"c": "Hungary", "iso": "HUN", "s": 0.785, "cr": 72.1, "nr": 362.2, "ir": 30.5, "ar": 464.9, "cl": 2, "an": 0, "re": 18.7}, {"c": "Iceland", "iso": "ISL", "s": 0.883, "cr": 9.8, "nr": 207.2, "ir": 21.6, "ar": 238.6, "cl": 3, "an": 0, "re": 11.1}, {"c": "India", "iso": "IND", "s": 0.591, "cr": 152.4, "nr": 214.1, "ir": 35.0, "ar": 415.4, "cl": 1, "an": 0, "re": -9.8}, {"c": "Indonesia", "iso": "IDN", "s": 0.656, "cr": 122.9, "nr": 217.4, "ir": 19.3, "ar": 386.4, "cl": 3, "an": 0, "re": -3.0}, {"c": "Iran (Islamic Republic of)", "iso": "IRN", "s": 0.705, "cr": 63.1, "nr": 191.4, "ir": 28.6, "ar": 294.5, "cl": 3, "an": 0, "re": -35.2}, {"c": "Iraq", "iso": "IRQ", "s": 0.637, "cr": 69.0, "nr": 162.5, "ir": 45.2, "ar": 280.3, "cl": 1, "an": 0, "re": -67.4}, {"c": "Ireland", "iso": "IRL", "s": 0.902, "cr": 20.2, "nr": 220.9, "ir": 18.7, "ar": 259.8, "cl": 3, "an": 0, "re": 32.2}, {"c": "Israel", "iso": "ISR", "s": 0.832, "cr": 27.3, "nr": 170.6, "ir": 17.7, "ar": 215.6, "cl": 3, "an": 0, "re": -0.0}, {"c": "Italy", "iso": "ITA", "s": 0.828, "cr": 30.4, "nr": 278.5, "ir": 23.1, "ar": 331.9, "cl": 2, "an": 0, "re": 0.8}, {"c": "Jamaica", "iso": "JAM", "s": 0.685, "cr": 70.3, "nr": 236.2, "ir": 46.9, "ar": 367.5, "cl": 1, "an": 0, "re": -39.3}, {"c": "Japan", "iso": "JPN", "s": 0.872, "cr": 17.8, "nr": 265.0, "ir": 23.5, "ar": 306.2, "cl": 3, "an": 0, "re": 12.7}, {"c": "Jordan", "iso": "JOR", "s": 0.71, "cr": 57.3, "nr": 138.9, "ir": 16.3, "ar": 221.7, "cl": 3, "an": 0, "re": -38.3}, {"c": "Kazakhstan", "iso": "KAZ", "s": 0.72, "cr": 86.5, "nr": 232.1, "ir": 33.5, "ar": 372.4, "cl": 3, "an": 0, "re": -3.6}, {"c": "Kenya", "iso": "KEN", "s": 0.531, "cr": 183.1, "nr": 134.0, "ir": 31.2, "ar": 351.7, "cl": 1, "an": 0, "re": -12.6}, {"c": "Kiribati", "iso": "KIR", "s": 0.534, "cr": 201.4, "nr": 302.2, "ir": 31.1, "ar": 534.7, "cl": 2, "an": 0, "re": 7.4}, {"c": "Kuwait", "iso": "KWT", "s": 0.869, "cr": 34.0, "nr": 146.8, "ir": 18.2, "ar": 204.9, "cl": 3, "an": 0, "re": 27.2}, {"c": "Kyrgyzstan", "iso": "KGZ", "s": 0.616, "cr": 76.5, "nr": 175.1, "ir": 26.3, "ar": 288.8, "cl": 1, "an": 0, "re": -71.7}, {"c": "Lao People's Democratic Republic", "iso": "LAO", "s": 0.505, "cr": 115.9, "nr": 195.2, "ir": 34.3, "ar": 349.9, "cl": 1, "an": 0, "re": -94.4}, {"c": "Latvia", "iso": "LVA", "s": 0.842, "cr": 64.7, "nr": 403.7, "ir": 40.3, "ar": 508.7, "cl": 2, "an": 0, "re": 43.1}, {"c": "Lebanon", "iso": "LBN", "s": 0.719, "cr": 84.5, "nr": 202.0, "ir": 22.7, "ar": 325.0, "cl": 3, "an": 0, "re": -6.0}, {"c": "Lesotho", "iso": "LSO", "s": 0.504, "cr": 463.8, "nr": 241.7, "ir": 84.2, "ar": 801.8, "cl": 0, "an": 1, "re": 252.9}, {"c": "Liberia", "iso": "LBR", "s": 0.371, "cr": 333.9, "nr": 156.7, "ir": 36.6, "ar": 529.5, "cl": 0, "an": 0, "re": 48.6}, {"c": "Libya", "iso": "LBY", "s": 0.765, "cr": 56.2, "nr": 196.2, "ir": 39.2, "ar": 300.1, "cl": 3, "an": 0, "re": -8.8}, {"c": "Lithuania", "iso": "LTU", "s": 0.848, "cr": 68.7, "nr": 372.1, "ir": 41.2, "ar": 482.1, "cl": 2, "an": 0, "re": 50.5}, {"c": "Luxembourg", "iso": "LUX", "s": 0.89, "cr": 20.6, "nr": 204.9, "ir": 22.0, "ar": 247.5, "cl": 3, "an": 0, "re": 25.6}, {"c": "Madagascar", "iso": "MDG", "s": 0.365, "cr": 286.4, "nr": 173.5, "ir": 39.0, "ar": 503.6, "cl": 0, "an": 0, "re": -2.4}, {"c": "Malawi", "iso": "MWI", "s": 0.395, "cr": 239.9, "nr": 161.6, "ir": 33.1, "ar": 439.1, "cl": 1, "an": 0, "re": -32.3}, {"c": "Malaysia", "iso": "MYS", "s": 0.764, "cr": 63.3, "nr": 202.4, "ir": 22.7, "ar": 295.2, "cl": 3, "an": 0, "re": -2.4}, {"c": "Maldives", "iso": "MDV", "s": 0.651, "cr": 40.1, "nr": 145.3, "ir": 10.1, "ar": 198.8, "cl": 3, "an": 0, "re": -88.6}, {"c": "Mali", "iso": "MLI", "s": 0.273, "cr": 419.5, "nr": 154.2, "ir": 53.1, "ar": 630.0, "cl": 0, "an": 0, "re": 78.9}, {"c": "Malta", "iso": "MLT", "s": 0.822, "cr": 21.3, "nr": 236.2, "ir": 20.4, "ar": 277.9, "cl": 3, "an": 0, "re": -11.6}, {"c": "Mauritania", "iso": "MRT", "s": 0.502, "cr": 185.0, "nr": 134.8, "ir": 26.0, "ar": 351.3, "cl": 1, "an": 0, "re": -27.0}, {"c": "Mauritius", "iso": "MUS", "s": 0.729, "cr": 56.3, "nr": 302.5, "ir": 22.2, "ar": 381.1, "cl": 2, "an": 0, "re": -28.6}, {"c": "Mexico", "iso": "MEX", "s": 0.684, "cr": 106.5, "nr": 215.0, "ir": 42.2, "ar": 363.7, "cl": 1, "an": 0, "re": -3.6}, {"c": "Micronesia (Federated States of)", "iso": "FSM", "s": 0.59, "cr": 81.1, "nr": 282.1, "ir": 40.0, "ar": 403.3, "cl": 2, "an": 0, "re": -81.8}, {"c": "Mongolia", "iso": "MNG", "s": 0.65, "cr": 56.8, "nr": 225.6, "ir": 45.4, "ar": 330.3, "cl": 1, "an": 0, "re": -72.5}, {"c": "Montenegro", "iso": "MNE", "s": 0.78, "cr": 86.1, "nr": 289.4, "ir": 26.3, "ar": 414.9, "cl": 2, "an": 0, "re": 29.9}, {"c": "Morocco", "iso": "MAR", "s": 0.598, "cr": 58.1, "nr": 231.8, "ir": 24.5, "ar": 321.5, "cl": 3, "an": 0, "re": -100.4}, {"c": "Mozambique", "iso": "MOZ", "s": 0.328, "cr": 402.2, "nr": 171.4, "ir": 42.5, "ar": 624.1, "cl": 0, "an": 0, "re": 92.7}, {"c": "Myanmar", "iso": "MMR", "s": 0.526, "cr": 125.3, "nr": 231.8, "ir": 38.0, "ar": 404.8, "cl": 1, "an": 0, "re": -73.4}, {"c": "Namibia", "iso": "NAM", "s": 0.613, "cr": 293.3, "nr": 165.8, "ir": 46.0, "ar": 525.2, "cl": 1, "an": 1, "re": 143.3}, {"c": "Nepal", "iso": "NPL", "s": 0.458, "cr": 108.4, "nr": 189.7, "ir": 37.5, "ar": 342.8, "cl": 1, "an": -1, "re": -128.2}, {"c": "Netherlands", "iso": "NLD", "s": 0.903, "cr": 30.7, "nr": 250.1, "ir": 22.2, "ar": 303.0, "cl": 3, "an": 0, "re": 43.3}, {"c": "New Zealand", "iso": "NZL", "s": 0.862, "cr": 10.0, "nr": 224.6, "ir": 31.2, "ar": 265.8, "cl": 3, "an": 0, "re": -0.5}, {"c": "Nicaragua", "iso": "NIC", "s": 0.527, "cr": 76.3, "nr": 154.2, "ir": 27.9, "ar": 258.4, "cl": 1, "an": -1, "re": -122.1}, {"c": "Niger", "iso": "NER", "s": 0.192, "cr": 514.4, "nr": 150.4, "ir": 61.8, "ar": 731.1, "cl": 0, "an": 1, "re": 128.9}, {"c": "Niger", "iso": "NER", "s": 0.405, "cr": 514.4, "nr": 150.4, "ir": 61.8, "ar": 731.1, "cl": 0, "an": 1, "re": 248.2}, {"c": "Nigeria", "iso": "NGA", "s": 0.496, "cr": 412.3, "nr": 142.8, "ir": 41.8, "ar": 598.9, "cl": 0, "an": 1, "re": 197.0}, {"c": "North Macedonia", "iso": "MKD", "s": 0.751, "cr": 109.2, "nr": 325.5, "ir": 25.6, "ar": 460.3, "cl": 2, "an": 0, "re": 36.7}, {"c": "Norway", "iso": "NOR", "s": 0.914, "cr": 13.0, "nr": 224.7, "ir": 23.6, "ar": 261.4, "cl": 3, "an": 0, "re": 31.5}, {"c": "Oman", "iso": "OMN", "s": 0.771, "cr": 55.3, "nr": 142.0, "ir": 17.7, "ar": 227.3, "cl": 3, "an": 0, "re": -6.3}, {"c": "Pakistan", "iso": "PAK", "s": 0.5, "cr": 201.9, "nr": 196.5, "ir": 36.9, "ar": 441.7, "cl": 1, "an": 0, "re": -11.2}, {"c": "Panama", "iso": "PAN", "s": 0.702, "cr": 58.9, "nr": 180.6, "ir": 28.2, "ar": 267.7, "cl": 3, "an": 0, "re": -41.1}, {"c": "Papua New Guinea", "iso": "PNG", "s": 0.436, "cr": 178.3, "nr": 177.6, "ir": 34.5, "ar": 399.9, "cl": 1, "an": 0, "re": -71.1}, {"c": "Paraguay", "iso": "PRY", "s": 0.665, "cr": 120.8, "nr": 189.0, "ir": 33.5, "ar": 343.3, "cl": 1, "an": 0, "re": -0.2}, {"c": "Peru", "iso": "PER", "s": 0.677, "cr": 141.1, "nr": 180.3, "ir": 25.4, "ar": 346.9, "cl": 3, "an": 0, "re": 27.2}, {"c": "Philippines", "iso": "PHL", "s": 0.658, "cr": 94.3, "nr": 248.8, "ir": 30.3, "ar": 373.3, "cl": 3, "an": 0, "re": -30.6}, {"c": "Poland", "iso": "POL", "s": 0.838, "cr": 71.9, "nr": 310.5, "ir": 32.1, "ar": 414.5, "cl": 2, "an": 0, "re": 47.7}, {"c": "Portugal", "iso": "PRT", "s": 0.779, "cr": 34.3, "nr": 289.0, "ir": 22.8, "ar": 346.1, "cl": 2, "an": 0, "re": -22.6}, {"c": "Puerto Rico", "iso": "PRI", "s": 0.843, "cr": 33.2, "nr": 288.7, "ir": 34.6, "ar": 356.5, "cl": 2, "an": 0, "re": 12.1}, {"c": "Qatar", "iso": "QAT", "s": 0.85, "cr": 20.9, "nr": 123.0, "ir": 21.0, "ar": 168.5, "cl": 3, "an": 0, "re": 3.8}, {"c": "Republic of Korea", "iso": "KOR", "s": 0.886, "cr": 17.8, "nr": 201.0, "ir": 29.5, "ar": 248.2, "cl": 3, "an": 0, "re": 20.4}, {"c": "Republic of Moldova", "iso": "MDA", "s": 0.724, "cr": 113.3, "nr": 365.4, "ir": 33.2, "ar": 511.9, "cl": 2, "an": 0, "re": 25.7}, {"c": "Romania", "iso": "ROU", "s": 0.757, "cr": 102.1, "nr": 357.3, "ir": 32.9, "ar": 492.2, "cl": 2, "an": 0, "re": 32.9}, {"c": "Russian Federation", "iso": "RUS", "s": 0.817, "cr": 122.2, "nr": 346.1, "ir": 43.9, "ar": 536.8, "cl": 2, "an": 0, "re": 86.6}, {"c": "Rwanda", "iso": "RWA", "s": 0.445, "cr": 164.2, "nr": 171.2, "ir": 40.4, "ar": 378.6, "cl": 1, "an": 0, "re": -79.7}, {"c": "Saint Lucia", "iso": "LCA", "s": 0.696, "cr": 103.8, "nr": 229.0, "ir": 32.2, "ar": 388.1, "cl": 3, "an": 0, "re": 0.2}, {"c": "Saint Vincent and the Grenadines", "iso": "VCT", "s": 0.649, "cr": 65.1, "nr": 284.2, "ir": 39.8, "ar": 389.0, "cl": 2, "an": 0, "re": -65.0}, {"c": "Samoa", "iso": "WSM", "s": 0.6, "cr": 53.5, "nr": 234.6, "ir": 26.4, "ar": 314.5, "cl": 3, "an": 0, "re": -103.5}, {"c": "Sao Tome and Principe", "iso": "STP", "s": 0.509, "cr": 84.9, "nr": 153.7, "ir": 21.7, "ar": 263.9, "cl": 1, "an": -1, "re": -123.3}, {"c": "Saudi Arabia", "iso": "SAU", "s": 0.818, "cr": 26.9, "nr": 138.2, "ir": 29.4, "ar": 198.3, "cl": 3, "an": 0, "re": -8.1}, {"c": "Senegal", "iso": "SEN", "s": 0.399, "cr": 162.9, "nr": 156.0, "ir": 36.1, "ar": 360.5, "cl": 1, "an": 0, "re": -106.9}, {"c": "Serbia", "iso": "SRB", "s": 0.776, "cr": 120.1, "nr": 394.4, "ir": 26.5, "ar": 541.0, "cl": 2, "an": 0, "re": 61.3}, {"c": "Seychelles", "iso": "SYC", "s": 0.744, "cr": 67.0, "nr": 218.6, "ir": 22.9, "ar": 308.5, "cl": 3, "an": 0, "re": -9.4}, {"c": "Sierra Leone", "iso": "SLE", "s": 0.371, "cr": 391.2, "nr": 177.2, "ir": 45.2, "ar": 615.2, "cl": 0, "an": 0, "re": 105.5}, {"c": "Singapore", "iso": "SGP", "s": 0.867, "cr": 18.7, "nr": 163.9, "ir": 15.3, "ar": 197.9, "cl": 3, "an": 0, "re": 10.7}, {"c": "Slovakia", "iso": "SVK", "s": 0.806, "cr": 93.2, "nr": 295.8, "ir": 32.0, "ar": 421.0, "cl": 2, "an": 0, "re": 51.5}, {"c": "Slovenia", "iso": "SVN", "s": 0.838, "cr": 32.0, "nr": 260.9, "ir": 36.9, "ar": 329.8, "cl": 2, "an": 0, "re": 8.3}, {"c": "Solomon Islands", "iso": "SLB", "s": 0.454, "cr": 101.1, "nr": 233.4, "ir": 41.3, "ar": 375.8, "cl": 1, "an": -1, "re": -138.1}, {"c": "Somalia", "iso": "SOM", "s": 0.22, "cr": 569.3, "nr": 178.9, "ir": 66.3, "ar": 826.9, "cl": 0, "an": 1, "re": 199.1}, {"c": "South Africa", "iso": "ZAF", "s": 0.696, "cr": 270.9, "nr": 231.8, "ir": 65.6, "ar": 594.5, "cl": 0, "an": 1, "re": 167.4}, {"c": "South Sudan", "iso": "SSD", "s": 0.374, "cr": 415.0, "nr": 158.4, "ir": 57.8, "ar": 635.2, "cl": 0, "an": 1, "re": 131.2}, {"c": "Spain", "iso": "ESP", "s": 0.805, "cr": 23.7, "nr": 249.0, "ir": 20.6, "ar": 293.3, "cl": 3, "an": 0, "re": -18.5}, {"c": "Sri Lanka", "iso": "LKA", "s": 0.726, "cr": 41.0, "nr": 207.4, "ir": 30.1, "ar": 282.8, "cl": 3, "an": 0, "re": -46.0}, {"c": "Sudan", "iso": "SDN", "s": 0.563, "cr": 194.7, "nr": 160.8, "ir": 36.9, "ar": 399.7, "cl": 1, "an": 0, "re": 16.6}, {"c": "Suriname", "iso": "SUR", "s": 0.651, "cr": 119.0, "nr": 217.9, "ir": 40.1, "ar": 389.5, "cl": 1, "an": 0, "re": -9.7}, {"c": "Sweden", "iso": "SWE", "s": 0.905, "cr": 19.8, "nr": 234.8, "ir": 23.3, "ar": 278.0, "cl": 3, "an": 0, "re": 33.3}, {"c": "Switzerland", "iso": "CHE", "s": 0.944, "cr": 20.5, "nr": 228.8, "ir": 25.7, "ar": 275.0, "cl": 3, "an": 0, "re": 55.6}, {"c": "Syrian Arab Republic", "iso": "SYR", "s": 0.577, "cr": 49.1, "nr": 184.6, "ir": 45.8, "ar": 282.6, "cl": 1, "an": -1, "re": -121.1}, {"c": "Tajikistan", "iso": "TJK", "s": 0.541, "cr": 101.7, "nr": 146.0, "ir": 27.1, "ar": 281.1, "cl": 1, "an": 0, "re": -88.9}, {"c": "Thailand", "iso": "THA", "s": 0.679, "cr": 56.4, "nr": 255.1, "ir": 45.2, "ar": 364.9, "cl": 2, "an": 0, "re": -56.4}, {"c": "Timor-Leste", "iso": "TLS", "s": 0.477, "cr": 167.8, "nr": 167.8, "ir": 35.7, "ar": 376.8, "cl": 1, "an": 0, "re": -58.4}, {"c": "Togo", "iso": "TGO", "s": 0.445, "cr": 248.7, "nr": 179.8, "ir": 45.4, "ar": 476.8, "cl": 1, "an": 0, "re": 4.7}, {"c": "Tonga", "iso": "TON", "s": 0.63, "cr": 38.1, "nr": 218.0, "ir": 20.7, "ar": 276.8, "cl": 3, "an": 0, "re": -102.6}, {"c": "Trinidad and Tobago", "iso": "TTO", "s": 0.767, "cr": 74.0, "nr": 278.8, "ir": 46.2, "ar": 411.7, "cl": 2, "an": 0, "re": 10.3}, {"c": "Tunisia", "iso": "TUN", "s": 0.675, "cr": 79.4, "nr": 198.8, "ir": 21.4, "ar": 316.3, "cl": 3, "an": 0, "re": -36.0}, {"c": "T\u00fcrkiye", "iso": "TUR", "s": 0.714, "cr": 55.6, "nr": 213.6, "ir": 16.0, "ar": 296.3, "cl": 3, "an": 0, "re": -37.9}, {"c": "Turkmenistan", "iso": "TKM", "s": 0.677, "cr": 121.3, "nr": 208.6, "ir": 26.7, "ar": 358.5, "cl": 3, "an": 0, "re": 7.0}, {"c": "Uganda", "iso": "UGA", "s": 0.426, "cr": 212.8, "nr": 137.2, "ir": 39.5, "ar": 392.1, "cl": 1, "an": 0, "re": -42.1}, {"c": "Ukraine", "iso": "UKR", "s": 0.764, "cr": 87.6, "nr": 393.4, "ir": 43.5, "ar": 543.8, "cl": 2, "an": 0, "re": 22.1}, {"c": "United Arab Emirates", "iso": "ARE", "s": 0.856, "cr": 19.6, "nr": 122.1, "ir": 16.3, "ar": 160.5, "cl": 3, "an": 0, "re": 5.8}, {"c": "United Kingdom", "iso": "GBR", "s": 0.876, "cr": 32.1, "nr": 268.1, "ir": 20.1, "ar": 320.3, "cl": 3, "an": 0, "re": 29.3}, {"c": "United Republic of Tanzania", "iso": "TZA", "s": 0.448, "cr": 223.9, "nr": 141.6, "ir": 32.9, "ar": 401.0, "cl": 1, "an": 0, "re": -18.7}, {"c": "United States of America", "iso": "USA", "s": 0.872, "cr": 47.6, "nr": 309.8, "ir": 35.0, "ar": 392.5, "cl": 2, "an": 0, "re": 42.5}, {"c": "Uruguay", "iso": "URY", "s": 0.738, "cr": 59.7, "nr": 279.1, "ir": 42.9, "ar": 381.7, "cl": 2, "an": 0, "re": -20.5}, {"c": "Uzbekistan", "iso": "UZB", "s": 0.629, "cr": 53.2, "nr": 209.7, "ir": 24.0, "ar": 291.9, "cl": 3, "an": 0, "re": -88.1}, {"c": "Vanuatu", "iso": "VUT", "s": 0.471, "cr": 78.2, "nr": 236.3, "ir": 35.7, "ar": 356.8, "cl": 1, "an": -1, "re": -151.2}, {"c": "Venezuela (Bolivarian Republic of)", "iso": "VEN", "s": 0.6, "cr": 62.3, "nr": 223.3, "ir": 73.0, "ar": 362.4, "cl": 1, "an": 0, "re": -95.0}, {"c": "Viet Nam", "iso": "VNM", "s": 0.632, "cr": 46.2, "nr": 216.0, "ir": 31.0, "ar": 294.9, "cl": 3, "an": 0, "re": -93.4}, {"c": "Yemen", "iso": "YEM", "s": 0.442, "cr": 176.7, "nr": 157.1, "ir": 92.6, "ar": 433.1, "cl": 0, "an": 0, "re": -69.1}, {"c": "Zambia", "iso": "ZMB", "s": 0.489, "cr": 304.3, "nr": 151.7, "ir": 35.6, "ar": 498.1, "cl": 1, "an": 0, "re": 84.8}, {"c": "Zimbabwe", "iso": "ZWE", "s": 0.484, "cr": 297.1, "nr": 183.7, "ir": 57.1, "ar": 546.4, "cl": 0, "an": 0, "re": 74.9}];
+const SDI_TREND=[{"year": 1990, "Global": 0.532, "SSA": 0.297, "S. Asia": 0.328, "SE Asia": 0.476, "Lat. Am.": 0.509, "High-income": 0.76, "C/E Europe": 0.642, "N. Africa/ME": 0.445}, {"year": 1991, "Global": 0.536, "SSA": 0.301, "S. Asia": 0.334, "SE Asia": 0.484, "Lat. Am.": 0.514, "High-income": 0.765, "C/E Europe": 0.648, "N. Africa/ME": 0.455}, {"year": 1992, "Global": 0.54, "SSA": 0.304, "S. Asia": 0.34, "SE Asia": 0.491, "Lat. Am.": 0.518, "High-income": 0.769, "C/E Europe": 0.654, "N. Africa/ME": 0.464}, {"year": 1993, "Global": 0.544, "SSA": 0.307, "S. Asia": 0.345, "SE Asia": 0.499, "Lat. Am.": 0.523, "High-income": 0.773, "C/E Europe": 0.659, "N. Africa/ME": 0.472}, {"year": 1994, "Global": 0.548, "SSA": 0.311, "S. Asia": 0.351, "SE Asia": 0.506, "Lat. Am.": 0.529, "High-income": 0.777, "C/E Europe": 0.663, "N. Africa/ME": 0.478}, {"year": 1995, "Global": 0.552, "SSA": 0.314, "S. Asia": 0.358, "SE Asia": 0.515, "Lat. Am.": 0.534, "High-income": 0.781, "C/E Europe": 0.667, "N. Africa/ME": 0.486}, {"year": 1996, "Global": 0.556, "SSA": 0.317, "S. Asia": 0.364, "SE Asia": 0.524, "Lat. Am.": 0.539, "High-income": 0.784, "C/E Europe": 0.671, "N. Africa/ME": 0.494}, {"year": 1997, "Global": 0.561, "SSA": 0.32, "S. Asia": 0.371, "SE Asia": 0.533, "Lat. Am.": 0.544, "High-income": 0.787, "C/E Europe": 0.675, "N. Africa/ME": 0.502}, {"year": 1998, "Global": 0.565, "SSA": 0.324, "S. Asia": 0.378, "SE Asia": 0.54, "Lat. Am.": 0.549, "High-income": 0.79, "C/E Europe": 0.678, "N. Africa/ME": 0.51}, {"year": 1999, "Global": 0.569, "SSA": 0.327, "S. Asia": 0.384, "SE Asia": 0.547, "Lat. Am.": 0.555, "High-income": 0.793, "C/E Europe": 0.682, "N. Africa/ME": 0.518}, {"year": 2000, "Global": 0.573, "SSA": 0.331, "S. Asia": 0.391, "SE Asia": 0.554, "Lat. Am.": 0.56, "High-income": 0.796, "C/E Europe": 0.686, "N. Africa/ME": 0.527}, {"year": 2001, "Global": 0.577, "SSA": 0.335, "S. Asia": 0.397, "SE Asia": 0.559, "Lat. Am.": 0.566, "High-income": 0.8, "C/E Europe": 0.69, "N. Africa/ME": 0.535}, {"year": 2002, "Global": 0.581, "SSA": 0.34, "S. Asia": 0.403, "SE Asia": 0.565, "Lat. Am.": 0.571, "High-income": 0.803, "C/E Europe": 0.694, "N. Africa/ME": 0.543}, {"year": 2003, "Global": 0.585, "SSA": 0.344, "S. Asia": 0.408, "SE Asia": 0.571, "Lat. Am.": 0.576, "High-income": 0.806, "C/E Europe": 0.699, "N. Africa/ME": 0.55}, {"year": 2004, "Global": 0.59, "SSA": 0.349, "S. Asia": 0.415, "SE Asia": 0.578, "Lat. Am.": 0.582, "High-income": 0.808, "C/E Europe": 0.705, "N. Africa/ME": 0.558}, {"year": 2005, "Global": 0.594, "SSA": 0.355, "S. Asia": 0.422, "SE Asia": 0.586, "Lat. Am.": 0.587, "High-income": 0.81, "C/E Europe": 0.711, "N. Africa/ME": 0.565}, {"year": 2006, "Global": 0.599, "SSA": 0.361, "S. Asia": 0.429, "SE Asia": 0.594, "Lat. Am.": 0.592, "High-income": 0.812, "C/E Europe": 0.716, "N. Africa/ME": 0.573}, {"year": 2007, "Global": 0.604, "SSA": 0.367, "S. Asia": 0.437, "SE Asia": 0.603, "Lat. Am.": 0.598, "High-income": 0.814, "C/E Europe": 0.721, "N. Africa/ME": 0.58}, {"year": 2008, "Global": 0.608, "SSA": 0.374, "S. Asia": 0.444, "SE Asia": 0.611, "Lat. Am.": 0.603, "High-income": 0.817, "C/E Europe": 0.726, "N. Africa/ME": 0.588}, {"year": 2009, "Global": 0.613, "SSA": 0.38, "S. Asia": 0.453, "SE Asia": 0.619, "Lat. Am.": 0.608, "High-income": 0.821, "C/E Europe": 0.731, "N. Africa/ME": 0.594}, {"year": 2010, "Global": 0.618, "SSA": 0.387, "S. Asia": 0.462, "SE Asia": 0.628, "Lat. Am.": 0.613, "High-income": 0.824, "C/E Europe": 0.735, "N. Africa/ME": 0.599}, {"year": 2011, "Global": 0.623, "SSA": 0.394, "S. Asia": 0.471, "SE Asia": 0.636, "Lat. Am.": 0.619, "High-income": 0.828, "C/E Europe": 0.739, "N. Africa/ME": 0.605}, {"year": 2012, "Global": 0.627, "SSA": 0.401, "S. Asia": 0.481, "SE Asia": 0.641, "Lat. Am.": 0.624, "High-income": 0.831, "C/E Europe": 0.742, "N. Africa/ME": 0.611}, {"year": 2013, "Global": 0.631, "SSA": 0.408, "S. Asia": 0.492, "SE Asia": 0.646, "Lat. Am.": 0.63, "High-income": 0.834, "C/E Europe": 0.746, "N. Africa/ME": 0.616}, {"year": 2014, "Global": 0.635, "SSA": 0.415, "S. Asia": 0.503, "SE Asia": 0.65, "Lat. Am.": 0.635, "High-income": 0.837, "C/E Europe": 0.749, "N. Africa/ME": 0.622}, {"year": 2015, "Global": 0.639, "SSA": 0.422, "S. Asia": 0.514, "SE Asia": 0.653, "Lat. Am.": 0.64, "High-income": 0.84, "C/E Europe": 0.752, "N. Africa/ME": 0.628}, {"year": 2016, "Global": 0.644, "SSA": 0.429, "S. Asia": 0.525, "SE Asia": 0.657, "Lat. Am.": 0.644, "High-income": 0.844, "C/E Europe": 0.755, "N. Africa/ME": 0.635}, {"year": 2017, "Global": 0.649, "SSA": 0.435, "S. Asia": 0.536, "SE Asia": 0.664, "Lat. Am.": 0.649, "High-income": 0.847, "C/E Europe": 0.758, "N. Africa/ME": 0.642}, {"year": 2018, "Global": 0.655, "SSA": 0.442, "S. Asia": 0.546, "SE Asia": 0.672, "Lat. Am.": 0.654, "High-income": 0.851, "C/E Europe": 0.762, "N. Africa/ME": 0.649}, {"year": 2019, "Global": 0.661, "SSA": 0.449, "S. Asia": 0.555, "SE Asia": 0.68, "Lat. Am.": 0.658, "High-income": 0.855, "C/E Europe": 0.765, "N. Africa/ME": 0.656}, {"year": 2020, "Global": 0.666, "SSA": 0.455, "S. Asia": 0.562, "SE Asia": 0.687, "Lat. Am.": 0.662, "High-income": 0.858, "C/E Europe": 0.768, "N. Africa/ME": 0.662}, {"year": 2021, "Global": 0.671, "SSA": 0.461, "S. Asia": 0.57, "SE Asia": 0.694, "Lat. Am.": 0.666, "High-income": 0.861, "C/E Europe": 0.771, "N. Africa/ME": 0.669}];
+const HEAT=[{"year": 2000, "LowSDI": 6.0, "MedSDI": 1.4, "HighSDI": 7.3}, {"year": 2001, "LowSDI": 7.1, "MedSDI": 1.8, "HighSDI": 7.4}, {"year": 2002, "LowSDI": 8.2, "MedSDI": 2.2, "HighSDI": 8.2}, {"year": 2003, "LowSDI": 8.3, "MedSDI": 2.3, "HighSDI": 8.2}, {"year": 2004, "LowSDI": 7.7, "MedSDI": 1.6, "HighSDI": 7.1}, {"year": 2005, "LowSDI": 10.3, "MedSDI": 2.6, "HighSDI": 7.9}, {"year": 2006, "LowSDI": 8.3, "MedSDI": 2.3, "HighSDI": 9.3}, {"year": 2007, "LowSDI": 8.6, "MedSDI": 2.1, "HighSDI": 9.5}, {"year": 2008, "LowSDI": 6.4, "MedSDI": 1.7, "HighSDI": 8.0}, {"year": 2009, "LowSDI": 9.6, "MedSDI": 2.3, "HighSDI": 8.4}, {"year": 2010, "LowSDI": 15.0, "MedSDI": 4.3, "HighSDI": 10.3}, {"year": 2011, "LowSDI": 9.1, "MedSDI": 2.0, "HighSDI": 8.8}, {"year": 2012, "LowSDI": 8.7, "MedSDI": 2.2, "HighSDI": 8.9}, {"year": 2013, "LowSDI": 10.0, "MedSDI": 2.2, "HighSDI": 7.0}, {"year": 2014, "LowSDI": 10.5, "MedSDI": 2.9, "HighSDI": 9.1}, {"year": 2015, "LowSDI": 11.4, "MedSDI": 3.9, "HighSDI": 10.2}, {"year": 2016, "LowSDI": 15.2, "MedSDI": 4.6, "HighSDI": 9.3}, {"year": 2017, "LowSDI": 13.4, "MedSDI": 3.7, "HighSDI": 10.4}, {"year": 2018, "LowSDI": 10.4, "MedSDI": 2.6, "HighSDI": 10.3}, {"year": 2019, "LowSDI": 14.6, "MedSDI": 4.7, "HighSDI": 11.1}, {"year": 2020, "LowSDI": 14.3, "MedSDI": 4.3, "HighSDI": 10.1}];
+const REG={
+  comm:{slope:-559.97,intercept:493.26,r2:0.613,sd:77.64},
+  ncd:{slope:194.88,intercept:93.59,r2:0.285},
+  inj:{slope:-51.6,intercept:69.06,r2:0.302}
+};
+const Q={labels:["Q1 Very Low", "Q2 Low", "Q3 Medium", "Q4 High", "Q5 Very High"],comm:[290.4, 162.7, 102.7, 69.8, 31.5],ncd:[170.7, 190.1, 216.9, 270.5, 249.2],inj:[50.7, 40.0, 32.8, 28.9, 26.1]};
+const CL={labels:["C0 Low SDI", "C1 Mid-Low", "C2 Mid-High", "C3 High SDI"],counts:[28, 56, 40, 62],comm:[368.36, 147.63, 76.99, 47.42],ncd:[174.13, 181.35, 317.9, 210.13],inj:[59.76, 38.9, 33.25, 23.81]};
+const RK=["Global", "SSA", "S. Asia", "SE Asia", "Lat. Am.", "High-income", "C/E Europe", "N. Africa/ME"];
+const RC=['#8b949e','#f87171','#fb923c','#4ade80','#fbbf24','#60a5fa','#a78bfa','#34d399'];
+const CC={comm:'#f87171',ncd:'#60a5fa',inj:'#4ade80',amb:'#fbbf24',cl:['#f87171','#fb923c','#4ade80','#60a5fa']};
+const TT=document.getElementById('tt');
+
+function mkLine(m,b,x0=0.18,x1=0.96){return [{x:x0,y:m*x0+b},{x:x1,y:m*x1+b}]}
+
+function grids(){return {x:{grid:{color:'rgba(48,54,61,.6)'},ticks:{color:'#8b949e'}},y:{grid:{color:'rgba(48,54,61,.6)'},ticks:{color:'#8b949e'}}}}
+function ax(xl,yl,extra={}){return {title:{display:true,text:xl,color:'#8b949e',font:{size:11}},grid:{color:'rgba(48,54,61,.6)'},ticks:{color:'#8b949e'},...extra}}
+
+function ttFn(fn){
+  return (ctx)=>{
+    const {chart,tooltip}=ctx;
+    if(tooltip.opacity===0){TT.style.display='none';return;}
+    const pt=tooltip.dataPoints?.[0];if(!pt)return;
+    const html=fn(pt.raw);if(!html)return;
+    TT.innerHTML=html;TT.style.display='block';
+    const r=chart.canvas.getBoundingClientRect();
+    TT.style.left=(r.left+pt.element.x+14)+'px';
+    TT.style.top=(r.top+pt.element.y-36)+'px';
+  };
+}
+
+function base(xl,yl,ttf){
+  return {responsive:true,maintainAspectRatio:false,animation:{duration:350},
+    plugins:{legend:{display:false},tooltip:{enabled:false,external:ttf?ttFn(ttf):undefined}},
+    scales:{x:ax(xl,''),y:ax('',yl)}
+  };
+}
+
+// OVERVIEW — composition
+new Chart(document.getElementById('c-comp'),{type:'bar',
+  data:{labels:Q.labels,datasets:[
+    {label:'Communicable',data:Q.comm,backgroundColor:CC.comm+'bb',stack:'s'},
+    {label:'NCD',data:Q.ncd,backgroundColor:CC.ncd+'bb',stack:'s'},
+    {label:'Injuries',data:Q.inj,backgroundColor:CC.inj+'bb',stack:'s'}
+  ]},
+  options:{...base('SDI Quintile','DALYs per 1,000 population'),
+    scales:{x:{stacked:true,grid:{display:false},ticks:{color:'#8b949e'}},y:{stacked:true,grid:{color:'rgba(48,54,61,.6)'},ticks:{color:'#8b949e'}}}
+  }
+});
+
+// OVERVIEW — histogram
+(()=>{
+  const rates=DATA.map(d=>d.ar),bins=14,mn=150,mx=850,step=(mx-mn)/bins;
+  const counts=Array(bins).fill(0);
+  rates.forEach(v=>{const i=Math.min(Math.floor((v-mn)/step),bins-1);if(i>=0)counts[i]++;});
+  new Chart(document.getElementById('c-hist'),{type:'bar',
+    data:{labels:counts.map((_,i)=>Math.round(mn+i*step)),datasets:[{label:'n',data:counts,backgroundColor:CC.ncd+'99',borderColor:CC.ncd,borderWidth:1}]},
+    options:{...base('All-cause rate (DALYs/1k)','Countries'),
+      scales:{x:{grid:{display:false},ticks:{color:'#8b949e',maxTicksLimit:8}},y:{grid:{color:'rgba(48,54,61,.6)'},ticks:{color:'#8b949e'}}}
+    }
+  });
+})();
+
+// OVERVIEW — all-cause scatter
+new Chart(document.getElementById('c-all'),{type:'scatter',
+  data:{datasets:[{label:'c',data:DATA.map(d=>({'x':d.s,'y':d.ar,'c':d.c})),backgroundColor:CC.ncd+'77',pointRadius:3.5}]},
+  options:{...base('SDI','All-cause DALYs/1k',r=>`<b>${r.c}</b><br>SDI ${r.x}<br>Total ${Math.round(r.y)} DALYs/1k`),
+    scales:{x:{...ax('SDI',''),min:0.15,max:1.0},y:{...ax('','All-cause DALYs/1k'),min:100,max:880}}
+  }
+});
+
+// REGRESSION — comm scatter
+new Chart(document.getElementById('c-rc'),{type:'scatter',
+  data:{datasets:[
+    {label:'c',data:DATA.map(d=>({'x':d.s,'y':d.cr,'c':d.c})),backgroundColor:CC.comm+'88',pointRadius:4},
+    {type:'line',data:mkLine(REG.comm.slope,REG.comm.intercept),borderColor:'#e6edf380',borderWidth:1.5,borderDash:[5,4],pointRadius:0,fill:false}
+  ]},
+  options:{...base('SDI','Communicable DALYs/1k',r=>r.c?`<b>${r.c}</b><br>SDI ${r.x}<br>Comm ${Math.round(r.y)}`:null),
+    scales:{x:{...ax('SDI',''),min:0.15,max:1.0},y:{...ax('','Communicable DALYs/1k'),min:0,max:680}}
+  }
+});
+
+// REGRESSION — ncd scatter
+new Chart(document.getElementById('c-rn'),{type:'scatter',
+  data:{datasets:[
+    {label:'c',data:DATA.map(d=>({'x':d.s,'y':d.nr,'c':d.c})),backgroundColor:CC.ncd+'88',pointRadius:4},
+    {type:'line',data:mkLine(REG.ncd.slope,REG.ncd.intercept),borderColor:'#e6edf380',borderWidth:1.5,borderDash:[5,4],pointRadius:0,fill:false}
+  ]},
+  options:{...base('SDI','NCD DALYs/1k',r=>r.c?`<b>${r.c}</b><br>SDI ${r.x}<br>NCD ${Math.round(r.y)}`:null),
+    scales:{x:{...ax('SDI',''),min:0.15,max:1.0},y:{...ax('','NCD DALYs/1k'),min:50,max:430}}
+  }
+});
+
+// REGRESSION — residual bar
+(()=>{
+  const sorted=[...DATA].sort((a,b)=>a.s-b.s);
+  new Chart(document.getElementById('c-res'),{type:'bar',
+    data:{labels:sorted.map(d=>d.iso),datasets:[{label:'ε',data:sorted.map(d=>d.re),backgroundColor:sorted.map(d=>d.re>0?CC.comm+'bb':CC.ncd+'bb'),borderWidth:0}]},
+    options:{...base('Countries sorted by SDI','ε = y − ŷ (DALYs/1k)'),
+      scales:{x:{display:false},y:{grid:{color:'rgba(48,54,61,.6)'},ticks:{color:'#8b949e'}}}
+    }
+  });
+})();
+
+// CLUSTERING — scatter
+new Chart(document.getElementById('c-cls'),{type:'scatter',
+  data:{datasets:[0,1,2,3].map(ci=>({'label':CL.labels[ci],
+    data:DATA.filter(d=>d.cl===ci).map(d=>({'x':d.s,'y':d.cr,'c':d.c})),
+    backgroundColor:CC.cl[ci]+'cc',pointRadius:5,pointHoverRadius:7
+  })) },
+  options:{...base('SDI','Communicable DALYs/1k',r=>`<b>${r.c}</b><br>SDI ${r.x}<br>Comm ${Math.round(r.y)} DALYs/1k`),
+    scales:{x:{...ax('SDI',''),min:0.15,max:1.0},y:{...ax('','Communicable DALYs/1k'),min:0,max:680}}
+  }
+});
+
+// CLUSTERING — profile bar
+new Chart(document.getElementById('c-clb'),{type:'bar',
+  data:{labels:CL.labels,datasets:[
+    {label:'Communicable',data:CL.comm,backgroundColor:CC.comm+'bb',stack:'s'},
+    {label:'NCD',data:CL.ncd,backgroundColor:CC.ncd+'bb',stack:'s'},
+    {label:'Injuries',data:CL.inj,backgroundColor:CC.inj+'bb',stack:'s'}
+  ]},
+  options:{...base('Cluster','Mean DALYs/1k'),
+    scales:{x:{stacked:true,grid:{display:false},ticks:{color:'#8b949e'}},y:{stacked:true,grid:{color:'rgba(48,54,61,.6)'},ticks:{color:'#8b949e'}}}
+  }
+});
+
+// ANOMALY — scatter
+(()=>{
+  const m=REG.comm.slope,b=REG.comm.intercept,sd=REG.comm.sd;
+  new Chart(document.getElementById('c-an'),{type:'scatter',
+    data:{datasets:[
+      {label:'Expected',data:DATA.filter(d=>d.an===0).map(d=>({'x':d.s,'y':d.cr,'c':d.c})),backgroundColor:'#6b728077',pointRadius:4},
+      {label:'Under',data:DATA.filter(d=>d.an===1).map(d=>({'x':d.s,'y':d.cr,'c':d.c,'r':d.re})),backgroundColor:CC.comm,pointRadius:7,pointStyle:'triangle'},
+      {label:'Over',data:DATA.filter(d=>d.an===-1).map(d=>({'x':d.s,'y':d.cr,'c':d.c,'r':d.re})),backgroundColor:CC.ncd,pointRadius:7,pointStyle:'triangle'},
+      {type:'line',data:mkLine(m,b),borderColor:'#e6edf366',borderWidth:1.5,borderDash:[6,3],pointRadius:0,fill:false},
+      {type:'line',data:[{x:0.18,y:m*0.18+b+1.5*sd},{x:0.96,y:m*0.96+b+1.5*sd}],borderColor:CC.comm+'55',borderWidth:1,borderDash:[3,5],pointRadius:0,fill:false},
+      {type:'line',data:[{x:0.18,y:m*0.18+b-1.5*sd},{x:0.96,y:m*0.96+b-1.5*sd}],borderColor:CC.ncd+'55',borderWidth:1,borderDash:[3,5],pointRadius:0,fill:false}
+    ]},
+    options:{...base('SDI','Communicable DALYs/1k',r=>r.c?`<b>${r.c}</b><br>SDI ${r.x}<br>Comm ${Math.round(r.y)} DALYs/1k<br>Residual ${(r.r||0)>0?'+':''}${Math.round(r.r||0)}`:null),
+      scales:{x:{...ax('SDI',''),min:0.15,max:1.0},y:{...ax('','Communicable DALYs/1k'),min:0,max:680}}
+    }
+  });
+
+  const und=DATA.filter(d=>d.an===1).sort((a,b)=>b.re-a.re);
+  const ovr=DATA.filter(d=>d.an===-1).sort((a,b)=>a.re-b.re);
+  const mkT=(data,cls,title)=>`<div class="at"><div class="ath ${cls}">${title}</div>
+    ${data.map(d=>`<div class="ar"><span class="ac">${d.c}</span><span class="av">SDI ${d.s} · ${Math.round(d.cr)} DALYs/1k · ${d.re>0?'+':''}${Math.round(d.re)}</span></div>`).join('')}</div>`;
+  document.getElementById('atabs').innerHTML=
+    mkT(und,'er',`▲ ${und.length} underperformers — burden higher than SDI predicts`)+
+    mkT(ovr,'ok',`▽ ${ovr.length} overperformers — burden lower than SDI predicts`);
+})();
+
+// CLIMATE — heat trend
+new Chart(document.getElementById('c-ht'),{type:'line',
+  data:{labels:HEAT.map(d=>d.year),datasets:[
+    {label:'Low SDI',data:HEAT.map(d=>d.LowSDI),borderColor:CC.comm,tension:0.3,pointRadius:3,borderWidth:2,fill:false},
+    {label:'Med SDI',data:HEAT.map(d=>d.MedSDI),borderColor:CC.amb,tension:0.3,pointRadius:3,borderWidth:2,fill:false},
+    {label:'High SDI',data:HEAT.map(d=>d.HighSDI),borderColor:CC.ncd,tension:0.3,pointRadius:3,borderWidth:2,fill:false}
+  ]},
+  options:{...base('Year','Mean days HI ≥ 35°C'),
+    scales:{x:{grid:{color:'rgba(48,54,61,.6)'},ticks:{color:'#8b949e'}},y:{min:0,grid:{color:'rgba(48,54,61,.6)'},ticks:{color:'#8b949e'}}}
+  }
+});
+
+// CLIMATE — SDI regional trends
+new Chart(document.getElementById('c-sdi'),{type:'line',
+  data:{labels:SDI_TREND.map(d=>d.year),datasets:RK.map((k,i)=>
+    ({label:k,data:SDI_TREND.map(d=>d[k]),borderColor:RC[i],tension:0.2,pointRadius:0,borderWidth:2,fill:false})
+  )},
+  options:{responsive:true,maintainAspectRatio:false,animation:{duration:350},
+    plugins:{legend:{display:true,position:'bottom',labels:{color:'#8b949e',font:{size:11},boxWidth:10,padding:8}},tooltip:{mode:'index',intersect:false}},
+    scales:{x:{grid:{color:'rgba(48,54,61,.6)'},ticks:{color:'#8b949e',maxTicksLimit:8}},y:{min:0.25,max:0.9,grid:{color:'rgba(48,54,61,.6)'},ticks:{color:'#8b949e'}}}
+  }
+});
+
+// NAV
+function show(el,id){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('pane-'+id).classList.add('active');
+  el.classList.add('active');
+  TT.style.display='none';
+}
+document.addEventListener('mousemove',e=>{
+  if(TT.style.display==='block'){TT.style.left=(e.clientX+14)+'px';TT.style.top=(e.clientY-36)+'px';}
+});
+</script>
+</body>
+</html>

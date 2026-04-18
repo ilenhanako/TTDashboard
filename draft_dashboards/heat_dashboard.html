@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>APAC Heat & Disease Burden Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:       #0d1117;
+    --surface:  #161b22;
+    --surface2: #1f2933;
+    --border:   #30363d;
+    --text:     #e6edf3;
+    --muted:    #7d8590;
+    --heat1:    #ff6b35;
+    --heat2:    #f7c59f;
+    --asean:    #38bdf8;
+    --nonasean: #a78bfa;
+    --green:    #4ade80;
+    --red:      #f87171;
+    --accent:   #ff6b35;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: 60px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo {
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--heat1);
+    white-space: nowrap;
+  }
+  .logo span { color: var(--text); }
+  .header-meta {
+    font-size: 0.72rem;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    border-left: 1px solid var(--border);
+    padding-left: 1.5rem;
+    line-height: 1.6;
+  }
+  .header-badge {
+    margin-left: auto;
+    font-size: 0.7rem;
+    font-family: 'DM Mono', monospace;
+    background: rgba(255,107,53,0.12);
+    color: var(--heat1);
+    border: 1px solid rgba(255,107,53,0.3);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    padding: 0 2rem;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    background: none; border: none; cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--muted);
+    padding: 0.85rem 1.4rem;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--heat1); border-bottom-color: var(--heat1); }
+
+  /* ── Layout ── */
+  .tab-panel { display: none; padding: 1.5rem 2rem; }
+  .tab-panel.active { display: block; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .col-span-2 { grid-column: span 2; }
+  .col-span-3 { grid-column: span 3; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+  .card-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .card-title .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); display: inline-block;
+  }
+
+  /* ── KPI tiles ── */
+  .kpi { text-align: center; padding: 1rem; }
+  .kpi-val {
+    font-size: 2rem; font-weight: 800; line-height: 1;
+    color: var(--heat1);
+    font-family: 'DM Mono', monospace;
+  }
+  .kpi-label { font-size: 0.72rem; color: var(--muted); margin-top: 0.4rem; }
+  .kpi-sub { font-size: 0.7rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  /* ── Controls ── */
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 0.75rem;
+    margin-bottom: 1.2rem; align-items: center;
+  }
+  .ctrl-label { font-size: 0.76rem; color: var(--muted); font-weight: 500; }
+  select, input[type=range] {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+  select:focus { outline: 1px solid var(--accent); }
+  .toggle-group {
+    display: flex; gap: 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
+  }
+  .toggle-btn {
+    background: none; border: none; cursor: pointer;
+    font-family: 'Outfit', sans-serif; font-size: 0.78rem;
+    color: var(--muted); padding: 5px 12px;
+    transition: all 0.15s;
+  }
+  .toggle-btn.active { background: var(--heat1); color: #000; font-weight: 600; }
+  .toggle-btn:not(.active):hover { background: var(--surface2); color: var(--text); }
+
+  /* Country checkboxes */
+  .country-checks {
+    display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem;
+  }
+  .country-check {
+    display: flex; align-items: center; gap: 0.3rem;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 3px 10px; cursor: pointer;
+    font-size: 0.73rem; transition: all 0.15s; user-select: none;
+  }
+  .country-check input { display: none; }
+  .country-check.checked { border-color: var(--accent); background: rgba(255,107,53,0.1); color: var(--heat1); }
+  .country-check .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--muted); flex-shrink: 0;
+  }
+  .country-check.checked .dot { background: var(--accent); }
+
+  /* ── Chart wrapper ── */
+  .chart-wrap { position: relative; }
+  canvas { max-width: 100%; }
+
+  /* ── Rank table ── */
+  .rank-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  .rank-table th {
+    text-align: left; padding: 8px 12px;
+    font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .rank-table td { padding: 7px 12px; border-bottom: 1px solid rgba(48,54,61,0.5); }
+  .rank-table tr:hover td { background: rgba(255,255,255,0.03); }
+  .heat-bar {
+    display: inline-block; height: 6px; border-radius: 3px;
+    background: linear-gradient(90deg, var(--heat1), #ff9f00);
+    vertical-align: middle; margin-left: 6px;
+  }
+  .badge {
+    font-size: 0.65rem; padding: 2px 7px; border-radius: 10px;
+    font-family: 'DM Mono', monospace; font-weight: 500;
+  }
+  .badge-asean { background: rgba(56,189,248,0.12); color: var(--asean); border: 1px solid rgba(56,189,248,0.25); }
+  .badge-non { background: rgba(167,139,250,0.12); color: var(--nonasean); border: 1px solid rgba(167,139,250,0.25); }
+
+  /* ── Scatter tooltip ── */
+  .scatter-info {
+    font-size: 0.75rem; color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-top: 0.5rem;
+    line-height: 1.5;
+  }
+
+  /* ── Section header ── */
+  .section-header {
+    margin-bottom: 1.2rem;
+  }
+  .section-header h2 {
+    font-size: 1.05rem; font-weight: 700;
+  }
+  .section-header p {
+    font-size: 0.78rem; color: var(--muted); margin-top: 0.25rem;
+  }
+
+  /* ── Comparison bars (ASEAN tab) ── */
+  .compare-row {
+    display: flex; align-items: center; gap: 1rem; margin-bottom: 0.6rem;
+  }
+  .compare-label { font-size: 0.75rem; width: 120px; flex-shrink: 0; }
+  .compare-bar-wrap { flex: 1; position: relative; height: 20px; }
+  .compare-bar {
+    height: 100%; border-radius: 3px;
+    display: flex; align-items: center; padding-left: 6px;
+    font-size: 0.68rem; font-family: 'DM Mono', monospace;
+    white-space: nowrap; overflow: hidden;
+    min-width: 2px;
+  }
+  .compare-val { font-size: 0.7rem; font-family: 'DM Mono', monospace; width: 55px; text-align: right; flex-shrink: 0; }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .col-span-2, .col-span-3 { grid-column: span 1; }
+    .tab-panel { padding: 1rem; }
+  }
+
+  /* ── Loading state ── */
+  .loading { color: var(--muted); font-size: 0.8rem; padding: 2rem; text-align: center; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">HEAT<span>×</span>DALY</div>
+  <div class="header-meta">
+    Heat Stress Exposure × Disease Burden · Asia-Pacific 15<br>
+    WB ESG Heat Index 35 (1970–2020) · WHO GHE DALY (2021)
+  </div>
+  <div class="header-badge">DRAFT · CDS 2026</div>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" onclick="switchTab('overview')">① Overview</button>
+  <button class="tab-btn" onclick="switchTab('trends')">② Heat Trends</button>
+  <button class="tab-btn" onclick="switchTab('daly')">③ DALY Explorer</button>
+  <button class="tab-btn" onclick="switchTab('asean')">④ ASEAN vs Non-ASEAN</button>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════
+     TAB 1: OVERVIEW
+     ══════════════════════════════════════════════════════════ -->
+<div id="tab-overview" class="tab-panel active">
+
+  <div class="section-header">
+    <h2>Regional Overview — Heat Exposure & Disease Burden</h2>
+    <p>Heat Index 35 = annual days population is exposed to a heat index ≥ 35°C. DALY per 100k from WHO Global Health Estimates 2021.</p>
+  </div>
+
+  <!-- KPI row -->
+  <div class="grid-4" style="margin-bottom:1.2rem">
+    <div class="card kpi">
+      <div class="kpi-val" id="kpi-max-heat">–</div>
+      <div class="kpi-label">Max Heat Index (2020)</div>
+      <div class="kpi-sub" id="kpi-max-country">–</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-val" id="kpi-avg-heat" style="color:var(--heat2)">–</div>
+      <div class="kpi-label">APAC-15 Avg Heat (2020)</div>
+      <div class="kpi-sub">days exposed ≥ HI35</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-val" id="kpi-max-daly" style="color:var(--red)">–</div>
+      <div class="kpi-label">Highest DALY Burden</div>
+      <div class="kpi-sub" id="kpi-max-daly-country">per 100k</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-val" id="kpi-min-daly" style="color:var(--green)">–</div>
+      <div class="kpi-label">Lowest DALY Burden</div>
+      <div class="kpi-sub" id="kpi-min-daly-country">per 100k</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Heat 2020 bar -->
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Heat Index 2020 — by Country</div>
+      <div class="chart-wrap" style="height:320px">
+        <canvas id="chart-heat-bar"></canvas>
+      </div>
+    </div>
+
+    <!-- DALY All Causes bar -->
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--red)"></span>DALY All Causes per 100k — 2021</div>
+      <div class="chart-wrap" style="height:320px">
+        <canvas id="chart-daly-bar"></canvas>
+      </div>
+    </div>
+
+    <!-- Scatter: heat vs daly -->
+    <div class="card col-span-2">
+      <div class="card-title"><span class="dot" style="background:var(--asean)"></span>Heat Exposure vs Disease Burden — Scatter</div>
+      <div class="controls">
+        <span class="ctrl-label">DALY cause:</span>
+        <select id="scatter-cause" onchange="renderScatter()"></select>
+      </div>
+      <div class="chart-wrap" style="height:300px">
+        <canvas id="chart-scatter"></canvas>
+      </div>
+      <div class="scatter-info">
+        Each point = one country. X-axis = Heat Index 35 days in 2020. Y-axis = DALY per 100 000 population (2021).<br>
+        🔵 ASEAN members &nbsp;|&nbsp; 🟣 Non-ASEAN (Bangladesh, China, India, Japan, Republic of Korea)
+      </div>
+    </div>
+  </div>
+
+  <!-- Country ranking table -->
+  <div class="card" style="margin-top:1.2rem">
+    <div class="card-title"><span class="dot" style="background:var(--green)"></span>Country Summary Table</div>
+    <table class="rank-table" id="summary-table"></table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     TAB 2: HEAT TRENDS
+     ══════════════════════════════════════════════════════════ -->
+<div id="tab-trends" class="tab-panel">
+
+  <div class="section-header">
+    <h2>Heat Index Trends — 1970 to 2020</h2>
+    <p>Annual days with heat index ≥ 35°C. Increases signal growing population exposure to dangerous heat stress.</p>
+  </div>
+
+  <div class="card" style="margin-bottom:1.2rem">
+    <div class="card-title"><span class="dot"></span>Select Countries to Compare</div>
+    <div class="country-checks" id="country-checks"></div>
+    <div class="controls">
+      <span class="ctrl-label">Group:</span>
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="grp-all" onclick="selectGroup('all')">All 15</button>
+        <button class="toggle-btn" id="grp-asean" onclick="selectGroup('ASEAN')">ASEAN</button>
+        <button class="toggle-btn" id="grp-non" onclick="selectGroup('Non-ASEAN')">Non-ASEAN</button>
+      </div>
+      <span class="ctrl-label" style="margin-left:1rem">Smoothing:</span>
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="smooth-off" onclick="setSmooth(false)">Raw</button>
+        <button class="toggle-btn" id="smooth-on" onclick="setSmooth(true)">5-yr MA</button>
+      </div>
+    </div>
+    <div class="chart-wrap" style="height:380px">
+      <canvas id="chart-trends"></canvas>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Decade Averages</div>
+      <div class="chart-wrap" style="height:240px">
+        <canvas id="chart-decade"></canvas>
+      </div>
+    </div>
+    <div class="card col-span-2">
+      <div class="card-title"><span class="dot" style="background:var(--heat2)"></span>Heat Index Growth Rate (1980–2020 change)</div>
+      <div class="chart-wrap" style="height:240px">
+        <canvas id="chart-growth"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     TAB 3: DALY EXPLORER
+     ══════════════════════════════════════════════════════════ -->
+<div id="tab-daly" class="tab-panel">
+
+  <div class="section-header">
+    <h2>DALY Explorer — Disease Burden by Country & Category</h2>
+    <p>Disability-Adjusted Life Years per 100 000 population. WHO Global Health Estimates 2021.</p>
+  </div>
+
+  <div class="controls">
+    <span class="ctrl-label">View:</span>
+    <div class="toggle-group">
+      <button class="toggle-btn active" id="daly-view-all" onclick="setDalyView('all')">All Countries</button>
+      <button class="toggle-btn" id="daly-view-asean" onclick="setDalyView('ASEAN')">ASEAN</button>
+      <button class="toggle-btn" id="daly-view-non" onclick="setDalyView('Non-ASEAN')">Non-ASEAN</button>
+    </div>
+    <span class="ctrl-label" style="margin-left:1rem">Show:</span>
+    <select id="daly-mode" onchange="renderDalyStacked()">
+      <option value="per100k">Per 100 000</option>
+      <option value="total">Total DALYs (000)</option>
+    </select>
+  </div>
+
+  <div class="card" style="margin-bottom:1.2rem">
+    <div class="card-title"><span class="dot"></span>Disease Burden by Country — Stacked by Category</div>
+    <div class="chart-wrap" style="height:360px">
+      <canvas id="chart-daly-stacked"></canvas>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--red)"></span>Select Country — DALY Breakdown</div>
+      <div class="controls">
+        <select id="daly-country-sel" onchange="renderDalyDonut()">
+          <option value="BGD">Bangladesh</option>
+          <option value="BRN">Brunei</option>
+          <option value="KHM">Cambodia</option>
+          <option value="CHN">China</option>
+          <option value="IND">India</option>
+          <option value="IDN">Indonesia</option>
+          <option value="JPN">Japan</option>
+          <option value="LAO">Lao PDR</option>
+          <option value="MYS">Malaysia</option>
+          <option value="MMR">Myanmar</option>
+          <option value="PHL">Philippines</option>
+          <option value="THA">Thailand</option>
+          <option value="KOR">Republic of Korea</option>
+          <option value="SGP">Singapore</option>
+          <option value="VNM">Viet Nam</option>
+        </select>
+      </div>
+      <div class="chart-wrap" style="height:300px">
+        <canvas id="chart-daly-donut"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--asean)"></span>Heat-Correlated Causes — Scatter</div>
+      <div class="controls">
+        <span class="ctrl-label">Cause:</span>
+        <select id="daly-scatter2-cause" onchange="renderScatter2()"></select>
+      </div>
+      <div class="chart-wrap" style="height:300px">
+        <canvas id="chart-scatter2"></canvas>
+      </div>
+      <div class="scatter-info">
+        Causes potentially linked to heat: respiratory infections, diarrhoeal diseases, cardiovascular, dengue.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     TAB 4: ASEAN vs Non-ASEAN
+     ══════════════════════════════════════════════════════════ -->
+<div id="tab-asean" class="tab-panel">
+
+  <div class="section-header">
+    <h2>ASEAN vs Non-ASEAN Comparison</h2>
+    <p>ASEAN members: Brunei, Cambodia, Indonesia, Lao PDR, Malaysia, Myanmar, Philippines, Singapore, Thailand, Viet Nam<br>
+    Non-ASEAN (APAC): Bangladesh, China, India, Japan, Republic of Korea</p>
+  </div>
+
+  <!-- Group KPI cards -->
+  <div class="grid-2" style="margin-bottom:1.2rem">
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--asean)"></span>ASEAN — Group Summary</div>
+      <div class="grid-2" id="asean-kpis"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--nonasean)"></span>Non-ASEAN — Group Summary</div>
+      <div class="grid-2" id="nonasean-kpis"></div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:1.2rem">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Heat Index Distribution — Box Approximation</div>
+      <div class="chart-wrap" style="height:280px">
+        <canvas id="chart-box"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--red)"></span>Heat Trend by Group (average)</div>
+      <div class="chart-wrap" style="height:280px">
+        <canvas id="chart-group-trend"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.2rem">
+    <div class="card-title"><span class="dot" style="background:var(--green)"></span>DALY Comparison by Cause — ASEAN vs Non-ASEAN (group average per 100k)</div>
+    <div class="chart-wrap" style="height:300px">
+      <canvas id="chart-group-daly"></canvas>
+    </div>
+  </div>
+
+  <!-- Horizontal comparison bars -->
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:var(--heat2)"></span>Country-by-Country Ranking — Heat Index 2020</div>
+    <div id="compare-bars" style="margin-top:0.5rem"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     EMBEDDED DATA + JAVASCRIPT
+     ══════════════════════════════════════════════════════════ -->
+<script>
+// ── Embedded data ────────────────────────────────────────────────────────────
+const DATA = {"heat_ts":{"BGD":{"years":[1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],"values":[40.26,11.45,50.67,33.64,35.34,29.02,19.98,28.32,30.66,64.14,41.01,25.43,43.0,48.26,28.37,29.77,38.42,53.87,42.74,49.61,38.06,42.81,45.16,38.67,45.4,61.52,54.69,44.97,77.26,46.11,45.64,50.76,45.14,61.77,56.73,71.21,66.7,68.85,58.42,83.51,102.36,64.62,91.67,76.77,91.52,80.33,101.38,98.65,87.56,107.43,102.77],"country":"Bangladesh","group":"Non-ASEAN"},"BRN":{"years":[1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],"values":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.15,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.15,0.29,4.33,0.0,0.15,0.0,0.44,0.0,0.0,0.0,0.0,0.0,0.0,0.29,0.13,0.0,0.0,0.27,2.18,0.89,3.77,0.53,2.98,2.77,3.35],"country":"Brunei","group":"ASEAN"},"CHN":{"years":[1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],"values":[1.94,2.98,1.9,1.82,1.04,1.91,1.92,2.7,3.13,2.63,1.91,3.48,1.62,2.41,2.1,1.8,1.75,2.05,3.24,2.05,2.93,2.44,2.15,1.82,3.49,3.18,2.23,1.8,4.17,2.07,2.52,2.7,2.49,3.98,2.36,2.58,3.34,2.71,1.81,2.74,3.84,2.25,2.6,4.33,2.51,2.39,4.64,4.55,4.61,4.06,3.96],"country":"China","group":"Non-ASEAN"},"IDN":{"years":[1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],"values":[0.0,0.0,0.0,0.01,0.0,0.0,0.0,0.0,0.01,0.02,0.01,0.0,0.01,0.04,0.0,0.0,0.0,0.06,0.08,0.0,0.06,0.01,0.0,0.01,0.01,0.07,0.04,0.04,2.05,0.02,0.12,0.08,0.23,0.22,0.39,0.19,0.1,0.15,0.03,0.27,1.46,0.2,0.23,0.71,0.59,0.72,2.36,0.8,0.8,1.28,2.28],"country":"Indonesia","group":"ASEAN"},"IND":{"years":[1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],"values":[31.43,14.04,28.97,34.3,25.0,23.86,19.73,22.65,29.04,31.62,29.41,27.5,27.1,33.84,26.13,25.46,24.42,38.93,37.6,27.52,27.59,35.08,28.34,35.59,32.48,36.77,32.67,27.55,50.13,30.57,33.86,33.35,43.69,38.71,37.19,39.46,39.11,41.4,27.91,44.66,52.52,38.28,41.45,40.79,45.04,49.98,59.01,56.82,51.05,59.68,56.3],"country":"India","group":"Non-ASEAN"},"JPN":{"years":[1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],"values":[0.02,0.05,0.01,0.02,0.0,0.0,0.01,0.05,0.06,0.06,0.0,0.02,0.0,0.39,0.16,0.03,0.01,0.09,0.03,0.0,0.48,0.36,0.0,0.0,1.42,0.63,0.28,0.11,0.86,0.01,0.1,0.56,0.23,0.05,0.22,0.07,0.28,0.35,0.5,0.12,1.0,0.2,0.24,1.82,0.4,0.6,0.69,1.55,2.49,1.81,2.33],"country":"Japan","group":"Non-ASEAN"},"KHM":{"years":[1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],"values":[8.87,0.98,9.3,19.54,1.49,4.99,1.98,10.28,10.83,19.49,21.35,11.19,11.83,30.01,7.51,6.27,12.36,26.46,23.05,10.93,25.68,19.14,27.77,17.87,12.33,24.0,12.78,12.55,61.62,5.32,9.3,25.66,32.56,38.21,35.81,32.52,18.99,27.59,13.78,21.06,64.18,17.59,29.92,49.28,47.85,56.67,68.45,46.73,24.78,63.1,63.68],"country":"Cambodia","group":"ASEAN"},"KOR":{"years":[1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],"values":[0.0,0.3,0.02,0.0,0.0,0.02,0.0,0.12,0.5,0.0,0.0,0.03,0.0,1.49,0.22,0.07,0.0,0.0,0.02,0.0,0.35,0.0,0.05,0.0,3.07,0.26,0.14,0.03,0.24,0.0,0.0,0.13,0.0,0.0,0.41,0.06,0.19,0.06,0.0,0.0,0.28,0.0,0.52,2.23,0.13,0.21,1.83,2.84,6.35,0.66,0.44],"country":"Republic of Korea","group":"Non-ASEAN"},"LAO":{"years":[1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],"values":[0.43,0.02,0.19,1.62,0.01,0.43,0.07,0.93,0.3,1.13,1.28,0.25,0.89,3.52,0.47,0.25,0.6,1.53,1.93,0.7,0.98,2.14,1.44,1.25,1.28,1.41,0.2,0.88,6.16,0.24,0.39,2.75,0.82,3.3,1.49,1.78,1.39,2.62,0.87,1.32,7.63,1.05,2.38,3.84,5.66,7.68,8.04,4.53,2.18,10.46,10.76],"country":"Lao PDR","group":"ASEAN"},"MMR":{"years":[1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],"values":[4.83,1.0,6.53,3.65,2.26,2.98,1.61,3.36,5.25,7.59,8.25,3.23,4.33,9.51,2.54,2.45,5.71,8.05,5.2,4.22,2.9,8.15,6.45,6.7,9.9,11.14,6.92,6.39,17.98,6.6,4.7,6.17,5.24,10.54,8.2,15.96,8.6,10.55,6.39,14.63,21.8,7.84,15.35,13.44,20.92,16.8,18.48,16.16,11.26,26.43,24.8],"country":"Myanmar","group":"ASEAN"},"MYS":{"years":[1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],"values":[0.0,0.0,0.0,0.02,0.0,0.0,0.0,0.0,0.02,0.04,0.05,0.0,0.01,0.04,0.0,0.01,0.01,0.1,0.04,0.0,0.11,0.08,0.02,0.0,0.0,0.05,0.05,0.07,2.81,0.01,0.06,0.0,0.2,0.19,0.49,0.16,0.06,0.04,0.0,0.2,0.89,0.17,0.01,0.82,1.13,0.87,4.03,0.63,1.29,1.87,2.78],"country":"Malaysia","group":"ASEAN"},"PHL":{"years":[1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],"values":[0.31,0.01,0.24,1.21,0.12,0.27,0.09,0.33,0.58,0.42,0.39,0.32,0.39,1.87,0.03,0.18,0.47,2.81,3.63,0.99,1.67,2.32,1.17,2.55,1.26,1.61,0.53,0.22,5.55,0.08,0.51,1.22,2.48,2.37,1.83,4.0,2.31,4.28,0.37,1.86,9.13,1.77,1.88,4.83,7.22,5.33,10.89,5.96,4.86,8.96,11.43],"country":"Philippines","group":"ASEAN"},"SGP":{"years":[1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],"values":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,2.0,0.0,2.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,12.0,0.0,0.0,0.0,0.0,0.0,4.0,0.0,0.0,0.0,0.0,0.0,2.0,0.0,0.0,2.0,2.0,0.0,6.0,0.0,1.0,0.0,0.0],"country":"Singapore","group":"ASEAN"},"THA":{"years":[1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],"values":[8.36,2.45,7.62,14.83,1.55,7.36,4.23,9.74,10.49,13.32,18.0,7.09,9.8,25.34,8.13,5.32,8.52,17.91,18.46,10.82,12.8,19.56,18.43,15.1,12.22,19.38,9.72,13.25,44.38,6.95,8.73,18.26,18.46,27.08,20.3,30.55,21.29,24.05,11.2,17.69,46.02,11.61,18.19,24.82,32.27,39.38,48.23,29.0,18.07,46.31,49.43],"country":"Thailand","group":"ASEAN"},"VNM":{"years":[1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],"values":[8.63,4.48,8.02,11.85,5.78,6.45,5.63,12.05,7.94,9.96,9.36,8.67,10.02,16.57,6.85,6.97,8.33,16.4,13.64,7.36,13.09,9.7,12.47,13.07,8.55,11.83,7.65,8.6,26.03,8.8,8.4,12.56,13.91,17.01,11.95,13.07,10.12,14.18,7.74,13.73,25.71,10.13,13.94,17.89,22.4,27.96,28.63,20.53,16.78,33.04,32.38],"country":"Viet Nam","group":"ASEAN"}},"daly":{"BGD":{"causes":[{"cause":"All Causes","daly_per_100k":28.22,"daly_000":47314.95},{"cause":"Communicable, maternal, perinatal and nutritional conditions","daly_per_100k":9.49,"daly_000":15909.74},{"cause":"Infectious and parasitic diseases","daly_per_100k":5.3,"daly_000":8890.0},{"cause":"Tuberculosis","daly_per_100k":0.95,"daly_000":1600.13},{"cause":"Diarrhoeal diseases","daly_per_100k":0.85,"daly_000":1421.39},{"cause":"Malaria","daly_per_100k":0.0,"daly_000":4.85},{"cause":"Dengue","daly_per_100k":0.0,"daly_000":7.31},{"cause":"Respiratory Infectious","daly_per_100k":2.59,"daly_000":4350.58},{"cause":"Noncommunicable diseases","daly_per_100k":7.26,"daly_000":12171.83},{"cause":"Diabetes mellitus","daly_per_100k":0.84,"daly_000":1411.45},{"cause":"Cardiovascular diseases","daly_per_100k":4.24,"daly_000":7101.48},{"cause":"Chronic obstructive pulmonary disease","daly_per_100k":0.0,"daly_000":0.68},{"cause":"Injuries incl War","daly_per_100k":2.29,"daly_000":3840.49}],"country":"Bangladesh","group":"Non-ASEAN"},"BRN":{"causes":[{"cause":"All Causes","daly_per_100k":23.42,"daly_000":105.8},{"cause":"Communicable, maternal, perinatal and nutritional conditions","daly_per_100k":2.71,"daly_000":12.22},{"cause":"Infectious and parasitic diseases","daly_per_100k":1.8,"daly_000":8.12},{"cause":"Tuberculosis","daly_per_100k":0.15,"daly_000":0.66},{"cause":"Diarrhoeal diseases","daly_per_100k":0.05,"daly_000":0.22},{"cause":"Malaria","daly_per_100k":0.0,"daly_000":0.0},{"cause":"Dengue","daly_per_100k":0.0,"daly_000":0.01},{"cause":"Respiratory Infectious","daly_per_100k":0.91,"daly_000":4.12},{"cause":"Noncommunicable diseases","daly_per_100k":32.47,"daly_000":146.69},{"cause":"Diabetes mellitus","daly_per_100k":2.0,"daly_000":9.02},{"cause":"Cardiovascular diseases","daly_per_100k":3.81,"daly_000":17.22},{"cause":"Chronic obstructive pulmonary disease","daly_per_100k":19.32,"daly_000":87.27},{"cause":"Injuries incl War","daly_per_100k":1.74,"daly_000":7.85}],"country":"Brunei","group":"ASEAN"},"CHN":{"causes":[{"cause":"All Causes","daly_per_100k":28.35,"daly_000":404385.23},{"cause":"Communicable, maternal, perinatal and nutritional conditions","daly_per_100k":1.19,"daly_000":16952.77},{"cause":"Infectious and parasitic diseases","daly_per_100k":0.7,"daly_000":10046.93},{"cause":"Tuberculosis","daly_per_100k":0.1,"daly_000":1397.33},{"cause":"Diarrhoeal diseases","daly_per_100k":0.04,"daly_000":508.5},{"cause":"Malaria","daly_per_100k":0.0,"daly_000":0.0},{"cause":"Dengue","daly_per_100k":0.0,"daly_000":0.63},{"cause":"Respiratory Infectious","daly_per_100k":0.33,"daly_000":4745.97},{"cause":"Noncommunicable diseases","daly_per_100k":12.97,"daly_000":185003.84},{"cause":"Diabetes mellitus","daly_per_100k":0.82,"daly_000":11669.85},{"cause":"Cardiovascular diseases","daly_per_100k":6.98,"daly_000":99615.77},{"cause":"Chronic obstructive pulmonary disease","daly_per_100k":0.02,"daly_000":232.48},{"cause":"Injuries incl War","daly_per_100k":2.23,"daly_000":31857.5}],"country":"China","group":"Non-ASEAN"},"IDN":{"causes":[{"cause":"All Causes","daly_per_100k":38.64,"daly_000":106943.51},{"cause":"Communicable, maternal, perinatal and nutritional conditions","daly_per_100k":14.42,"daly_000":39902.73},{"cause":"Infectious and parasitic diseases","daly_per_100k":12.28,"daly_000":33999.22},{"cause":"Tuberculosis","daly_per_100k":1.64,"daly_000":4544.14},{"cause":"Diarrhoeal diseases","daly_per_100k":0.63,"daly_000":1749.34},{"cause":"Malaria","daly_per_100k":0.03,"daly_000":94.44},{"cause":"Dengue","daly_per_100k":0.14,"daly_000":398.16},{"cause":"Respiratory Infectious","daly_per_100k":6.76,"daly_000":18717.83},{"cause":"Noncommunicable diseases","daly_per_100k":10.68,"daly_000":29545.93},{"cause":"Diabetes mellitus","daly_per_100k":0.95,"daly_000":2622.54},{"cause":"Cardiovascular diseases","daly_per_100k":6.71,"daly_000":18571.87},{"cause":"Chronic obstructive pulmonary disease","daly_per_100k":0.1,"daly_000":285.31},{"cause":"Injuries incl War","daly_per_100k":1.87,"daly_000":5167.26}],"country":"Indonesia","group":"ASEAN"},"IND":{"causes":[{"cause":"All Causes","daly_per_100k":41.54,"daly_000":587446.42},{"cause":"Communicable, maternal, perinatal and nutritional conditions","daly_per_100k":16.41,"daly_000":232135.33},{"cause":"Infectious and parasitic diseases","daly_per_100k":12.17,"daly_000":172045.7},{"cause":"Tuberculosis","daly_per_100k":1.02,"daly_000":14468.67},{"cause":"Diarrhoeal diseases","daly_per_100k":1.27,"daly_000":17976.52},{"cause":"Malaria","daly_per_100k":0.04,"daly_000":590.11},{"cause":"Dengue","daly_per_100k":0.06,"daly_000":839.73},{"cause":"Respiratory Infectious","daly_per_100k":7.59,"daly_000":107370.23},{"cause":"Noncommunicable diseases","daly_per_100k":9.06,"daly_000":128153.6},{"cause":"Diabetes mellitus","daly_per_100k":1.01,"daly_000":14314.36},{"cause":"Cardiovascular diseases","daly_per_100k":5.52,"daly_000":78121.37},{"cause":"Chronic obstructive pulmonary disease","daly_per_100k":0.15,"daly_000":2082.31},{"cause":"Injuries incl War","daly_per_100k":2.81,"daly_000":39730.94}],"country":"India","group":"Non-ASEAN"},"JPN":{"causes":[{"cause":"All Causes","daly_per_100k":30.62,"daly_000":38489.04},{"cause":"Communicable, maternal, perinatal and nutritional conditions","daly_per_100k":1.76,"daly_000":2217.29},{"cause":"Infectious and parasitic diseases","daly_per_100k":1.49,"daly_000":1869.67},{"cause":"Tuberculosis","daly_per_100k":0.03,"daly_000":37.01},{"cause":"Diarrhoeal diseases","daly_per_100k":0.09,"daly_000":115.19},{"cause":"Malaria","daly_per_100k":0.0,"daly_000":0.0},{"cause":"Dengue","daly_per_100k":0.0,"daly_000":0.0},{"cause":"Respiratory Infectious","daly_per_100k":1.1,"daly_000":1387.1},{"cause":"Noncommunicable diseases","daly_per_100k":12.34,"daly_000":15510.59},{"cause":"Diabetes mellitus","daly_per_100k":1.06,"daly_000":1336.72},{"cause":"Cardiovascular diseases","daly_per_100k":4.95,"daly_000":6219.74},{"cause":"Chronic obstructive pulmonary disease","daly_per_100k":0.01,"daly_000":16.26},{"cause":"Injuries incl War","daly_per_100k":1.63,"daly_000":2042.5}],"country":"Japan","group":"Non-ASEAN"},"KHM":{"causes":[{"cause":"All Causes","daly_per_100k":34.93,"daly_000":5928.52},{"cause":"Communicable, maternal, perinatal and nutritional conditions","daly_per_100k":9.79,"daly_000":1661.05},{"cause":"Infectious and parasitic diseases","daly_per_100k":6.53,"daly_000":1107.74},{"cause":"Tuberculosis","daly_per_100k":0.97,"daly_000":164.19},{"cause":"Diarrhoeal diseases","daly_per_100k":0.59,"daly_000":100.56},{"cause":"Malaria","daly_per_100k":0.01,"daly_000":1.43},{"cause":"Dengue","daly_per_100k":0.02,"daly_000":3.51},{"cause":"Respiratory Infectious","daly_per_100k":3.59,"daly_000":610.17},{"cause":"Noncommunicable diseases","daly_per_100k":10.05,"daly_000":1705.9},{"cause":"Diabetes mellitus","daly_per_100k":0.97,"daly_000":164.26},{"cause":"Cardiovascular diseases","daly_per_100k":5.21,"daly_000":884.97},{"cause":"Chronic obstructive pulmonary disease","daly_per_100k":0.45,"daly_000":76.31},{"cause":"Injuries incl War","daly_per_100k":3.29,"daly_000":558.95}],"country":"Cambodia","group":"ASEAN"},"KOR":{"causes":[{"cause":"All Causes","daly_per_100k":24.82,"daly_000":12869.89},{"cause":"Communicable, maternal, perinatal and nutritional conditions","daly_per_100k":1.76,"daly_000":910.52},{"cause":"Infectious and parasitic diseases","daly_per_100k":1.48,"daly_000":769.89},{"cause":"Tuberculosis","daly_per_100k":0.07,"daly_000":35.36},{"cause":"Diarrhoeal diseases","daly_per_100k":0.04,"daly_000":20.04},{"cause":"Malaria","daly_per_100k":0.0,"daly_000":0.01},{"cause":"Dengue","daly_per_100k":0.0,"daly_000":0.0},{"cause":"Respiratory Infectious","daly_per_100k":0.98,"daly_000":506.2},{"cause":"Noncommunicable diseases","daly_per_100k":8.54,"daly_000":4426.41},{"cause":"Diabetes mellitus","daly_per_100k":1.53,"daly_000":792.84},{"cause":"Cardiovascular diseases","daly_per_100k":2.79,"daly_000":1448.98},{"cause":"Chronic obstructive pulmonary disease","daly_per_100k":0.03,"daly_000":14.12},{"cause":"Injuries incl War","daly_per_100k":1.83,"daly_000":949.53}],"country":"Republic of Korea","group":"Non-ASEAN"},"LAO":{"causes":[{"cause":"All Causes","daly_per_100k":34.99,"daly_000":2608.07},{"cause":"Communicable, maternal, perinatal and nutritional conditions","daly_per_100k":11.7,"daly_000":872.08},{"cause":"Infectious and parasitic diseases","daly_per_100k":6.79,"daly_000":505.98},{"cause":"Tuberculosis","daly_per_100k":1.29,"daly_000":96.47},{"cause":"Diarrhoeal diseases","daly_per_100k":1.1,"daly_000":82.26},{"cause":"Malaria","daly_per_100k":0.01,"daly_000":0.65},{"cause":"Dengue","daly_per_100k":0.03,"daly_000":1.99},{"cause":"Respiratory Infectious","daly_per_100k":2.9,"daly_000":216.47},{"cause":"Noncommunicable diseases","daly_per_100k":9.45,"daly_000":704.24},{"cause":"Diabetes mellitus","daly_per_100k":0.91,"daly_000":67.7},{"cause":"Cardiovascular diseases","daly_per_100k":5.37,"daly_000":400.46},{"cause":"Chronic obstructive pulmonary disease","daly_per_100k":0.12,"daly_000":8.75},{"cause":"Injuries incl War","daly_per_100k":3.16,"daly_000":235.48}],"country":"Lao PDR","group":"ASEAN"},"MMR":{"causes":[{"cause":"All Causes","daly_per_100k":40.48,"daly_000":21610.8},{"cause":"Communicable, maternal, perinatal and nutritional conditions","daly_per_100k":12.79,"daly_000":6830.61},{"cause":"Infectious and parasitic diseases","daly_per_100k":8.9,"daly_000":4749.78},{"cause":"Tuberculosis","daly_per_100k":2.62,"daly_000":1396.8},{"cause":"Diarrhoeal diseases","daly_per_100k":1.02,"daly_000":542.81},{"cause":"Malaria","daly_per_100k":0.03,"daly_000":18.06},{"cause":"Dengue","daly_per_100k":0.06,"daly_000":32.78},{"cause":"Respiratory Infectious","daly_per_100k":3.36,"daly_000":1793.95},{"cause":"Noncommunicable diseases","daly_per_100k":11.1,"daly_000":5925.06},{"cause":"Diabetes mellitus","daly_per_100k":1.7,"daly_000":905.71},{"cause":"Cardiovascular diseases","daly_per_100k":6.02,"daly_000":3213.88},{"cause":"Chronic obstructive pulmonary disease","daly_per_100k":0.02,"daly_000":13.28},{"cause":"Injuries incl War","daly_per_100k":3.65,"daly_000":1947.49}],"country":"Myanmar","group":"ASEAN"},"MYS":{"causes":[{"cause":"All Causes","daly_per_100k":29.52,"daly_000":10119.09},{"cause":"Communicable, maternal, perinatal and nutritional conditions","daly_per_100k":6.65,"daly_000":2278.21},{"cause":"Infectious and parasitic diseases","daly_per_100k":5.56,"daly_000":1905.54},{"cause":"Tuberculosis","daly_per_100k":0.26,"daly_000":90.63},{"cause":"Diarrhoeal diseases","daly_per_100k":0.2,"daly_000":70.15},{"cause":"Malaria","daly_per_100k":0.0,"daly_000":0.02},{"cause":"Dengue","daly_per_100k":0.06,"daly_000":20.31},{"cause":"Respiratory Infectious","daly_per_100k":4.02,"daly_000":1376.65},{"cause":"Noncommunicable diseases","daly_per_100k":9.54,"daly_000":3269.16},{"cause":"Diabetes mellitus","daly_per_100k":1.03,"daly_000":352.43},{"cause":"Cardiovascular diseases","daly_per_100k":5.72,"daly_000":1961.9},{"cause":"Chronic obstructive pulmonary disease","daly_per_100k":0.01,"daly_000":3.45},{"cause":"Injuries incl War","daly_per_100k":1.99,"daly_000":682.1}],"country":"Malaysia","group":"ASEAN"},"PHL":{"causes":[{"cause":"All Causes","daly_per_100k":37.33,"daly_000":42225.88},{"cause":"Communicable, maternal, perinatal and nutritional conditions","daly_per_100k":9.3,"daly_000":10515.35},{"cause":"Infectious and parasitic diseases","daly_per_100k":6.41,"daly_000":7248.29},{"cause":"Tuberculosis","daly_per_100k":1.32,"daly_000":1488.22},{"cause":"Diarrhoeal diseases","daly_per_100k":0.64,"daly_000":727.02},{"cause":"Malaria","daly_per_100k":0.0,"daly_000":1.17},{"cause":"Dengue","daly_per_100k":0.09,"daly_000":104.83},{"cause":"Respiratory Infectious","daly_per_100k":3.47,"daly_000":3923.47},{"cause":"Noncommunicable diseases","daly_per_100k":12.61,"daly_000":14261.48},{"cause":"Diabetes mellitus","daly_per_100k":1.16,"daly_000":1313.61},{"cause":"Cardiovascular diseases","daly_per_100k":7.99,"daly_000":9034.38},{"cause":"Chronic obstructive pulmonary disease","daly_per_100k":0.21,"daly_000":239.86},{"cause":"Injuries incl War","daly_per_100k":2.84,"daly_000":3212.58}],"country":"Philippines","group":"ASEAN"},"SGP":{"causes":[{"cause":"All Causes","daly_per_100k":19.79,"daly_000":1097.36},{"cause":"Communicable, maternal, perinatal and nutritional conditions","daly_per_100k":1.85,"daly_000":102.36},{"cause":"Infectious and parasitic diseases","daly_per_100k":1.59,"daly_000":87.93},{"cause":"Tuberculosis","daly_per_100k":0.01,"daly_000":0.62},{"cause":"Diarrhoeal diseases","daly_per_100k":0.01,"daly_000":0.73},{"cause":"Malaria","daly_per_100k":0.0,"daly_000":0.0},{"cause":"Dengue","daly_per_100k":0.08,"daly_000":4.6},{"cause":"Respiratory Infectious","daly_per_100k":1.4,"daly_000":77.49},{"cause":"Noncommunicable diseases","daly_per_100k":8.06,"daly_000":447.16},{"cause":"Diabetes mellitus","daly_per_100k":0.85,"daly_000":46.99},{"cause":"Cardiovascular diseases","daly_per_100k":3.42,"daly_000":189.82},{"cause":"Chronic obstructive pulmonary disease","daly_per_100k":0.5,"daly_000":27.91},{"cause":"Injuries incl War","daly_per_100k":1.13,"daly_000":62.75}],"country":"Singapore","group":"ASEAN"},"THA":{"causes":[],"country":"Thailand","group":"ASEAN"},"VNM":{"causes":[{"cause":"All Causes","daly_per_100k":29.49,"daly_000":29175.68},{"cause":"Communicable, maternal, perinatal and nutritional conditions","daly_per_100k":4.56,"daly_000":4514.11},{"cause":"Infectious and parasitic diseases","daly_per_100k":2.8,"daly_000":2768.18},{"cause":"Tuberculosis","daly_per_100k":0.39,"daly_000":388.06},{"cause":"Diarrhoeal diseases","daly_per_100k":0.25,"daly_000":250.11},{"cause":"Malaria","daly_per_100k":0.0,"daly_000":0.16},{"cause":"Dengue","daly_per_100k":0.02,"daly_000":16.93},{"cause":"Respiratory Infectious","daly_per_100k":1.61,"daly_000":1592.64},{"cause":"Noncommunicable diseases","daly_per_100k":11.05,"daly_000":10935.44},{"cause":"Diabetes mellitus","daly_per_100k":1.1,"daly_000":1086.18},{"cause":"Cardiovascular diseases","daly_per_100k":5.82,"daly_000":5762.11},{"cause":"Chronic obstructive pulmonary disease","daly_per_100k":0.11,"daly_000":104.71},{"cause":"Injuries incl War","daly_per_100k":2.77,"daly_000":2740.8}],"country":"Viet Nam","group":"ASEAN"}},"causes":["Communicable, maternal, perinatal and nutritional conditions","Noncommunicable diseases","Injuries incl War","Cardiovascular diseases","Diabetes mellitus","Malaria","Dengue","Diarrhoeal diseases","Respiratory Infectious","Chronic obstructive pulmonary disease","Tuberculosis","Infectious and parasitic diseases"]};
+
+// ── Palette ───────────────────────────────────────────────────────────────────
+const PALETTE_15 = [
+  '#ff6b35','#f7c59f','#4ade80','#38bdf8','#a78bfa',
+  '#fb923c','#34d399','#60a5fa','#c084fc','#f472b6',
+  '#facc15','#2dd4bf','#818cf8','#e879f9','#94a3b8'
+];
+const ISOS = Object.keys(DATA.heat_ts);
+const COLOR_MAP = Object.fromEntries(ISOS.map((iso, i) => [iso, PALETTE_15[i]]));
+const STACKED_CAUSES = [
+  'Communicable, maternal, perinatal and nutritional conditions',
+  'Noncommunicable diseases',
+  'Injuries incl War',
+];
+const STACKED_COLORS = ['#38bdf8','#a78bfa','#f87171'];
+const CAUSE_ABBREV = {
+  'Communicable, maternal, perinatal and nutritional conditions': 'Communicable',
+  'Noncommunicable diseases': 'NCDs',
+  'Injuries incl War': 'Injuries',
+  'Cardiovascular diseases': 'CVD',
+  'Diabetes mellitus': 'Diabetes',
+  'Malaria': 'Malaria',
+  'Dengue': 'Dengue',
+  'Diarrhoeal diseases': 'Diarrhoeal',
+  'Respiratory Infectious': 'Resp. Infect.',
+  'Chronic obstructive pulmonary disease': 'COPD',
+  'Tuberculosis': 'TB',
+  'Infectious and parasitic diseases': 'Infect. & Parasitic',
+};
+
+let charts = {};
+let smoothEnabled = false;
+let activeGroup = 'all';
+let dalyView = 'all';
+let checkedCountries = new Set(ISOS);
+
+function destroyChart(id) {
+  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+}
+
+// ── Chart defaults ────────────────────────────────────────────────────────────
+Chart.defaults.color = '#7d8590';
+Chart.defaults.borderColor = '#30363d';
+Chart.defaults.font.family = "'Outfit', sans-serif";
+Chart.defaults.font.size = 11;
+const gridOpts = { color: 'rgba(48,54,61,0.6)', drawTicks: false };
+
+function heatForISO(iso) {
+  const d = DATA.heat_ts[iso];
+  return d.values[d.years.indexOf(2020)] ?? 0;
+}
+function dalyForISO(iso, cause) {
+  const d = DATA.daly[iso];
+  if (!d || !d.causes.length) return null;
+  const r = d.causes.find(c => c.cause === cause);
+  return r ? r.daly_per_100k : null;
+}
+
+// ── TAB SWITCHING ─────────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════
+// TAB 1: OVERVIEW
+// ══════════════════════════════════════════════════════════
+function initOverview() {
+  // KPIs
+  const heatVals = ISOS.map(iso => ({ iso, v: heatForISO(iso), c: DATA.heat_ts[iso].country }));
+  heatVals.sort((a,b) => b.v - a.v);
+  document.getElementById('kpi-max-heat').textContent = heatVals[0].v.toFixed(1);
+  document.getElementById('kpi-max-country').textContent = heatVals[0].c;
+  const avg = heatVals.reduce((s,x) => s+x.v, 0) / heatVals.length;
+  document.getElementById('kpi-avg-heat').textContent = avg.toFixed(1);
+
+  const withDaly = ISOS.filter(iso => DATA.daly[iso]?.causes.length > 0);
+  const dalyAll = withDaly.map(iso => ({ iso, c: DATA.daly[iso].country, v: DATA.daly[iso].causes.find(x=>x.cause==='All Causes')?.daly_per_100k ?? 0 }));
+  dalyAll.sort((a,b) => b.v - a.v);
+  document.getElementById('kpi-max-daly').textContent = dalyAll[0].v.toFixed(1);
+  document.getElementById('kpi-max-daly-country').textContent = dalyAll[0].c;
+  document.getElementById('kpi-min-daly').textContent = dalyAll[dalyAll.length-1].v.toFixed(1);
+  document.getElementById('kpi-min-daly-country').textContent = dalyAll[dalyAll.length-1].c;
+
+  // Heat bar
+  const sorted = [...heatVals].sort((a,b) => b.v - a.v);
+  destroyChart('heat-bar');
+  charts['heat-bar'] = new Chart(document.getElementById('chart-heat-bar'), {
+    type: 'bar',
+    data: {
+      labels: sorted.map(x => DATA.heat_ts[x.iso].country),
+      datasets: [{
+        label: 'Heat Index 2020',
+        data: sorted.map(x => x.v),
+        backgroundColor: sorted.map(x => COLOR_MAP[x.iso] + 'cc'),
+        borderColor: sorted.map(x => COLOR_MAP[x.iso]),
+        borderWidth: 1, borderRadius: 3,
+      }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: ctx => `${ctx.raw.toFixed(1)} days` }
+      }},
+      scales: {
+        x: { grid: gridOpts, title: { display: true, text: 'Days ≥ HI35 (2020)' } },
+        y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+      }
+    }
+  });
+
+  // DALY bar
+  const dalySort = [...withDaly].map(iso => ({
+    iso, c: DATA.daly[iso].country,
+    v: DATA.daly[iso].causes.find(x=>x.cause==='All Causes')?.daly_per_100k ?? 0
+  })).sort((a,b) => b.v - a.v);
+
+  destroyChart('daly-bar');
+  charts['daly-bar'] = new Chart(document.getElementById('chart-daly-bar'), {
+    type: 'bar',
+    data: {
+      labels: dalySort.map(x => x.c),
+      datasets: [{
+        data: dalySort.map(x => x.v),
+        backgroundColor: dalySort.map(x => COLOR_MAP[x.iso] + 'cc'),
+        borderColor: dalySort.map(x => COLOR_MAP[x.iso]),
+        borderWidth: 1, borderRadius: 3,
+      }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: ctx => `${ctx.raw.toFixed(1)} per 100k` }
+      }},
+      scales: {
+        x: { grid: gridOpts, title: { display: true, text: 'DALY per 100 000' } },
+        y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+      }
+    }
+  });
+
+  // Scatter cause selector
+  const sel = document.getElementById('scatter-cause');
+  DATA.causes.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c; opt.textContent = CAUSE_ABBREV[c] || c;
+    sel.appendChild(opt);
+  });
+  sel.value = 'Respiratory Infectious';
+  renderScatter();
+
+  // Summary table
+  buildSummaryTable();
+}
+
+function renderScatter() {
+  const cause = document.getElementById('scatter-cause').value;
+  const points = ISOS.map(iso => {
+    const heat = heatForISO(iso);
+    const daly = dalyForISO(iso, cause);
+    if (daly === null) return null;
+    return { x: heat, y: daly, label: DATA.heat_ts[iso].country, group: DATA.heat_ts[iso].group, iso };
+  }).filter(Boolean);
+
+  const asean = points.filter(p => p.group === 'ASEAN');
+  const nonAsean = points.filter(p => p.group === 'Non-ASEAN');
+
+  destroyChart('scatter');
+  charts['scatter'] = new Chart(document.getElementById('chart-scatter'), {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'ASEAN', data: asean.map(p => ({x: p.x, y: p.y})),
+          backgroundColor: '#38bdf888', borderColor: '#38bdf8', pointRadius: 7, pointHoverRadius: 9,
+          labels: asean.map(p => p.label),
+        },
+        {
+          label: 'Non-ASEAN', data: nonAsean.map(p => ({x: p.x, y: p.y})),
+          backgroundColor: '#a78bfa88', borderColor: '#a78bfa', pointRadius: 7, pointHoverRadius: 9,
+          labels: nonAsean.map(p => p.label),
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 10, padding: 15 } },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const ds = ctx.dataset;
+              return `${ds.labels[ctx.dataIndex]}: heat=${ctx.parsed.x.toFixed(1)}, DALY=${ctx.parsed.y.toFixed(2)}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { grid: gridOpts, title: { display: true, text: 'Heat Index 35 (days, 2020)' } },
+        y: { grid: gridOpts, title: { display: true, text: `DALY per 100k — ${CAUSE_ABBREV[cause] || cause}` } }
+      }
+    }
+  });
+}
+
+function buildSummaryTable() {
+  const rows = ISOS.map(iso => ({
+    iso, country: DATA.heat_ts[iso].country, group: DATA.heat_ts[iso].group,
+    heat: heatForISO(iso),
+    daly: DATA.daly[iso]?.causes.find(x=>x.cause==='All Causes')?.daly_per_100k ?? null,
+    respInf: dalyForISO(iso, 'Respiratory Infectious'),
+    cvd: dalyForISO(iso, 'Cardiovascular diseases'),
+    dengue: dalyForISO(iso, 'Dengue'),
+  })).sort((a,b) => b.heat - a.heat);
+
+  const maxHeat = Math.max(...rows.map(r => r.heat));
+  const table = document.getElementById('summary-table');
+  table.innerHTML = `<thead><tr>
+    <th>#</th><th>Country</th><th>Group</th>
+    <th>Heat Index 2020</th><th>DALY All (per 100k)</th>
+    <th>Resp. Infect.</th><th>CVD</th><th>Dengue</th>
+  </tr></thead><tbody>${rows.map((r,i) => `<tr>
+    <td style="color:var(--muted)">${i+1}</td>
+    <td style="font-weight:600">${r.country}</td>
+    <td><span class="badge badge-${r.group === 'ASEAN' ? 'asean' : 'non'}">${r.group}</span></td>
+    <td>
+      ${r.heat.toFixed(1)}
+      <span class="heat-bar" style="width:${(r.heat/maxHeat*90).toFixed(0)}px"></span>
+    </td>
+    <td>${r.daly !== null ? r.daly.toFixed(1) : '–'}</td>
+    <td>${r.respInf !== null ? r.respInf.toFixed(2) : '–'}</td>
+    <td>${r.cvd !== null ? r.cvd.toFixed(2) : '–'}</td>
+    <td>${r.dengue !== null ? r.dengue.toFixed(3) : '–'}</td>
+  </tr>`).join('')}</tbody>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// TAB 2: HEAT TRENDS
+// ══════════════════════════════════════════════════════════
+function initTrends() {
+  // Build country checkboxes
+  const wrap = document.getElementById('country-checks');
+  wrap.innerHTML = '';
+  ISOS.forEach(iso => {
+    const label = document.createElement('label');
+    label.className = 'country-check checked';
+    label.dataset.iso = iso;
+    label.innerHTML = `<input type="checkbox" checked><span class="dot"></span>${DATA.heat_ts[iso].country}`;
+    label.addEventListener('click', () => {
+      if (checkedCountries.has(iso)) checkedCountries.delete(iso);
+      else checkedCountries.add(iso);
+      label.classList.toggle('checked');
+      renderTrends();
+    });
+    wrap.appendChild(label);
+  });
+  renderTrends();
+  renderDecade();
+  renderGrowth();
+}
+
+function movingAvg(arr, w=5) {
+  return arr.map((_, i) => {
+    const slice = arr.slice(Math.max(0, i-w+1), i+1);
+    return slice.reduce((s,v) => s+v, 0) / slice.length;
+  });
+}
+
+function renderTrends() {
+  const isos = ISOS.filter(iso => checkedCountries.has(iso));
+  const datasets = isos.map(iso => {
+    const d = DATA.heat_ts[iso];
+    const vals = smoothEnabled ? movingAvg(d.values) : d.values;
+    return {
+      label: d.country,
+      data: d.years.map((y, i) => ({ x: y, y: vals[i] })),
+      borderColor: COLOR_MAP[iso],
+      backgroundColor: COLOR_MAP[iso] + '22',
+      borderWidth: 1.5, pointRadius: 0, pointHoverRadius: 4,
+      tension: 0.3, fill: false,
+    };
+  });
+
+  destroyChart('trends');
+  charts['trends'] = new Chart(document.getElementById('chart-trends'), {
+    type: 'line',
+    data: { datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'right', labels: { boxWidth: 10, padding: 10, font: { size: 10 } } },
+        tooltip: { mode: 'index', intersect: false }
+      },
+      scales: {
+        x: { type: 'linear', grid: gridOpts, title: { display: true, text: 'Year' }, ticks: { stepSize: 10 } },
+        y: { grid: gridOpts, title: { display: true, text: 'Heat Index (days ≥ HI35)' } }
+      }
+    }
+  });
+}
+
+function renderDecade() {
+  const decades = [1970,1980,1990,2000,2010];
+  const aseanIsos = ISOS.filter(iso => DATA.heat_ts[iso].group === 'ASEAN');
+  const nonIsos = ISOS.filter(iso => DATA.heat_ts[iso].group === 'Non-ASEAN');
+  const avgForDecade = (isos, decade) => {
+    const vals = isos.map(iso => {
+      const d = DATA.heat_ts[iso];
+      const dVals = d.years.filter(y => y >= decade && y < decade+10).map(y => d.values[d.years.indexOf(y)]);
+      return dVals.length ? dVals.reduce((s,v) => s+v, 0)/dVals.length : 0;
+    });
+    return vals.reduce((s,v) => s+v, 0) / vals.length;
+  };
+
+  destroyChart('decade');
+  charts['decade'] = new Chart(document.getElementById('chart-decade'), {
+    type: 'bar',
+    data: {
+      labels: decades.map(d => d + 's'),
+      datasets: [
+        { label: 'ASEAN', data: decades.map(d => avgForDecade(aseanIsos, d)), backgroundColor: '#38bdf844', borderColor: '#38bdf8', borderWidth: 1.5, borderRadius: 3 },
+        { label: 'Non-ASEAN', data: decades.map(d => avgForDecade(nonIsos, d)), backgroundColor: '#a78bfa44', borderColor: '#a78bfa', borderWidth: 1.5, borderRadius: 3 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 10 } } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: gridOpts, title: { display: true, text: 'Avg Heat Index' } }
+      }
+    }
+  });
+}
+
+function renderGrowth() {
+  const growthData = ISOS.map(iso => {
+    const d = DATA.heat_ts[iso];
+    const v1980 = d.values[d.years.indexOf(1980)] || 0;
+    const v2020 = d.values[d.years.indexOf(2020)] || 0;
+    const change = v2020 - v1980;
+    return { iso, country: d.country, change, group: d.group };
+  }).sort((a,b) => b.change - a.change);
+
+  destroyChart('growth');
+  charts['growth'] = new Chart(document.getElementById('chart-growth'), {
+    type: 'bar',
+    data: {
+      labels: growthData.map(x => x.country),
+      datasets: [{
+        label: 'Δ Heat Index (2020−1980)',
+        data: growthData.map(x => x.change),
+        backgroundColor: growthData.map(x => x.change > 0 ? '#ff6b3599' : '#4ade8099'),
+        borderColor: growthData.map(x => x.change > 0 ? '#ff6b35' : '#4ade80'),
+        borderWidth: 1, borderRadius: 3,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { maxRotation: 45, font: { size: 9 } } },
+        y: { grid: gridOpts, title: { display: true, text: 'Change in days' } }
+      }
+    }
+  });
+}
+
+function selectGroup(g) {
+  activeGroup = g;
+  document.querySelectorAll('#grp-all,#grp-asean,#grp-non').forEach(b => b.classList.remove('active'));
+  document.getElementById('grp-' + (g === 'all' ? 'all' : g === 'ASEAN' ? 'asean' : 'non')).classList.add('active');
+  checkedCountries.clear();
+  ISOS.forEach(iso => {
+    if (g === 'all' || DATA.heat_ts[iso].group === g) checkedCountries.add(iso);
+  });
+  document.querySelectorAll('.country-check').forEach(el => {
+    const iso = el.dataset.iso;
+    el.classList.toggle('checked', checkedCountries.has(iso));
+  });
+  renderTrends();
+}
+
+function setSmooth(v) {
+  smoothEnabled = v;
+  document.getElementById('smooth-off').classList.toggle('active', !v);
+  document.getElementById('smooth-on').classList.toggle('active', v);
+  renderTrends();
+}
+
+// ══════════════════════════════════════════════════════════
+// TAB 3: DALY EXPLORER
+// ══════════════════════════════════════════════════════════
+function initDaly() {
+  // Populate cause selector
+  const sel2 = document.getElementById('daly-scatter2-cause');
+  sel2.innerHTML = '';
+  DATA.causes.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c; opt.textContent = CAUSE_ABBREV[c] || c;
+    sel2.appendChild(opt);
+  });
+  sel2.value = 'Diarrhoeal diseases';
+  renderDalyStacked();
+  renderDalyDonut();
+  renderScatter2();
+}
+
+function setDalyView(v) {
+  dalyView = v;
+  ['all','asean','non'].forEach(x => {
+    const el = document.getElementById(`daly-view-${x}`);
+    el.classList.toggle('active', (x === 'all' && v === 'all') || (x === 'asean' && v === 'ASEAN') || (x === 'non' && v === 'Non-ASEAN'));
+  });
+  renderDalyStacked();
+}
+
+function renderDalyStacked() {
+  const mode = document.getElementById('daly-mode').value;
+  let isos = ISOS.filter(iso => DATA.daly[iso]?.causes.length > 0);
+  if (dalyView !== 'all') isos = isos.filter(iso => DATA.daly[iso].group === dalyView);
+
+  const datasets = STACKED_CAUSES.map((cause, ci) => ({
+    label: CAUSE_ABBREV[cause] || cause,
+    data: isos.map(iso => {
+      const r = DATA.daly[iso].causes.find(c => c.cause === cause);
+      return r ? (mode === 'per100k' ? r.daly_per_100k : r.daly_000) : 0;
+    }),
+    backgroundColor: STACKED_COLORS[ci] + 'bb',
+    borderColor: STACKED_COLORS[ci],
+    borderWidth: 1,
+  }));
+
+  destroyChart('daly-stacked');
+  charts['daly-stacked'] = new Chart(document.getElementById('chart-daly-stacked'), {
+    type: 'bar',
+    data: { labels: isos.map(iso => DATA.daly[iso].country), datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 10, padding: 12 } } },
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { maxRotation: 35, font: { size: 10 } } },
+        y: { stacked: true, grid: gridOpts, title: { display: true, text: mode === 'per100k' ? 'DALY per 100 000' : 'DALY (000s)' } }
+      }
+    }
+  });
+}
+
+function renderDalyDonut() {
+  const iso = document.getElementById('daly-country-sel').value;
+  const d = DATA.daly[iso];
+  if (!d?.causes.length) {
+    destroyChart('daly-donut');
+    return;
+  }
+  const topCauses = d.causes.filter(c => c.cause !== 'All Causes' && !['Infectious and parasitic diseases'].includes(c.cause));
+  const sorted = topCauses.sort((a,b) => b.daly_per_100k - a.daly_per_100k).slice(0, 8);
+
+  destroyChart('daly-donut');
+  charts['daly-donut'] = new Chart(document.getElementById('chart-daly-donut'), {
+    type: 'doughnut',
+    data: {
+      labels: sorted.map(c => CAUSE_ABBREV[c.cause] || c.cause),
+      datasets: [{
+        data: sorted.map(c => c.daly_per_100k),
+        backgroundColor: PALETTE_15.slice(0, sorted.length).map(c => c + 'cc'),
+        borderColor: PALETTE_15.slice(0, sorted.length),
+        borderWidth: 1,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '60%',
+      plugins: {
+        legend: { position: 'right', labels: { boxWidth: 10, padding: 8, font: { size: 10 } } },
+        tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw.toFixed(2)} per 100k` } }
+      }
+    }
+  });
+}
+
+function renderScatter2() {
+  const cause = document.getElementById('daly-scatter2-cause').value;
+  const points = ISOS.map(iso => {
+    const heat = heatForISO(iso);
+    const daly = dalyForISO(iso, cause);
+    if (daly === null) return null;
+    return { x: heat, y: daly, label: DATA.heat_ts[iso].country, group: DATA.heat_ts[iso].group };
+  }).filter(Boolean);
+
+  const asean = points.filter(p => p.group === 'ASEAN');
+  const nonAsean = points.filter(p => p.group === 'Non-ASEAN');
+
+  destroyChart('scatter2');
+  charts['scatter2'] = new Chart(document.getElementById('chart-scatter2'), {
+    type: 'scatter',
+    data: {
+      datasets: [
+        { label: 'ASEAN', data: asean.map(p=>({x:p.x,y:p.y})), backgroundColor:'#38bdf888',borderColor:'#38bdf8', pointRadius:6, pointHoverRadius:8, labels: asean.map(p=>p.label) },
+        { label: 'Non-ASEAN', data: nonAsean.map(p=>({x:p.x,y:p.y})), backgroundColor:'#a78bfa88',borderColor:'#a78bfa', pointRadius:6, pointHoverRadius:8, labels: nonAsean.map(p=>p.label) },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 10 } },
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.labels[ctx.dataIndex]}: (${ctx.parsed.x.toFixed(1)}, ${ctx.parsed.y.toFixed(3)})` } }
+      },
+      scales: {
+        x: { grid: gridOpts, title: { display: true, text: 'Heat Index (days)' } },
+        y: { grid: gridOpts, title: { display: true, text: `${CAUSE_ABBREV[cause] || cause} DALY per 100k` } }
+      }
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// TAB 4: ASEAN vs Non-ASEAN
+// ══════════════════════════════════════════════════════════
+function initASEAN() {
+  const aseanIsos = ISOS.filter(iso => DATA.heat_ts[iso].group === 'ASEAN');
+  const nonIsos = ISOS.filter(iso => DATA.heat_ts[iso].group === 'Non-ASEAN');
+
+  // Group KPIs
+  function buildGroupKPIs(isos, containerId) {
+    const heats = isos.map(heatForISO);
+    const avgHeat = heats.reduce((s,v)=>s+v,0)/heats.length;
+    const maxHeat = Math.max(...heats);
+    const withDaly = isos.filter(iso => DATA.daly[iso]?.causes.length>0);
+    const dalyAll = withDaly.map(iso => DATA.daly[iso].causes.find(c=>c.cause==='All Causes')?.daly_per_100k ?? 0);
+    const avgDaly = dalyAll.reduce((s,v)=>s+v,0)/dalyAll.length;
+
+    document.getElementById(containerId).innerHTML = `
+      <div class="kpi"><div class="kpi-val">${avgHeat.toFixed(1)}</div><div class="kpi-label">Avg Heat 2020</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--heat2)">${maxHeat.toFixed(1)}</div><div class="kpi-label">Peak Heat</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--red)">${avgDaly.toFixed(1)}</div><div class="kpi-label">Avg DALY/100k</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--green)">${isos.length}</div><div class="kpi-label">Countries</div></div>
+    `;
+  }
+  buildGroupKPIs(aseanIsos, 'asean-kpis');
+  buildGroupKPIs(nonIsos, 'nonasean-kpis');
+
+  // Box approximation chart (violin-like with min/q1/med/q3/max)
+  const groupBoxData = (isos) => {
+    const vals = isos.map(heatForISO).sort((a,b)=>a-b);
+    const n = vals.length;
+    return { min: vals[0], q1: vals[Math.floor(n*0.25)], med: vals[Math.floor(n*0.5)], q3: vals[Math.floor(n*0.75)], max: vals[n-1] };
+  };
+  const asBox = groupBoxData(aseanIsos);
+  const nonBox = groupBoxData(nonIsos);
+
+  destroyChart('box');
+  charts['box'] = new Chart(document.getElementById('chart-box'), {
+    type: 'bar',
+    data: {
+      labels: ['Min','Q1','Median','Q3','Max'],
+      datasets: [
+        { label: 'ASEAN', data: [asBox.min,asBox.q1,asBox.med,asBox.q3,asBox.max], backgroundColor:'#38bdf844',borderColor:'#38bdf8',borderWidth:1.5,borderRadius:3 },
+        { label: 'Non-ASEAN', data: [nonBox.min,nonBox.q1,nonBox.med,nonBox.q3,nonBox.max], backgroundColor:'#a78bfa44',borderColor:'#a78bfa',borderWidth:1.5,borderRadius:3 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 10 } } },
+      scales: { x: { grid: { display:false } }, y: { grid: gridOpts, title: { display: true, text: 'Heat Index (days)' } } }
+    }
+  });
+
+  // Group trend
+  const years = DATA.heat_ts['BGD'].years;
+  const avgByYear = (isos, y) => {
+    const vals = isos.map(iso => {
+      const d = DATA.heat_ts[iso];
+      return d.values[d.years.indexOf(y)] ?? 0;
+    });
+    return vals.reduce((s,v)=>s+v,0)/vals.length;
+  };
+
+  destroyChart('group-trend');
+  charts['group-trend'] = new Chart(document.getElementById('chart-group-trend'), {
+    type: 'line',
+    data: {
+      datasets: [
+        { label: 'ASEAN avg', data: years.map(y=>({x:y,y:avgByYear(aseanIsos,y)})), borderColor:'#38bdf8',backgroundColor:'#38bdf811',borderWidth:2,pointRadius:0,fill:true,tension:0.3 },
+        { label: 'Non-ASEAN avg', data: years.map(y=>({x:y,y:avgByYear(nonIsos,y)})), borderColor:'#a78bfa',backgroundColor:'#a78bfa11',borderWidth:2,pointRadius:0,fill:true,tension:0.3 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { position: 'top', labels: { boxWidth: 10 } } },
+      scales: {
+        x: { type:'linear',grid:gridOpts,title:{display:true,text:'Year'},ticks:{stepSize:10} },
+        y: { grid:gridOpts,title:{display:true,text:'Avg Heat Index'} }
+      }
+    }
+  });
+
+  // Group DALY comparison
+  const causes = DATA.causes.slice(0, 8);
+  const groupAvgDaly = (isos, cause) => {
+    const withD = isos.filter(iso => DATA.daly[iso]?.causes.length>0);
+    const vals = withD.map(iso => dalyForISO(iso, cause) ?? 0);
+    return vals.reduce((s,v)=>s+v,0) / vals.length;
+  };
+
+  destroyChart('group-daly');
+  charts['group-daly'] = new Chart(document.getElementById('chart-group-daly'), {
+    type: 'bar',
+    data: {
+      labels: causes.map(c => CAUSE_ABBREV[c] || c),
+      datasets: [
+        { label: 'ASEAN', data: causes.map(c => groupAvgDaly(aseanIsos, c)), backgroundColor:'#38bdf844',borderColor:'#38bdf8',borderWidth:1.5,borderRadius:3 },
+        { label: 'Non-ASEAN', data: causes.map(c => groupAvgDaly(nonIsos, c)), backgroundColor:'#a78bfa44',borderColor:'#a78bfa',borderWidth:1.5,borderRadius:3 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 10 } } },
+      scales: {
+        x: { grid:{display:false}, ticks:{maxRotation:30,font:{size:10}} },
+        y: { grid:gridOpts,title:{display:true,text:'Avg DALY per 100 000'} }
+      }
+    }
+  });
+
+  // Horizontal compare bars
+  const maxH = Math.max(...ISOS.map(heatForISO));
+  const sorted = ISOS.map(iso => ({
+    iso, country: DATA.heat_ts[iso].country,
+    group: DATA.heat_ts[iso].group, heat: heatForISO(iso)
+  })).sort((a,b) => b.heat - a.heat);
+
+  const container = document.getElementById('compare-bars');
+  container.innerHTML = sorted.map(r => `
+    <div class="compare-row">
+      <div class="compare-label">
+        <span class="badge badge-${r.group==='ASEAN'?'asean':'non'}">${r.iso}</span>
+        <span style="margin-left:6px;font-size:0.72rem">${r.country}</span>
+      </div>
+      <div class="compare-bar-wrap">
+        <div class="compare-bar" style="width:${(r.heat/maxH*100).toFixed(1)}%;background:${r.group==='ASEAN'?'linear-gradient(90deg,#38bdf844,#38bdf8aa)':'linear-gradient(90deg,#a78bfa44,#a78bfaaa)'}">
+          <span style="color:white">${r.heat.toFixed(1)}</span>
+        </div>
+      </div>
+      <div class="compare-val">${r.heat.toFixed(1)} d</div>
+    </div>`).join('');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  initOverview();
+  initTrends();
+  initDaly();
+  initASEAN();
+});
+</script>
+</body>
+</html>
