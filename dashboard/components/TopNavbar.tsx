@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
 import { useDashboard } from "@/lib/context";
 
 const dalyDashboardNavItems = [
@@ -31,17 +30,25 @@ export function TopNavbar() {
     <header className="top-nav sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3">
-            <Image
-              src="/temasek-trust-logo.svg"
-              alt="Temasek Trust"
-              width={160}
-              height={20}
-              className="h-5 w-auto"
-              priority
-            />
-          </Link>
+          {/* Logo and Back Button */}
+          <div className="flex items-center gap-4">
+            <Link href="/" className="flex items-center gap-3 text-trust-navy font-heading font-bold">
+              Data Dashboard
+            </Link>
+
+            {/* Back to People link when in dashboard */}
+            {isDALYDashboard && (
+              <Link
+                href="/people"
+                className="hidden md:flex items-center gap-1 text-sm text-secondary hover:text-trust-navy transition-colors border-l border-border pl-4"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to People
+              </Link>
+            )}
+          </div>
 
           {/* Navigation Links - Only show when in DALY Dashboard */}
           {isDALYDashboard && (
@@ -78,19 +85,6 @@ export function TopNavbar() {
                 );
               })}
             </nav>
-          )}
-
-          {/* Back to People link when in dashboard */}
-          {isDALYDashboard && (
-            <Link
-              href="/people"
-              className="hidden md:flex items-center gap-1 text-sm text-secondary hover:text-trust-navy transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              Back to People
-            </Link>
           )}
 
           {/* Year Selector - Only show when in DALY Dashboard */}

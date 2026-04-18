@@ -76,6 +76,43 @@ export const AGE_COLORS = [
 // World average DALY rate per 1,000 population (fallback - use actual data when available)
 export const WORLD_DALY_RATE = 380.0;
 
+// ISO3 code mappings for World Bank API
+export const ISO3_TO_COUNTRY: Record<string, string> = {
+  BGD: "Bangladesh",
+  BRN: "Brunei Darussalam",
+  KHM: "Cambodia",
+  CHN: "China",
+  IND: "India",
+  IDN: "Indonesia",
+  JPN: "Japan",
+  LAO: "Lao People's Democratic Republic",
+  MYS: "Malaysia",
+  MMR: "Myanmar",
+  PHL: "Philippines",
+  KOR: "Republic of Korea",
+  SGP: "Singapore",
+  THA: "Thailand",
+  VNM: "Viet Nam",
+};
+
+export const COUNTRY_TO_ISO3: Record<string, string> = {
+  Bangladesh: "BGD",
+  "Brunei Darussalam": "BRN",
+  Cambodia: "KHM",
+  China: "CHN",
+  India: "IND",
+  Indonesia: "IDN",
+  Japan: "JPN",
+  "Lao People's Democratic Republic": "LAO",
+  Malaysia: "MYS",
+  Myanmar: "MMR",
+  Philippines: "PHL",
+  "Republic of Korea": "KOR",
+  Singapore: "SGP",
+  Thailand: "THA",
+  "Viet Nam": "VNM",
+};
+
 // ASEAN member countries (10 countries)
 export const ASEAN_COUNTRIES = [
   "Brunei Darussalam",

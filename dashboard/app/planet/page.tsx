@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 const pillars = [
   { id: "planet", label: "PLANET", href: "/planet", available: true },
@@ -12,34 +11,22 @@ const pillars = [
 
 const categories = [
   {
-    title: "GLOBAL HEALTH",
-    items: [
-      {
-        label: "WHO Global Health Estimates: Causes of DALYs",
-        href: "/people/daly-dashboard",
-        available: true,
-      },
-    ],
-  },
-  {
-    title: "LIFELONG HEALTH & WELL-BEING",
+    title: "GREENHOUSE GAS MITIGATION",
     items: [],
   },
   {
-    title: "INCLUSIVE DEVELOPMENT",
+    title: "URBAN LIVEABILITY",
     items: [
-      {
-        label: "Global Burden of Disease Study -- Socio-Demographic Index (SDI)",
-        href: "/people/sdi",
-        available: true,
-      },
+      { label: "Heat Index 35", href: "/planet/heat-index", available: true },
     ],
+  },
+  {
+    title: "SUSTAINABLE NATURAL ECOSYSTEMS",
+    items: [],
   },
 ];
 
-export default function PeoplePage() {
-  const pathname = usePathname();
-
+export default function PlanetPage() {
   return (
     <div className="min-h-[calc(100vh-80px)]">
       {/* Pillars Navigation */}
@@ -47,7 +34,7 @@ export default function PeoplePage() {
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center gap-8 md:gap-16">
             {pillars.map((pillar) => {
-              const isActive = pillar.id === "people";
+              const isActive = pillar.id === "planet";
               return (
                 <Link
                   key={pillar.id}
@@ -78,85 +65,108 @@ export default function PeoplePage() {
       <div className="max-w-6xl mx-auto py-6 px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* Left: Image */}
-          <div className="relative aspect-[4/3] max-h-[400px] rounded-lg overflow-hidden bg-[#9C5B8D]">
-            {/* Decorative 3D-like elements */}
+          <div className="relative aspect-[4/3] max-h-[400px] rounded-lg overflow-hidden bg-[#4CAF50]">
             <svg
               viewBox="0 0 400 300"
               className="w-full h-full"
               preserveAspectRatio="xMidYMid slice"
             >
               {/* Background */}
-              <rect width="400" height="300" fill="#9C5B8D" />
+              <rect width="400" height="300" fill="#4CAF50" />
 
-              {/* Curved shapes */}
+              {/* Concentric curved rings */}
               <ellipse
-                cx="200"
+                cx="150"
                 cy="200"
-                rx="150"
-                ry="150"
-                fill="rgba(0,0,0,0.08)"
+                rx="180"
+                ry="180"
+                fill="none"
+                stroke="rgba(0,0,0,0.12)"
+                strokeWidth="25"
               />
               <ellipse
-                cx="200"
+                cx="150"
                 cy="200"
-                rx="110"
-                ry="110"
-                fill="rgba(0,0,0,0.06)"
+                rx="130"
+                ry="130"
+                fill="none"
+                stroke="rgba(0,0,0,0.10)"
+                strokeWidth="25"
               />
-
-              {/* Heart-like curve at top */}
-              <path
-                d="M80 120 Q200 40 320 120 Q200 180 80 120"
-                fill="rgba(0,0,0,0.1)"
+              <ellipse
+                cx="150"
+                cy="200"
+                rx="80"
+                ry="80"
+                fill="none"
+                stroke="rgba(0,0,0,0.08)"
+                strokeWidth="25"
               />
 
               {/* Metallic spheres */}
               <defs>
-                <radialGradient id="sphere1" cx="30%" cy="30%">
-                  <stop offset="0%" stopColor="#D4A5C9" />
-                  <stop offset="50%" stopColor="#9C5B8D" />
-                  <stop offset="100%" stopColor="#6B3A5E" />
+                <radialGradient id="greenSphere1" cx="30%" cy="30%">
+                  <stop offset="0%" stopColor="#7CB342" />
+                  <stop offset="50%" stopColor="#4CAF50" />
+                  <stop offset="100%" stopColor="#2E7D32" />
                 </radialGradient>
-                <radialGradient id="sphere2" cx="30%" cy="30%">
-                  <stop offset="0%" stopColor="#C99BBE" />
-                  <stop offset="50%" stopColor="#8B4F7A" />
-                  <stop offset="100%" stopColor="#5A3250" />
+                <radialGradient id="greenSphere2" cx="30%" cy="30%">
+                  <stop offset="0%" stopColor="#81C784" />
+                  <stop offset="50%" stopColor="#43A047" />
+                  <stop offset="100%" stopColor="#1B5E20" />
                 </radialGradient>
               </defs>
 
-              {/* Main sphere */}
-              <circle cx="200" cy="200" r="30" fill="url(#sphere1)" />
+              {/* Spheres on the rings */}
+              <circle cx="330" cy="80" r="18" fill="url(#greenSphere1)" />
               <ellipse
-                cx="190"
-                cy="190"
-                rx="7"
-                ry="5"
+                cx="324"
+                cy="74"
+                rx="4"
+                ry="3"
                 fill="rgba(255,255,255,0.4)"
               />
 
-              {/* Smaller sphere */}
-              <circle cx="100" cy="260" r="20" fill="url(#sphere2)" />
+              <circle cx="280" cy="150" r="22" fill="url(#greenSphere2)" />
               <ellipse
-                cx="94"
-                cy="254"
-                rx="4"
-                ry="3"
+                cx="273"
+                cy="143"
+                rx="5"
+                ry="4"
+                fill="rgba(255,255,255,0.4)"
+              />
+
+              <circle cx="80" cy="100" r="16" fill="url(#greenSphere1)" />
+              <ellipse
+                cx="75"
+                cy="95"
+                rx="3"
+                ry="2"
                 fill="rgba(255,255,255,0.3)"
               />
 
-              {/* Shadow under spheres */}
+              <circle cx="50" cy="220" r="14" fill="url(#greenSphere2)" />
               <ellipse
-                cx="200"
-                cy="235"
-                rx="25"
-                ry="6"
+                cx="46"
+                cy="216"
+                rx="3"
+                ry="2"
+                fill="rgba(255,255,255,0.3)"
+              />
+
+              {/* Shadows */}
+              <ellipse
+                cx="330"
+                cy="100"
+                rx="12"
+                ry="4"
                 fill="rgba(0,0,0,0.15)"
               />
               <ellipse
-                cx="100"
-                cy="282"
+                cx="280"
+                cy="175"
                 rx="15"
-                ry="4"
+                ry="5"
                 fill="rgba(0,0,0,0.15)"
               />
             </svg>
@@ -165,11 +175,11 @@ export default function PeoplePage() {
           {/* Right: Content */}
           <div className="py-4 lg:py-8">
             <h1 className="text-4xl md:text-5xl font-bold text-trust-navy font-heading mb-4">
-              Uplifting Communities
+              Protecting Planet
             </h1>
             <p className="text-lg text-secondary mb-8">
-              We are committed to unlocking human potential and nurturing
-              resilient communities.
+              Our planet is our home. Responsible stewardship starts with
+              protecting it for present and future generations.
             </p>
 
             {/* Categories */}
@@ -181,7 +191,7 @@ export default function PeoplePage() {
                   </h2>
                   {category.items.length > 0 ? (
                     <ul className="space-y-2 ml-4">
-                      {category.items.map((item) => (
+                      {category.items.map((item: any) => (
                         <li key={item.label} className="flex items-center gap-3">
                           <span className="text-trust-navy text-lg leading-none">•</span>
                           {item.available ? (

@@ -10,7 +10,7 @@ const impactAreas = [
     subtitle: "Protecting the Earth",
     color: "#4CAF50",
     href: "/planet",
-    available: false,
+    available: true,
   },
   {
     id: "people",

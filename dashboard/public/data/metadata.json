@@ -4,6 +4,7 @@
   "years_processed": [
     "2000",
     "2010",
+    "2019",
     "2021"
   ],
   "source_files": [
@@ -37,6 +38,12 @@
       "path": "/var/folders/bp/7zfnn3_d3c77rd0qk19b3_1m0000gn/T/daly-upload-1773647172690/ghe2021_daly_bycountry_2000.xlsx",
       "year": "2000",
       "processed": "2026-03-16T15:46:25.039440"
+    },
+    {
+      "type": "country",
+      "path": "/var/folders/bp/7zfnn3_d3c77rd0qk19b3_1m0000gn/T/daly-upload-1773714283597/ghe2021_daly_bycountry_2019.xlsx",
+      "year": "2019",
+      "processed": "2026-03-17T10:25:05.408971"
     }
   ]
 }

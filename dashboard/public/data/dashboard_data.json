@@ -1,10 +1,11 @@
 {
   "metadata": {
     "created": null,
-    "updated": "2026-03-16T15:46:25.072559",
+    "updated": "2026-03-17T10:25:05.456183",
     "years_processed": [
       "2000",
       "2010",
+      "2019",
       "2021"
     ],
     "source_files": [
@@ -38,6 +39,12 @@
         "path": "/var/folders/bp/7zfnn3_d3c77rd0qk19b3_1m0000gn/T/daly-upload-1773647172690/ghe2021_daly_bycountry_2000.xlsx",
         "year": "2000",
         "processed": "2026-03-16T15:46:25.039440"
+      },
+      {
+        "type": "country",
+        "path": "/var/folders/bp/7zfnn3_d3c77rd0qk19b3_1m0000gn/T/daly-upload-1773714283597/ghe2021_daly_bycountry_2019.xlsx",
+        "year": "2019",
+        "processed": "2026-03-17T10:25:05.408971"
       }
     ]
   },
@@ -45,6 +52,7 @@
     "defaultYear": "2021",
     "availableYears": [
       "2021",
+      "2019",
       "2010",
       "2000"
     ],
@@ -11050,6 +11058,3651 @@
             "Viet Nam": 50.97
           }
         }
+      },
+      "2019": {
+        "countries": {
+          "Bangladesh": {
+            "total": 46718.2631100796,
+            "population": 164913.064,
+            "dalyRate": 283.29,
+            "dalyRateVsWorld": 74.6,
+            "diseases": {
+              "Infectious & Parasitic": {
+                "value": 4157.85295182923,
+                "pct": 9.224969209238257,
+                "sub": {
+                  "Tuberculosis": {
+                    "value": 1528.06878334295,
+                    "pct": 3.3903044766735273
+                  },
+                  "Diarrhoeal Diseases": {
+                    "value": 1542.49214610777,
+                    "pct": 3.422305386503828
+                  },
+                  "Malaria": {
+                    "value": 5.00144696427176,
+                    "pct": 0.011096639246644552
+                  },
+                  "Dengue": {
+                    "value": 12.2327390963289,
+                    "pct": 0.027140604253123653
+                  },
+                  "Hepatitis": {
+                    "value": 123.799944963099,
+                    "pct": 0.27467317714724343
+                  },
+                  "Respiratory Infections": {
+                    "value": 1930.36441210531,
+                    "pct": 4.2828720665665765
+                  },
+                  "Meningitis": {
+                    "value": 161.569796383533,
+                    "pct": 0.35847260931276026
+                  },
+                  "Encephalitis": {
+                    "value": 21.3224497141101,
+                    "pct": 0.047307815922556826
+                  },
+                  "Other Infectious": {
+                    "value": 225.568401292447,
+                    "pct": 0.5004654038052154
+                  },
+                  "COVID-19": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  }
+                }
+              },
+              "Injuries": {
+                "value": 4028.23621966307,
+                "pct": 8.937390409052728,
+                "sub": {
+                  "Unintentional Injuries": {
+                    "value": 3319.85684851882,
+                    "pct": 7.365719173207237
+                  },
+                  "Interpersonal Violence": {
+                    "value": 377.269736889667,
+                    "pct": 0.8370429995253806
+                  },
+                  "Collective Violence": {
+                    "value": 22.0083285122601,
+                    "pct": 0.04882956545711395
+                  }
+                }
+              },
+              "Maternal, Perinatal & Nutritional": {
+                "value": 7411.580146079068,
+                "pct": 16.443967459046664,
+                "sub": {
+                  "Maternal Conditions": {
+                    "value": 302.426351345359,
+                    "pct": 0.670989044476865
+                  },
+                  "Preterm Birth": {
+                    "value": 3029.45512585867,
+                    "pct": 6.721409001374192
+                  },
+                  "Birth Asphyxia": {
+                    "value": 1607.20635627428,
+                    "pct": 3.5658858842036296
+                  },
+                  "Neonatal Sepsis": {
+                    "value": 556.933339764588,
+                    "pct": 1.2356600799617616
+                  },
+                  "Other Neonatal": {
+                    "value": 637.567551834325,
+                    "pct": 1.4145620594623254
+                  },
+                  "Protein-Energy Malnutrition": {
+                    "value": 192.03759094761,
+                    "pct": 0.42607107178444387
+                  },
+                  "Iron Deficiency Anaemia": {
+                    "value": 838.694666486978,
+                    "pct": 1.8607999282155685
+                  },
+                  "Other Nutritional": {
+                    "value": 73.6945596605264,
+                    "pct": 0.16350507139932385
+                  }
+                }
+              },
+              "Mental & Substance Disorders": {
+                "value": 2429.9536328524714,
+                "pct": 5.391303565240026,
+                "sub": {
+                  "Self-Harm": {
+                    "value": 309.101305742328,
+                    "pct": 0.685798670863007
+                  },
+                  "Depressive Disorders": {
+                    "value": 1330.10212074731,
+                    "pct": 2.951078657949709
+                  },
+                  "Anxiety Disorders": {
+                    "value": 606.294427462048,
+                    "pct": 1.3451768231989765
+                  },
+                  "Eating Disorders": {
+                    "value": 57.1569390921245,
+                    "pct": 0.12681328785020748
+                  },
+                  "ADHD": {
+                    "value": 15.7240444307468,
+                    "pct": 0.034886713743572315
+                  },
+                  "Conduct Disorder": {
+                    "value": 111.574795377914,
+                    "pct": 0.24754941163455307
+                  }
+                }
+              },
+              "Substance Abuse": {
+                "value": 290.862187130013,
+                "pct": 0.6453317978033845,
+                "sub": {
+                  "Alcohol Use": {
+                    "value": 186.716593703895,
+                    "pct": 0.4142654508775964
+                  },
+                  "Drug Use": {
+                    "value": 104.145593426118,
+                    "pct": 0.23106634692578806
+                  }
+                }
+              },
+              "Others": {
+                "value": 10601.228882240684,
+                "pct": 23.5207957452494,
+                "sub": {
+                  "HIV/AIDS": {
+                    "value": 35.1516312569493,
+                    "pct": 0.07799042432638026
+                  },
+                  "STDs": {
+                    "value": 146.850599124157,
+                    "pct": 0.32581533569688836
+                  },
+                  "Leprosy": {
+                    "value": 0.46891836192969,
+                    "pct": 0.001040382500430837
+                  },
+                  "Neurological": {
+                    "value": 1516.86818412319,
+                    "pct": 3.3654538664849576
+                  },
+                  "Digestive Diseases": {
+                    "value": 1532.39170213544,
+                    "pct": 3.399895675115794
+                  },
+                  "Genitourinary": {
+                    "value": 1210.28773271314,
+                    "pct": 2.685248179276172
+                  },
+                  "Skin Diseases": {
+                    "value": 751.904361102892,
+                    "pct": 1.6682395120333797
+                  },
+                  "Musculoskeletal": {
+                    "value": 3390.79451964145,
+                    "pct": 7.523107575217327
+                  },
+                  "Sense Organ Diseases": {
+                    "value": 1316.11436020863,
+                    "pct": 2.9200442125832007
+                  },
+                  "Oral Conditions": {
+                    "value": 365.564895025491,
+                    "pct": 0.8110736333532261
+                  }
+                }
+              },
+              "Noncommunicable Diseases": {
+                "value": 16152.013132046668,
+                "pct": 35.836241814369544,
+                "sub": {
+                  "Diabetes": {
+                    "value": 1341.57293640965,
+                    "pct": 2.9765287935162834
+                  },
+                  "Cardiovascular (excl Stroke)": {
+                    "value": 7120.19340888459,
+                    "pct": 15.797471849475656
+                  },
+                  "Stroke": {
+                    "value": 3135.51981936299,
+                    "pct": 6.956733228349121
+                  },
+                  "COPD": {
+                    "value": 1345.30044402944,
+                    "pct": 2.9847989616579045
+                  },
+                  "Asthma": {
+                    "value": 389.804851601095,
+                    "pct": 0.8648544802551931
+                  },
+                  "Neoplasms": {
+                    "value": 3842.02759513667,
+                    "pct": 8.524251982164657
+                  }
+                }
+              }
+            }
+          },
+          "Brunei Darussalam": {
+            "total": 99.4749661352681,
+            "population": 442.7,
+            "dalyRate": 224.7,
+            "dalyRateVsWorld": 59.1,
+            "diseases": {
+              "Infectious & Parasitic": {
+                "value": 3.94651428474148,
+                "pct": 4.037916002263194,
+                "sub": {
+                  "Tuberculosis": {
+                    "value": 0.683395070143094,
+                    "pct": 0.6992225773178319
+                  },
+                  "Diarrhoeal Diseases": {
+                    "value": 0.178748552939269,
+                    "pct": 0.18288838965703744
+                  },
+                  "Malaria": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  },
+                  "Dengue": {
+                    "value": 0.00575436714458568,
+                    "pct": 0.005887638938963617
+                  },
+                  "Hepatitis": {
+                    "value": 0.357730176875456,
+                    "pct": 0.3660152482616616
+                  },
+                  "Respiratory Infections": {
+                    "value": 1.9712864602925,
+                    "pct": 2.0169416778333735
+                  },
+                  "Meningitis": {
+                    "value": 0.0364660184384216,
+                    "pct": 0.0373105755528699
+                  },
+                  "Encephalitis": {
+                    "value": 0.00511517642615671,
+                    "pct": 0.005233644491148887
+                  },
+                  "Other Infectious": {
+                    "value": 2.35482335814736,
+                    "pct": 2.409361333653261
+                  },
+                  "COVID-19": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  }
+                }
+              },
+              "Injuries": {
+                "value": 8.61791762431176,
+                "pct": 8.817509571911755,
+                "sub": {
+                  "Unintentional Injuries": {
+                    "value": 7.70332635476965,
+                    "pct": 7.881736265048832
+                  },
+                  "Interpersonal Violence": {
+                    "value": 0.295198457380893,
+                    "pct": 0.3020352870659379
+                  },
+                  "Collective Violence": {
+                    "value": 0.00155028772918321,
+                    "pct": 0.0015861925684607565
+                  }
+                }
+              },
+              "Maternal, Perinatal & Nutritional": {
+                "value": 4.193908414665171,
+                "pct": 4.2910398082372785,
+                "sub": {
+                  "Maternal Conditions": {
+                    "value": 0.168909903021005,
+                    "pct": 0.17282187549307662
+                  },
+                  "Preterm Birth": {
+                    "value": 2.29397570764175,
+                    "pct": 2.3471044446748865
+                  },
+                  "Birth Asphyxia": {
+                    "value": 0.426114182060719,
+                    "pct": 0.4359830347470743
+                  },
+                  "Neonatal Sepsis": {
+                    "value": 0.478433544914862,
+                    "pct": 0.489514119966698
+                  },
+                  "Other Neonatal": {
+                    "value": 0.314038004592948,
+                    "pct": 0.32131116032378243
+                  },
+                  "Protein-Energy Malnutrition": {
+                    "value": 0.0272522118420692,
+                    "pct": 0.027883376152879214
+                  },
+                  "Iron Deficiency Anaemia": {
+                    "value": 0.381803471501674,
+                    "pct": 0.3906460831161641
+                  },
+                  "Other Nutritional": {
+                    "value": 0.000455285577187027,
+                    "pct": 0.00046583004268627837
+                  }
+                }
+              },
+              "Mental & Substance Disorders": {
+                "value": 4.416621018360068,
+                "pct": 4.518910461041525,
+                "sub": {
+                  "Self-Harm": {
+                    "value": 0.617842524432036,
+                    "pct": 0.6321518272285263
+                  },
+                  "Depressive Disorders": {
+                    "value": 1.29605905880971,
+                    "pct": 1.3260759333064773
+                  },
+                  "Anxiety Disorders": {
+                    "value": 1.62601382930235,
+                    "pct": 1.6636724936297316
+                  },
+                  "Eating Disorders": {
+                    "value": 0.548994394978823,
+                    "pct": 0.5617091673045859
+                  },
+                  "ADHD": {
+                    "value": 0.0678331176974555,
+                    "pct": 0.06940414038103516
+                  },
+                  "Conduct Disorder": {
+                    "value": 0.259878093139694,
+                    "pct": 0.26589689919116943
+                  }
+                }
+              },
+              "Substance Abuse": {
+                "value": 0.9751694090439009,
+                "pct": 0.9977544429321253,
+                "sub": {
+                  "Alcohol Use": {
+                    "value": 0.463304475294066,
+                    "pct": 0.47403465938109723
+                  },
+                  "Drug Use": {
+                    "value": 0.511864933749835,
+                    "pct": 0.5237197835510281
+                  }
+                }
+              },
+              "Others": {
+                "value": 31.547888686769177,
+                "pct": 32.27854135950959,
+                "sub": {
+                  "HIV/AIDS": {
+                    "value": 0.0352669735413181,
+                    "pct": 0.036083760640235316
+                  },
+                  "STDs": {
+                    "value": 0.107784831118945,
+                    "pct": 0.11028114000730999
+                  },
+                  "Leprosy": {
+                    "value": 3.97270278760977e-05,
+                    "pct": 4.0647110338220655e-05
+                  },
+                  "Neurological": {
+                    "value": 5.6145389948644,
+                    "pct": 5.744572353468311
+                  },
+                  "Digestive Diseases": {
+                    "value": 2.29395554533217,
+                    "pct": 2.3470838154039346
+                  },
+                  "Genitourinary": {
+                    "value": 4.17360440918797,
+                    "pct": 4.270265559695112
+                  },
+                  "Skin Diseases": {
+                    "value": 2.87378943604809,
+                    "pct": 2.9403467246574637
+                  },
+                  "Musculoskeletal": {
+                    "value": 10.4273676363045,
+                    "pct": 10.66886665098525
+                  },
+                  "Sense Organ Diseases": {
+                    "value": 2.11966503231115,
+                    "pct": 2.1687567143742372
+                  },
+                  "Oral Conditions": {
+                    "value": 0.771238038076808,
+                    "pct": 0.7890999983314168
+                  }
+                }
+              },
+              "Noncommunicable Diseases": {
+                "value": 44.038394160843886,
+                "pct": 45.05832835410452,
+                "sub": {
+                  "Diabetes": {
+                    "value": 8.14886852971622,
+                    "pct": 8.337597247195955
+                  },
+                  "Cardiovascular (excl Stroke)": {
+                    "value": 16.4384819567176,
+                    "pct": 16.819199059428435
+                  },
+                  "Stroke": {
+                    "value": 5.47745746420768,
+                    "pct": 5.604315999045978
+                  },
+                  "COPD": {
+                    "value": 1.08069202619191,
+                    "pct": 1.1057209758368833
+                  },
+                  "Asthma": {
+                    "value": 0.97533434005077,
+                    "pct": 0.9979231937597813
+                  },
+                  "Neoplasms": {
+                    "value": 10.6204984731997,
+                    "pct": 10.8664704199225
+                  }
+                }
+              }
+            }
+          },
+          "Cambodia": {
+            "total": 5512.09954677586,
+            "population": 16481.304,
+            "dalyRate": 334.45,
+            "dalyRateVsWorld": 88.0,
+            "diseases": {
+              "Infectious & Parasitic": {
+                "value": 462.04554277101,
+                "pct": 8.86162719481512,
+                "sub": {
+                  "Tuberculosis": {
+                    "value": 144.643105136644,
+                    "pct": 2.7741275596649024
+                  },
+                  "Diarrhoeal Diseases": {
+                    "value": 107.45793124097,
+                    "pct": 2.0609486243988933
+                  },
+                  "Malaria": {
+                    "value": 8.75173363427386,
+                    "pct": 0.16785055496941675
+                  },
+                  "Dengue": {
+                    "value": 3.22449991608164,
+                    "pct": 0.061843072816286385
+                  },
+                  "Hepatitis": {
+                    "value": 16.6534222284417,
+                    "pct": 0.319397993585746
+                  },
+                  "Respiratory Infections": {
+                    "value": 383.81821878887,
+                    "pct": 7.361295912707491
+                  },
+                  "Meningitis": {
+                    "value": 15.729783423989,
+                    "pct": 0.30168341354968015
+                  },
+                  "Encephalitis": {
+                    "value": 9.58745339273502,
+                    "pct": 0.18387892501798156
+                  },
+                  "Other Infectious": {
+                    "value": 38.5564048270603,
+                    "pct": 0.7394779386912332
+                  },
+                  "COVID-19": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  }
+                }
+              },
+              "Injuries": {
+                "value": 649.60541868095,
+                "pct": 12.4588606775833,
+                "sub": {
+                  "Unintentional Injuries": {
+                    "value": 548.4517139197,
+                    "pct": 10.518821573228509
+                  },
+                  "Interpersonal Violence": {
+                    "value": 28.99693533901,
+                    "pct": 0.556135720356502
+                  },
+                  "Collective Violence": {
+                    "value": 34.2378175560403,
+                    "pct": 0.656651232530322
+                  }
+                }
+              },
+              "Maternal, Perinatal & Nutritional": {
+                "value": 579.6662368717024,
+                "pct": 11.11748867389078,
+                "sub": {
+                  "Maternal Conditions": {
+                    "value": 41.147549569346,
+                    "pct": 0.7891738162366229
+                  },
+                  "Preterm Birth": {
+                    "value": 246.461720602455,
+                    "pct": 4.726919066621228
+                  },
+                  "Birth Asphyxia": {
+                    "value": 108.455593794429,
+                    "pct": 2.0800829148455877
+                  },
+                  "Neonatal Sepsis": {
+                    "value": 31.8853913929637,
+                    "pct": 0.611533767408825
+                  },
+                  "Other Neonatal": {
+                    "value": 35.7356349839441,
+                    "pct": 0.6853780536405918
+                  },
+                  "Protein-Energy Malnutrition": {
+                    "value": 20.1854071782345,
+                    "pct": 0.38713835895114346
+                  },
+                  "Iron Deficiency Anaemia": {
+                    "value": 81.640602529807,
+                    "pct": 1.565794963068784
+                  },
+                  "Other Nutritional": {
+                    "value": 2.46096241241152,
+                    "pct": 0.04719909493868198
+                  }
+                }
+              },
+              "Mental & Substance Disorders": {
+                "value": 203.2693736698051,
+                "pct": 3.898527835118854,
+                "sub": {
+                  "Self-Harm": {
+                    "value": 37.9189518662001,
+                    "pct": 0.7272521514679731
+                  },
+                  "Depressive Disorders": {
+                    "value": 72.8198001759685,
+                    "pct": 1.3966197307960555
+                  },
+                  "Anxiety Disorders": {
+                    "value": 74.9755180665674,
+                    "pct": 1.4379645042335698
+                  },
+                  "Eating Disorders": {
+                    "value": 3.87907208236629,
+                    "pct": 0.07439719134522947
+                  },
+                  "ADHD": {
+                    "value": 1.79597412627796,
+                    "pct": 0.03444520439080765
+                  },
+                  "Conduct Disorder": {
+                    "value": 11.8800573524248,
+                    "pct": 0.2278490528852176
+                  }
+                }
+              },
+              "Substance Abuse": {
+                "value": 29.1109176599874,
+                "pct": 0.5583218010386007,
+                "sub": {
+                  "Alcohol Use": {
+                    "value": 18.5506507320037,
+                    "pct": 0.3557851678913658
+                  },
+                  "Drug Use": {
+                    "value": 10.5602669279837,
+                    "pct": 0.20253663314723488
+                  }
+                }
+              },
+              "Others": {
+                "value": 1423.7811116354517,
+                "pct": 27.306869670606954,
+                "sub": {
+                  "HIV/AIDS": {
+                    "value": 75.3464422645246,
+                    "pct": 1.4450785041655236
+                  },
+                  "STDs": {
+                    "value": 4.12056881839502,
+                    "pct": 0.07902888637385545
+                  },
+                  "Leprosy": {
+                    "value": 0.0378045510806556,
+                    "pct": 0.0007250580450034686
+                  },
+                  "Neurological": {
+                    "value": 175.203674851589,
+                    "pct": 3.3602524123165307
+                  },
+                  "Digestive Diseases": {
+                    "value": 441.803387295708,
+                    "pct": 8.473400453429775
+                  },
+                  "Genitourinary": {
+                    "value": 165.65475097896,
+                    "pct": 3.177112449611933
+                  },
+                  "Skin Diseases": {
+                    "value": 95.1937461281088,
+                    "pct": 1.8257323388643747
+                  },
+                  "Musculoskeletal": {
+                    "value": 226.994194248467,
+                    "pct": 4.353549030586105
+                  },
+                  "Sense Organ Diseases": {
+                    "value": 137.249379264016,
+                    "pct": 2.6323223993533342
+                  },
+                  "Oral Conditions": {
+                    "value": 37.1631899864893,
+                    "pct": 0.7127573032201479
+                  }
+                }
+              },
+              "Noncommunicable Diseases": {
+                "value": 1866.5247934978859,
+                "pct": 35.79830414694639,
+                "sub": {
+                  "Diabetes": {
+                    "value": 151.778784285447,
+                    "pct": 2.9109836107357085
+                  },
+                  "Cardiovascular (excl Stroke)": {
+                    "value": 845.058905532023,
+                    "pct": 16.20748667668596
+                  },
+                  "Stroke": {
+                    "value": 445.672143599923,
+                    "pct": 8.547599797221595
+                  },
+                  "COPD": {
+                    "value": 103.98242074666,
+                    "pct": 1.994291389426914
+                  },
+                  "Asthma": {
+                    "value": 48.4304640685726,
+                    "pct": 0.9288537118521187
+                  },
+                  "Neoplasms": {
+                    "value": 467.249592469332,
+                    "pct": 8.961436291670049
+                  }
+                }
+              }
+            }
+          },
+          "China": {
+            "total": 395072.520778747,
+            "population": 1423520.357,
+            "dalyRate": 277.53,
+            "dalyRateVsWorld": 73.0,
+            "diseases": {
+              "Infectious & Parasitic": {
+                "value": 7605.03487151845,
+                "pct": 1.9388023361636222,
+                "sub": {
+                  "Tuberculosis": {
+                    "value": 1487.88969056525,
+                    "pct": 0.37931765688875807
+                  },
+                  "Diarrhoeal Diseases": {
+                    "value": 655.225275460884,
+                    "pct": 0.16704095592442317
+                  },
+                  "Malaria": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  },
+                  "Dengue": {
+                    "value": 0.686523192678405,
+                    "pct": 0.00017501994300910301
+                  },
+                  "Hepatitis": {
+                    "value": 184.858352091968,
+                    "pct": 0.04712717442460651
+                  },
+                  "Respiratory Infections": {
+                    "value": 5134.56254963941,
+                    "pct": 1.3089883261023756
+                  },
+                  "Meningitis": {
+                    "value": 294.354738734802,
+                    "pct": 0.07504181963151467
+                  },
+                  "Encephalitis": {
+                    "value": 276.424078748727,
+                    "pct": 0.07047063671687055
+                  },
+                  "Other Infectious": {
+                    "value": 366.650603949218,
+                    "pct": 0.09347268743694968
+                  },
+                  "COVID-19": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  }
+                }
+              },
+              "Injuries": {
+                "value": 36762.6606843657,
+                "pct": 9.37215063738526,
+                "sub": {
+                  "Unintentional Injuries": {
+                    "value": 30478.406557203,
+                    "pct": 7.7700637582811485
+                  },
+                  "Interpersonal Violence": {
+                    "value": 1666.72486247524,
+                    "pct": 0.4249093017588996
+                  },
+                  "Collective Violence": {
+                    "value": 92.9820007190872,
+                    "pct": 0.02370452249870351
+                  }
+                }
+              },
+              "Maternal, Perinatal & Nutritional": {
+                "value": 8515.62579071409,
+                "pct": 2.1709453613110385,
+                "sub": {
+                  "Maternal Conditions": {
+                    "value": 202.925850757291,
+                    "pct": 0.05173324253773895
+                  },
+                  "Preterm Birth": {
+                    "value": 2605.315769552,
+                    "pct": 0.6641905508373825
+                  },
+                  "Birth Asphyxia": {
+                    "value": 2442.98796441637,
+                    "pct": 0.6228072392368094
+                  },
+                  "Neonatal Sepsis": {
+                    "value": 344.291804865363,
+                    "pct": 0.08777260944520528
+                  },
+                  "Other Neonatal": {
+                    "value": 476.078571607551,
+                    "pct": 0.12136989013514755
+                  },
+                  "Protein-Energy Malnutrition": {
+                    "value": 224.995140486807,
+                    "pct": 0.057359513976059685
+                  },
+                  "Iron Deficiency Anaemia": {
+                    "value": 1750.57653638227,
+                    "pct": 0.44628616905914387
+                  },
+                  "Other Nutritional": {
+                    "value": 69.7771830783642,
+                    "pct": 0.017788763345438538
+                  }
+                }
+              },
+              "Mental & Substance Disorders": {
+                "value": 18942.911563528305,
+                "pct": 4.8292429704239614,
+                "sub": {
+                  "Self-Harm": {
+                    "value": 4524.54726396842,
+                    "pct": 1.15347305484652
+                  },
+                  "Depressive Disorders": {
+                    "value": 7622.61255196545,
+                    "pct": 1.9432835316467107
+                  },
+                  "Anxiety Disorders": {
+                    "value": 5582.35775916176,
+                    "pct": 1.423147749827867
+                  },
+                  "Eating Disorders": {
+                    "value": 360.887636106702,
+                    "pct": 0.09200349555222202
+                  },
+                  "ADHD": {
+                    "value": 300.788518850382,
+                    "pct": 0.07668202616957606
+                  },
+                  "Conduct Disorder": {
+                    "value": 551.71783347559,
+                    "pct": 0.14065311238106545
+                  }
+                }
+              },
+              "Substance Abuse": {
+                "value": 4459.39683092791,
+                "pct": 1.1368638197917182,
+                "sub": {
+                  "Alcohol Use": {
+                    "value": 2768.42451768436,
+                    "pct": 0.7057729534522706
+                  },
+                  "Drug Use": {
+                    "value": 1690.97231324355,
+                    "pct": 0.4310908663394477
+                  }
+                }
+              },
+              "Others": {
+                "value": 106643.46123076476,
+                "pct": 27.18732987604287,
+                "sub": {
+                  "HIV/AIDS": {
+                    "value": 1882.55390873484,
+                    "pct": 0.47993204211045426
+                  },
+                  "STDs": {
+                    "value": 374.938670817664,
+                    "pct": 0.09558561968227086
+                  },
+                  "Leprosy": {
+                    "value": 0.428735759939766,
+                    "pct": 0.00010930047093947603
+                  },
+                  "Neurological": {
+                    "value": 20385.6824255436,
+                    "pct": 5.197058182987944
+                  },
+                  "Digestive Diseases": {
+                    "value": 10407.8964147383,
+                    "pct": 2.6533545505511427
+                  },
+                  "Genitourinary": {
+                    "value": 10936.0551457807,
+                    "pct": 2.788001583590422
+                  },
+                  "Skin Diseases": {
+                    "value": 7338.52614695013,
+                    "pct": 1.8708594869156638
+                  },
+                  "Musculoskeletal": {
+                    "value": 29295.94617062,
+                    "pct": 7.468611233912865
+                  },
+                  "Sense Organ Diseases": {
+                    "value": 18440.7364515273,
+                    "pct": 4.701220114939489
+                  },
+                  "Oral Conditions": {
+                    "value": 4178.54695438007,
+                    "pct": 1.065264884880655
+                  }
+                }
+              },
+              "Noncommunicable Diseases": {
+                "value": 209325.17495643446,
+                "pct": 53.36466499888153,
+                "sub": {
+                  "Diabetes": {
+                    "value": 10961.3315600183,
+                    "pct": 2.79444546870096
+                  },
+                  "Cardiovascular (excl Stroke)": {
+                    "value": 96421.5510088219,
+                    "pct": 24.58139002788006
+                  },
+                  "Stroke": {
+                    "value": 51299.7118782497,
+                    "pct": 13.078178195679028
+                  },
+                  "COPD": {
+                    "value": 22075.4058066632,
+                    "pct": 5.627830650719031
+                  },
+                  "Asthma": {
+                    "value": 1448.4863461955,
+                    "pct": 0.36927229912151904
+                  },
+                  "Neoplasms": {
+                    "value": 70108.2207254985,
+                    "pct": 17.873156983924765
+                  }
+                }
+              }
+            }
+          },
+          "India": {
+            "total": 482856.765254674,
+            "population": 1389030.309,
+            "dalyRate": 347.62,
+            "dalyRateVsWorld": 91.5,
+            "diseases": {
+              "Infectious & Parasitic": {
+                "value": 52094.8758367215,
+                "pct": 11.144241909137882,
+                "sub": {
+                  "Tuberculosis": {
+                    "value": 13830.3714072622,
+                    "pct": 2.9586212113996186
+                  },
+                  "Diarrhoeal Diseases": {
+                    "value": 19543.0704557546,
+                    "pct": 4.180693423454394
+                  },
+                  "Malaria": {
+                    "value": 603.897299113141,
+                    "pct": 0.12918693981890447
+                  },
+                  "Dengue": {
+                    "value": 899.935766725721,
+                    "pct": 0.19251609157320296
+                  },
+                  "Hepatitis": {
+                    "value": 2180.59534072364,
+                    "pct": 0.46647739518813564
+                  },
+                  "Respiratory Infections": {
+                    "value": 19155.1882876185,
+                    "pct": 4.097716880281552
+                  },
+                  "Meningitis": {
+                    "value": 2046.82613045287,
+                    "pct": 0.4378612133601147
+                  },
+                  "Encephalitis": {
+                    "value": 2208.31667576566,
+                    "pct": 0.47240759962361223
+                  },
+                  "Other Infectious": {
+                    "value": 2925.44187769218,
+                    "pct": 0.6258164829551872
+                  },
+                  "COVID-19": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  }
+                }
+              },
+              "Injuries": {
+                "value": 52645.9282208623,
+                "pct": 11.262124157148607,
+                "sub": {
+                  "Unintentional Injuries": {
+                    "value": 37994.164691834,
+                    "pct": 8.127789070627916
+                  },
+                  "Interpersonal Violence": {
+                    "value": 3669.85158858311,
+                    "pct": 0.7850621239982968
+                  },
+                  "Collective Violence": {
+                    "value": 260.479054937296,
+                    "pct": 0.055722209792438734
+                  }
+                }
+              },
+              "Maternal, Perinatal & Nutritional": {
+                "value": 65918.01513444136,
+                "pct": 14.10131601293894,
+                "sub": {
+                  "Maternal Conditions": {
+                    "value": 1870.39104505203,
+                    "pct": 0.4001178606524695
+                  },
+                  "Preterm Birth": {
+                    "value": 26551.9970624472,
+                    "pct": 5.680057274002558
+                  },
+                  "Birth Asphyxia": {
+                    "value": 11329.4016341375,
+                    "pct": 2.423608665319283
+                  },
+                  "Neonatal Sepsis": {
+                    "value": 2923.91200239468,
+                    "pct": 0.6254892089165737
+                  },
+                  "Other Neonatal": {
+                    "value": 6523.6840273239,
+                    "pct": 1.3955597699693405
+                  },
+                  "Protein-Energy Malnutrition": {
+                    "value": 2127.55513041505,
+                    "pct": 0.4551309254039842
+                  },
+                  "Iron Deficiency Anaemia": {
+                    "value": 12141.7538333986,
+                    "pct": 2.5973887018119393
+                  },
+                  "Other Nutritional": {
+                    "value": 635.557275481594,
+                    "pct": 0.13595970642638192
+                  }
+                }
+              },
+              "Mental & Substance Disorders": {
+                "value": 25962.12857998582,
+                "pct": 5.5538714072058095,
+                "sub": {
+                  "Self-Harm": {
+                    "value": 10721.4328855078,
+                    "pct": 2.293550752729936
+                  },
+                  "Depressive Disorders": {
+                    "value": 8773.15303415878,
+                    "pct": 1.8767707600453598
+                  },
+                  "Anxiety Disorders": {
+                    "value": 4886.35461448226,
+                    "pct": 1.0452989282150769
+                  },
+                  "Eating Disorders": {
+                    "value": 532.970349579269,
+                    "pct": 0.11401410236057018
+                  },
+                  "ADHD": {
+                    "value": 91.9939002404509,
+                    "pct": 0.0196795224478109
+                  },
+                  "Conduct Disorder": {
+                    "value": 956.22379601726,
+                    "pct": 0.20455734140705661
+                  }
+                }
+              },
+              "Substance Abuse": {
+                "value": 3892.7123998674897,
+                "pct": 0.8327369625141641,
+                "sub": {
+                  "Alcohol Use": {
+                    "value": 2653.49427107361,
+                    "pct": 0.567640897236023
+                  },
+                  "Drug Use": {
+                    "value": 1239.21812879388,
+                    "pct": 0.2650960652781412
+                  }
+                }
+              },
+              "Others": {
+                "value": 105637.95274640138,
+                "pct": 22.598285940478828,
+                "sub": {
+                  "HIV/AIDS": {
+                    "value": 2492.1403782332,
+                    "pct": 0.5331237439476545
+                  },
+                  "STDs": {
+                    "value": 740.983558679344,
+                    "pct": 0.15851271158603378
+                  },
+                  "Leprosy": {
+                    "value": 10.8759083270635,
+                    "pct": 0.0023265964537142947
+                  },
+                  "Neurological": {
+                    "value": 15446.0024980873,
+                    "pct": 3.304240303928247
+                  },
+                  "Digestive Diseases": {
+                    "value": 19131.8695117725,
+                    "pct": 4.092728480273319
+                  },
+                  "Genitourinary": {
+                    "value": 13920.1144880483,
+                    "pct": 2.9778192339668714
+                  },
+                  "Skin Diseases": {
+                    "value": 6254.00081394826,
+                    "pct": 1.3378685878632248
+                  },
+                  "Musculoskeletal": {
+                    "value": 25480.6876116487,
+                    "pct": 5.450880574999306
+                  },
+                  "Sense Organ Diseases": {
+                    "value": 15045.8448340373,
+                    "pct": 3.21863776167542
+                  },
+                  "Oral Conditions": {
+                    "value": 3643.64511932233,
+                    "pct": 0.7794559827351546
+                  }
+                }
+              },
+              "Noncommunicable Diseases": {
+                "value": 161308.41048632291,
+                "pct": 34.50742361057577,
+                "sub": {
+                  "Diabetes": {
+                    "value": 13483.8648158807,
+                    "pct": 2.884495815850749
+                  },
+                  "Cardiovascular (excl Stroke)": {
+                    "value": 78567.0024963896,
+                    "pct": 16.80721314395416
+                  },
+                  "Stroke": {
+                    "value": 20541.2561961036,
+                    "pct": 4.394227349431426
+                  },
+                  "COPD": {
+                    "value": 24359.3210277245,
+                    "pct": 5.210995552156696
+                  },
+                  "Asthma": {
+                    "value": 6498.31735601192,
+                    "pct": 1.3901332799933144
+                  },
+                  "Neoplasms": {
+                    "value": 27100.3221265188,
+                    "pct": 5.797356088150994
+                  }
+                }
+              }
+            }
+          },
+          "Indonesia": {
+            "total": 86387.6529194132,
+            "population": 272489.384,
+            "dalyRate": 317.03,
+            "dalyRateVsWorld": 83.4,
+            "diseases": {
+              "Infectious & Parasitic": {
+                "value": 9529.48094540344,
+                "pct": 11.0104983631822,
+                "sub": {
+                  "Tuberculosis": {
+                    "value": 3569.08007576632,
+                    "pct": 4.123766085208072
+                  },
+                  "Diarrhoeal Diseases": {
+                    "value": 2057.4188038083,
+                    "pct": 2.377171065401875
+                  },
+                  "Malaria": {
+                    "value": 94.8266026968028,
+                    "pct": 0.1095640108586285
+                  },
+                  "Dengue": {
+                    "value": 518.14422783545,
+                    "pct": 0.5986712398251193
+                  },
+                  "Hepatitis": {
+                    "value": 209.518565500684,
+                    "pct": 0.24208074245788824
+                  },
+                  "Respiratory Infections": {
+                    "value": 1872.72604603177,
+                    "pct": 2.1637744156954732
+                  },
+                  "Meningitis": {
+                    "value": 300.660511241945,
+                    "pct": 0.34738744805400407
+                  },
+                  "Encephalitis": {
+                    "value": 128.876514164897,
+                    "pct": 0.14890576479400802
+                  },
+                  "Other Infectious": {
+                    "value": 213.600687161717,
+                    "pct": 0.24679728411683288
+                  },
+                  "COVID-19": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  }
+                }
+              },
+              "Injuries": {
+                "value": 6034.32475588587,
+                "pct": 6.972144991762545,
+                "sub": {
+                  "Unintentional Injuries": {
+                    "value": 4961.99283060676,
+                    "pct": 5.733157372634272
+                  },
+                  "Interpersonal Violence": {
+                    "value": 792.883708454914,
+                    "pct": 0.9161091589513712
+                  },
+                  "Collective Violence": {
+                    "value": 59.8546682953703,
+                    "pct": 0.06915693845978801
+                  }
+                }
+              },
+              "Maternal, Perinatal & Nutritional": {
+                "value": 6200.038159380005,
+                "pct": 7.16361262451012,
+                "sub": {
+                  "Maternal Conditions": {
+                    "value": 369.47208029257,
+                    "pct": 0.426893317548959
+                  },
+                  "Preterm Birth": {
+                    "value": 2569.58932406569,
+                    "pct": 2.9689401981880916
+                  },
+                  "Birth Asphyxia": {
+                    "value": 1126.75533726685,
+                    "pct": 1.3018692064930963
+                  },
+                  "Neonatal Sepsis": {
+                    "value": 401.383050103907,
+                    "pct": 0.46376370775051123
+                  },
+                  "Other Neonatal": {
+                    "value": 272.535920103714,
+                    "pct": 0.31489189384000155
+                  },
+                  "Protein-Energy Malnutrition": {
+                    "value": 586.216280551073,
+                    "pct": 0.6773226615864846
+                  },
+                  "Iron Deficiency Anaemia": {
+                    "value": 653.429357533163,
+                    "pct": 0.7549816105193439
+                  },
+                  "Other Nutritional": {
+                    "value": 79.2982088774094,
+                    "pct": 0.09162228289770007
+                  }
+                }
+              },
+              "Mental & Substance Disorders": {
+                "value": 2692.5361415878087,
+                "pct": 3.110994706806288,
+                "sub": {
+                  "Self-Harm": {
+                    "value": 219.593548528827,
+                    "pct": 0.2537215217171158
+                  },
+                  "Depressive Disorders": {
+                    "value": 1030.98524981021,
+                    "pct": 1.1912150798702
+                  },
+                  "Anxiety Disorders": {
+                    "value": 1142.99001919721,
+                    "pct": 1.3206269898230723
+                  },
+                  "Eating Disorders": {
+                    "value": 82.1244078197345,
+                    "pct": 0.09488771351315321
+                  },
+                  "ADHD": {
+                    "value": 28.7837506693269,
+                    "pct": 0.033257156548881804
+                  },
+                  "Conduct Disorder": {
+                    "value": 188.0591655625,
+                    "pct": 0.21728624533386426
+                  }
+                }
+              },
+              "Substance Abuse": {
+                "value": 280.755123653023,
+                "pct": 0.3243884789892672,
+                "sub": {
+                  "Alcohol Use": {
+                    "value": 149.250285929036,
+                    "pct": 0.1724459116232122
+                  },
+                  "Drug Use": {
+                    "value": 131.504837723987,
+                    "pct": 0.15194256736605502
+                  }
+                }
+              },
+              "Others": {
+                "value": 23583.694158459308,
+                "pct": 27.248937000577893,
+                "sub": {
+                  "HIV/AIDS": {
+                    "value": 1647.77327189133,
+                    "pct": 1.9038607681781534
+                  },
+                  "STDs": {
+                    "value": 282.952466523098,
+                    "pct": 0.326927320318918
+                  },
+                  "Leprosy": {
+                    "value": 1.82106490255417,
+                    "pct": 0.0021040843928118447
+                  },
+                  "Neurological": {
+                    "value": 3138.94076543914,
+                    "pct": 3.626776983762607
+                  },
+                  "Digestive Diseases": {
+                    "value": 5095.60088471282,
+                    "pct": 5.887530026241634
+                  },
+                  "Genitourinary": {
+                    "value": 3092.21036934271,
+                    "pct": 3.5727840168131553
+                  },
+                  "Skin Diseases": {
+                    "value": 1687.88841662681,
+                    "pct": 1.950210379240849
+                  },
+                  "Musculoskeletal": {
+                    "value": 4608.36672000685,
+                    "pct": 5.324572714745126
+                  },
+                  "Sense Organ Diseases": {
+                    "value": 2566.59003333198,
+                    "pct": 2.9654747748451604
+                  },
+                  "Oral Conditions": {
+                    "value": 767.705098617489,
+                    "pct": 0.887017433600276
+                  }
+                }
+              },
+              "Noncommunicable Diseases": {
+                "value": 38228.213557041745,
+                "pct": 44.16942383417169,
+                "sub": {
+                  "Diabetes": {
+                    "value": 2540.26954380786,
+                    "pct": 2.9350637053982704
+                  },
+                  "Cardiovascular (excl Stroke)": {
+                    "value": 21341.7252995521,
+                    "pct": 24.658534166181102
+                  },
+                  "Stroke": {
+                    "value": 11354.7136214955,
+                    "pct": 13.119398261054599
+                  },
+                  "COPD": {
+                    "value": 2322.71060131775,
+                    "pct": 2.6836929965520087
+                  },
+                  "Asthma": {
+                    "value": 1144.19054562523,
+                    "pct": 1.3220140952012565
+                  },
+                  "Neoplasms": {
+                    "value": 6903.69333850878,
+                    "pct": 7.976625866514567
+                  }
+                }
+              }
+            }
+          },
+          "Japan": {
+            "total": 37585.307026075,
+            "population": 126699.422,
+            "dalyRate": 296.65,
+            "dalyRateVsWorld": 78.1,
+            "diseases": {
+              "Infectious & Parasitic": {
+                "value": 521.432648002427,
+                "pct": 1.4382148438803493,
+                "sub": {
+                  "Tuberculosis": {
+                    "value": 42.6950831215689,
+                    "pct": 0.11776152210910266
+                  },
+                  "Diarrhoeal Diseases": {
+                    "value": 121.947106564332,
+                    "pct": 0.3363543489288088
+                  },
+                  "Malaria": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  },
+                  "Dengue": {
+                    "value": 0.00445322839832498,
+                    "pct": 1.2282888710932211e-05
+                  },
+                  "Hepatitis": {
+                    "value": 53.3349730399434,
+                    "pct": 0.14710845248732451
+                  },
+                  "Respiratory Infections": {
+                    "value": 1357.68920697934,
+                    "pct": 3.744776584922888
+                  },
+                  "Meningitis": {
+                    "value": 8.8658763130581,
+                    "pct": 0.024453848385396833
+                  },
+                  "Encephalitis": {
+                    "value": 3.33202857229201,
+                    "pct": 0.009190396825481305
+                  },
+                  "Other Infectious": {
+                    "value": 267.798222209043,
+                    "pct": 0.7386407042621949
+                  },
+                  "COVID-19": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  }
+                }
+              },
+              "Injuries": {
+                "value": 2947.17276679259,
+                "pct": 8.128888048953339,
+                "sub": {
+                  "Unintentional Injuries": {
+                    "value": 2046.27928709813,
+                    "pct": 5.644044838204552
+                  },
+                  "Interpersonal Violence": {
+                    "value": 52.7903073346815,
+                    "pct": 0.14560615625546952
+                  },
+                  "Collective Violence": {
+                    "value": 0.525272724742339,
+                    "pct": 0.0014488065384935247
+                  }
+                }
+              },
+              "Maternal, Perinatal & Nutritional": {
+                "value": 352.3376659668147,
+                "pct": 0.9718172868402181,
+                "sub": {
+                  "Maternal Conditions": {
+                    "value": 4.49170675984209,
+                    "pct": 0.012389019677058145
+                  },
+                  "Preterm Birth": {
+                    "value": 106.033799650996,
+                    "pct": 0.2924622867312053
+                  },
+                  "Birth Asphyxia": {
+                    "value": 69.2981516375221,
+                    "pct": 0.19113807069881003
+                  },
+                  "Neonatal Sepsis": {
+                    "value": 13.9423172083067,
+                    "pct": 0.038455680985632866
+                  },
+                  "Other Neonatal": {
+                    "value": 14.0990519677076,
+                    "pct": 0.03888798659285933
+                  },
+                  "Protein-Energy Malnutrition": {
+                    "value": 33.8858308005196,
+                    "pct": 0.09346385394398701
+                  },
+                  "Iron Deficiency Anaemia": {
+                    "value": 91.3924084952403,
+                    "pct": 0.25207842090321003
+                  },
+                  "Other Nutritional": {
+                    "value": 7.28554325864989,
+                    "pct": 0.020094975833338906
+                  }
+                }
+              },
+              "Mental & Substance Disorders": {
+                "value": 1926.9398848323333,
+                "pct": 5.314883055842053,
+                "sub": {
+                  "Self-Harm": {
+                    "value": 847.577899635033,
+                    "pct": 2.337788247954814
+                  },
+                  "Depressive Disorders": {
+                    "value": 565.044568846751,
+                    "pct": 1.5585051865904391
+                  },
+                  "Anxiety Disorders": {
+                    "value": 366.192043791602,
+                    "pct": 1.0100304135338942
+                  },
+                  "Eating Disorders": {
+                    "value": 87.5694924469677,
+                    "pct": 0.2415340588871429
+                  },
+                  "ADHD": {
+                    "value": 12.3220205565557,
+                    "pct": 0.03398658089194815
+                  },
+                  "Conduct Disorder": {
+                    "value": 48.233859555424,
+                    "pct": 0.13303856798381358
+                  }
+                }
+              },
+              "Substance Abuse": {
+                "value": 176.4616790301307,
+                "pct": 0.48671637100100124,
+                "sub": {
+                  "Alcohol Use": {
+                    "value": 82.7514550621839,
+                    "pct": 0.22824495450959295
+                  },
+                  "Drug Use": {
+                    "value": 93.7102239679468,
+                    "pct": 0.25847141649140826
+                  }
+                }
+              },
+              "Others": {
+                "value": 13329.357936786579,
+                "pct": 36.7650175291509,
+                "sub": {
+                  "HIV/AIDS": {
+                    "value": 5.09930293423373,
+                    "pct": 0.014064890646094404
+                  },
+                  "STDs": {
+                    "value": 14.863494788859,
+                    "pct": 0.04099647177668809
+                  },
+                  "Leprosy": {
+                    "value": 0.0171625538017197,
+                    "pct": 4.733773332200999e-05
+                  },
+                  "Neurological": {
+                    "value": 2512.26365613609,
+                    "pct": 6.929322311976187
+                  },
+                  "Digestive Diseases": {
+                    "value": 1329.70177943751,
+                    "pct": 3.6675816990888532
+                  },
+                  "Genitourinary": {
+                    "value": 1281.45125093523,
+                    "pct": 3.5344971548377466
+                  },
+                  "Skin Diseases": {
+                    "value": 772.914726004543,
+                    "pct": 2.1318523806516096
+                  },
+                  "Musculoskeletal": {
+                    "value": 5170.43996613619,
+                    "pct": 14.261100713921287
+                  },
+                  "Sense Organ Diseases": {
+                    "value": 1601.19234787906,
+                    "pct": 4.416406627873009
+                  },
+                  "Oral Conditions": {
+                    "value": 411.322350824495,
+                    "pct": 1.134508767032163
+                  }
+                }
+              },
+              "Noncommunicable Diseases": {
+                "value": 17001.843675891352,
+                "pct": 46.89446286433214,
+                "sub": {
+                  "Diabetes": {
+                    "value": 1270.79405637807,
+                    "pct": 3.505102494827587
+                  },
+                  "Cardiovascular (excl Stroke)": {
+                    "value": 6028.08238311409,
+                    "pct": 16.626648900373343
+                  },
+                  "Stroke": {
+                    "value": 2293.37860727968,
+                    "pct": 6.325593858119766
+                  },
+                  "COPD": {
+                    "value": 796.545989722043,
+                    "pct": 2.197032101155036
+                  },
+                  "Asthma": {
+                    "value": 185.849389388539,
+                    "pct": 0.512609541363915
+                  },
+                  "Neoplasms": {
+                    "value": 7596.93644932874,
+                    "pct": 20.953860122294095
+                  }
+                }
+              }
+            }
+          },
+          "Lao People's Democratic Republic": {
+            "total": 2544.65428925883,
+            "population": 7237.647,
+            "dalyRate": 351.59,
+            "dalyRateVsWorld": 92.5,
+            "diseases": {
+              "Infectious & Parasitic": {
+                "value": 318.630724586551,
+                "pct": 13.178708804449357,
+                "sub": {
+                  "Tuberculosis": {
+                    "value": 94.7509938094115,
+                    "pct": 3.9189433409684544
+                  },
+                  "Diarrhoeal Diseases": {
+                    "value": 86.8033802616471,
+                    "pct": 3.5902265018369137
+                  },
+                  "Malaria": {
+                    "value": 1.05197155119997,
+                    "pct": 0.043510012293442396
+                  },
+                  "Dengue": {
+                    "value": 1.41084038875867,
+                    "pct": 0.05835298738730429
+                  },
+                  "Hepatitis": {
+                    "value": 2.84925889130018,
+                    "pct": 0.11784661785412207
+                  },
+                  "Respiratory Infections": {
+                    "value": 158.26768902617,
+                    "pct": 6.546022168877422
+                  },
+                  "Meningitis": {
+                    "value": 9.75013116092317,
+                    "pct": 0.40326977111741397
+                  },
+                  "Encephalitis": {
+                    "value": 4.5228008568364,
+                    "pct": 0.18706505956104144
+                  },
+                  "Other Infectious": {
+                    "value": 12.6273362996361,
+                    "pct": 0.522272258222085
+                  },
+                  "COVID-19": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  }
+                }
+              },
+              "Injuries": {
+                "value": 289.16692233365,
+                "pct": 11.960072809233562,
+                "sub": {
+                  "Unintentional Injuries": {
+                    "value": 227.779374180863,
+                    "pct": 9.42105645299721
+                  },
+                  "Interpersonal Violence": {
+                    "value": 34.8843316092937,
+                    "pct": 1.4428315056975975
+                  },
+                  "Collective Violence": {
+                    "value": 7.18106808110801,
+                    "pct": 0.2970121769287873
+                  }
+                }
+              },
+              "Maternal, Perinatal & Nutritional": {
+                "value": 376.0697303995134,
+                "pct": 15.554411689374648,
+                "sub": {
+                  "Maternal Conditions": {
+                    "value": 16.5541636966036,
+                    "pct": 0.6846875898167358
+                  },
+                  "Preterm Birth": {
+                    "value": 148.546189720829,
+                    "pct": 6.143936624070068
+                  },
+                  "Birth Asphyxia": {
+                    "value": 94.392143200672,
+                    "pct": 3.904101119826681
+                  },
+                  "Neonatal Sepsis": {
+                    "value": 23.8498456368113,
+                    "pct": 0.9864402470491376
+                  },
+                  "Other Neonatal": {
+                    "value": 43.1532356868316,
+                    "pct": 1.7848370643617777
+                  },
+                  "Protein-Energy Malnutrition": {
+                    "value": 15.751714981145,
+                    "pct": 0.6514979532389841
+                  },
+                  "Iron Deficiency Anaemia": {
+                    "value": 27.9922893110489,
+                    "pct": 1.157773563986631
+                  },
+                  "Other Nutritional": {
+                    "value": 1.08122116391815,
+                    "pct": 0.044719789314023164
+                  }
+                }
+              },
+              "Mental & Substance Disorders": {
+                "value": 94.14917873161708,
+                "pct": 3.894052001080656,
+                "sub": {
+                  "Self-Harm": {
+                    "value": 19.3221484623862,
+                    "pct": 0.7991726736100033
+                  },
+                  "Depressive Disorders": {
+                    "value": 28.9891936796595,
+                    "pct": 1.19900597306096
+                  },
+                  "Anxiety Disorders": {
+                    "value": 37.449039450084,
+                    "pct": 1.5489089652587276
+                  },
+                  "Eating Disorders": {
+                    "value": 2.11417789963048,
+                    "pct": 0.08744334036269043
+                  },
+                  "ADHD": {
+                    "value": 0.82405272734964,
+                    "pct": 0.03408318813995375
+                  },
+                  "Conduct Disorder": {
+                    "value": 5.45056651250727,
+                    "pct": 0.22543786064832083
+                  }
+                }
+              },
+              "Substance Abuse": {
+                "value": 12.44640616054025,
+                "pct": 0.5147889070161185,
+                "sub": {
+                  "Alcohol Use": {
+                    "value": 8.05018724734385,
+                    "pct": 0.3329593330702744
+                  },
+                  "Drug Use": {
+                    "value": 4.3962189131964,
+                    "pct": 0.18182957394584412
+                  }
+                }
+              },
+              "Others": {
+                "value": 484.5467257567416,
+                "pct": 20.04106857298033,
+                "sub": {
+                  "HIV/AIDS": {
+                    "value": 22.5639975916234,
+                    "pct": 0.9332569987095738
+                  },
+                  "STDs": {
+                    "value": 5.61927416217635,
+                    "pct": 0.2324156842431949
+                  },
+                  "Leprosy": {
+                    "value": 0.0193909260150378,
+                    "pct": 0.0008020173438465421
+                  },
+                  "Neurological": {
+                    "value": 71.6371729889777,
+                    "pct": 2.9629454084213904
+                  },
+                  "Digestive Diseases": {
+                    "value": 84.779263434043,
+                    "pct": 3.5065081275596257
+                  },
+                  "Genitourinary": {
+                    "value": 83.4601449680474,
+                    "pct": 3.4519487997845486
+                  },
+                  "Skin Diseases": {
+                    "value": 42.3382444879545,
+                    "pct": 1.751128665078792
+                  },
+                  "Musculoskeletal": {
+                    "value": 93.6222177440654,
+                    "pct": 3.872256659732893
+                  },
+                  "Sense Organ Diseases": {
+                    "value": 45.3895355094087,
+                    "pct": 1.87733142189565
+                  },
+                  "Oral Conditions": {
+                    "value": 11.1697276893993,
+                    "pct": 0.46198491634664396
+                  }
+                }
+              },
+              "Noncommunicable Diseases": {
+                "value": 842.7592248627857,
+                "pct": 34.856897215865345,
+                "sub": {
+                  "Diabetes": {
+                    "value": 62.0228968458368,
+                    "pct": 2.565294661399343
+                  },
+                  "Cardiovascular (excl Stroke)": {
+                    "value": 383.2404379505,
+                    "pct": 15.850995350159213
+                  },
+                  "Stroke": {
+                    "value": 174.909376522632,
+                    "pct": 7.234329782071656
+                  },
+                  "COPD": {
+                    "value": 45.0878940462349,
+                    "pct": 1.8648553965165102
+                  },
+                  "Asthma": {
+                    "value": 27.1730223686708,
+                    "pct": 1.123888318046452
+                  },
+                  "Neoplasms": {
+                    "value": 223.280113237231,
+                    "pct": 9.234965014739656
+                  }
+                }
+              }
+            }
+          },
+          "Malaysia": {
+            "total": 8671.32635856312,
+            "population": 33440.598,
+            "dalyRate": 259.31,
+            "dalyRateVsWorld": 68.2,
+            "diseases": {
+              "Infectious & Parasitic": {
+                "value": 415.580804521863,
+                "pct": 5.015719423720412,
+                "sub": {
+                  "Tuberculosis": {
+                    "value": 73.4407028662502,
+                    "pct": 0.886369042674472
+                  },
+                  "Diarrhoeal Diseases": {
+                    "value": 66.9948266792698,
+                    "pct": 0.8085726044315367
+                  },
+                  "Malaria": {
+                    "value": 0.0186423434582072,
+                    "pct": 0.00022499779385762729
+                  },
+                  "Dengue": {
+                    "value": 19.9424608114176,
+                    "pct": 0.24068914386864618
+                  },
+                  "Hepatitis": {
+                    "value": 10.4337186221054,
+                    "pct": 0.12592642534281034
+                  },
+                  "Respiratory Infections": {
+                    "value": 524.256326374264,
+                    "pct": 6.3273438296290925
+                  },
+                  "Meningitis": {
+                    "value": 18.9188415439318,
+                    "pct": 0.22833489895030828
+                  },
+                  "Encephalitis": {
+                    "value": 23.1531000145818,
+                    "pct": 0.27943892547224214
+                  },
+                  "Other Infectious": {
+                    "value": 41.0344691596401,
+                    "pct": 0.49525238357161755
+                  },
+                  "COVID-19": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  }
+                }
+              },
+              "Injuries": {
+                "value": 845.51001367431,
+                "pct": 10.204612321821628,
+                "sub": {
+                  "Unintentional Injuries": {
+                    "value": 691.792629124563,
+                    "pct": 8.34936957947041
+                  },
+                  "Interpersonal Violence": {
+                    "value": 64.5886326585596,
+                    "pct": 0.7795318163210233
+                  },
+                  "Collective Violence": {
+                    "value": 0.899859580849215,
+                    "pct": 0.010860567016513566
+                  }
+                }
+              },
+              "Maternal, Perinatal & Nutritional": {
+                "value": 388.7503478732428,
+                "pct": 4.6918978200864245,
+                "sub": {
+                  "Maternal Conditions": {
+                    "value": 11.3591786922607,
+                    "pct": 0.13709596926603404
+                  },
+                  "Preterm Birth": {
+                    "value": 144.153847025628,
+                    "pct": 1.7398186890810203
+                  },
+                  "Birth Asphyxia": {
+                    "value": 49.17059796155,
+                    "pct": 0.5934487844197798
+                  },
+                  "Neonatal Sepsis": {
+                    "value": 23.7178928271575,
+                    "pct": 0.2862555114396159
+                  },
+                  "Other Neonatal": {
+                    "value": 27.6176234065082,
+                    "pct": 0.33332206071546616
+                  },
+                  "Protein-Energy Malnutrition": {
+                    "value": 21.7349540646202,
+                    "pct": 0.2623230671132966
+                  },
+                  "Iron Deficiency Anaemia": {
+                    "value": 96.4551953277822,
+                    "pct": 1.1641350886764843
+                  },
+                  "Other Nutritional": {
+                    "value": 3.76924362230538,
+                    "pct": 0.04549167873834461
+                  }
+                }
+              },
+              "Mental & Substance Disorders": {
+                "value": 517.0194573653472,
+                "pct": 6.240000756850007,
+                "sub": {
+                  "Self-Harm": {
+                    "value": 88.2288923103387,
+                    "pct": 1.0648503590136862
+                  },
+                  "Depressive Disorders": {
+                    "value": 214.791290238775,
+                    "pct": 2.5923546871614853
+                  },
+                  "Anxiety Disorders": {
+                    "value": 177.064350732956,
+                    "pct": 2.137021473456937
+                  },
+                  "Eating Disorders": {
+                    "value": 14.4191791008739,
+                    "pct": 0.17402766418330057
+                  },
+                  "ADHD": {
+                    "value": 1.65061543793075,
+                    "pct": 0.019921574391885785
+                  },
+                  "Conduct Disorder": {
+                    "value": 20.8651295444728,
+                    "pct": 0.25182499864271096
+                  }
+                }
+              },
+              "Substance Abuse": {
+                "value": 52.4800921822515,
+                "pct": 0.6333916649976281,
+                "sub": {
+                  "Alcohol Use": {
+                    "value": 26.3359880025831,
+                    "pct": 0.31785377267220377
+                  },
+                  "Drug Use": {
+                    "value": 26.1441041796684,
+                    "pct": 0.31553789232542434
+                  }
+                }
+              },
+              "Others": {
+                "value": 2514.862046323351,
+                "pct": 30.352322042963138,
+                "sub": {
+                  "HIV/AIDS": {
+                    "value": 125.136454728911,
+                    "pct": 1.5102943633824393
+                  },
+                  "STDs": {
+                    "value": 7.31858844641723,
+                    "pct": 0.08832935935802963
+                  },
+                  "Leprosy": {
+                    "value": 0.0263126393676929,
+                    "pct": 0.0003175719738011735
+                  },
+                  "Neurological": {
+                    "value": 390.952385504388,
+                    "pct": 4.718474608037459
+                  },
+                  "Digestive Diseases": {
+                    "value": 341.978673233522,
+                    "pct": 4.127402072405572
+                  },
+                  "Genitourinary": {
+                    "value": 418.522994272911,
+                    "pct": 5.051229240636959
+                  },
+                  "Skin Diseases": {
+                    "value": 235.987027556455,
+                    "pct": 2.848169850440448
+                  },
+                  "Musculoskeletal": {
+                    "value": 538.120313685889,
+                    "pct": 6.49467078432118
+                  },
+                  "Sense Organ Diseases": {
+                    "value": 274.740860988439,
+                    "pct": 3.3158968315075006
+                  },
+                  "Oral Conditions": {
+                    "value": 81.0300244505342,
+                    "pct": 0.97796592893333
+                  }
+                }
+              },
+              "Noncommunicable Diseases": {
+                "value": 3551.3644601114165,
+                "pct": 42.86205596956078,
+                "sub": {
+                  "Diabetes": {
+                    "value": 318.23112397735,
+                    "pct": 3.8407886321939158
+                  },
+                  "Cardiovascular (excl Stroke)": {
+                    "value": 1808.95981817832,
+                    "pct": 21.832661176941865
+                  },
+                  "Stroke": {
+                    "value": 636.400716693957,
+                    "pct": 7.6808346325426715
+                  },
+                  "COPD": {
+                    "value": 168.765891033664,
+                    "pct": 2.0368658718319104
+                  },
+                  "Asthma": {
+                    "value": 60.7409463819061,
+                    "pct": 0.7330933990885494
+                  },
+                  "Neoplasms": {
+                    "value": 898.54051281504,
+                    "pct": 10.844646947327904
+                  }
+                }
+              }
+            }
+          },
+          "Myanmar": {
+            "total": 19999.825149547,
+            "population": 52640.715,
+            "dalyRate": 379.93,
+            "dalyRateVsWorld": 100.0,
+            "diseases": {
+              "Infectious & Parasitic": {
+                "value": 2425.65959932871,
+                "pct": 12.29759182805999,
+                "sub": {
+                  "Tuberculosis": {
+                    "value": 873.990716539083,
+                    "pct": 4.430951934263891
+                  },
+                  "Diarrhoeal Diseases": {
+                    "value": 487.738575606517,
+                    "pct": 2.4727335703939017
+                  },
+                  "Malaria": {
+                    "value": 8.94910422040515,
+                    "pct": 0.04537010508802144
+                  },
+                  "Dengue": {
+                    "value": 26.1604750580963,
+                    "pct": 0.1326281908564764
+                  },
+                  "Hepatitis": {
+                    "value": 12.1555642086203,
+                    "pct": 0.06162619318834207
+                  },
+                  "Respiratory Infections": {
+                    "value": 766.554886477237,
+                    "pct": 3.8862745252098603
+                  },
+                  "Meningitis": {
+                    "value": 46.7233479449581,
+                    "pct": 0.23687769793689678
+                  },
+                  "Encephalitis": {
+                    "value": 15.0588186846006,
+                    "pct": 0.0763450921337978
+                  },
+                  "Other Infectious": {
+                    "value": 208.30674806649,
+                    "pct": 1.0560720735346167
+                  },
+                  "COVID-19": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  }
+                }
+              },
+              "Injuries": {
+                "value": 2126.60973960616,
+                "pct": 10.781470970820056,
+                "sub": {
+                  "Unintentional Injuries": {
+                    "value": 1791.8045140658,
+                    "pct": 9.084077813620112
+                  },
+                  "Interpersonal Violence": {
+                    "value": 138.692021334574,
+                    "pct": 0.7031398258243613
+                  },
+                  "Collective Violence": {
+                    "value": 111.593303115258,
+                    "pct": 0.5657549364454121
+                  }
+                }
+              },
+              "Maternal, Perinatal & Nutritional": {
+                "value": 2256.665097969115,
+                "pct": 11.440824703982907,
+                "sub": {
+                  "Maternal Conditions": {
+                    "value": 103.908779006322,
+                    "pct": 0.5267959906350709
+                  },
+                  "Preterm Birth": {
+                    "value": 937.081635342386,
+                    "pct": 4.7508098268202135
+                  },
+                  "Birth Asphyxia": {
+                    "value": 549.71302310372,
+                    "pct": 2.786931184643261
+                  },
+                  "Neonatal Sepsis": {
+                    "value": 133.172300868249,
+                    "pct": 0.6751559861633308
+                  },
+                  "Other Neonatal": {
+                    "value": 185.043520523539,
+                    "pct": 0.9381323275761706
+                  },
+                  "Protein-Energy Malnutrition": {
+                    "value": 38.6362620725972,
+                    "pct": 0.19587784735428096
+                  },
+                  "Iron Deficiency Anaemia": {
+                    "value": 274.570756709342,
+                    "pct": 1.3920168744482937
+                  },
+                  "Other Nutritional": {
+                    "value": 4.1179852138992,
+                    "pct": 0.020877332222762585
+                  }
+                }
+              },
+              "Mental & Substance Disorders": {
+                "value": 543.1758974407951,
+                "pct": 2.753789311334395,
+                "sub": {
+                  "Self-Harm": {
+                    "value": 84.5199010905202,
+                    "pct": 0.42849839493013214
+                  },
+                  "Depressive Disorders": {
+                    "value": 174.051152060539,
+                    "pct": 0.8824032959267902
+                  },
+                  "Anxiety Disorders": {
+                    "value": 232.453645323117,
+                    "pct": 1.1784918419383448
+                  },
+                  "Eating Disorders": {
+                    "value": 13.9342810452013,
+                    "pct": 0.07064391918749906
+                  },
+                  "ADHD": {
+                    "value": 5.38301126752633,
+                    "pct": 0.02729075233483158
+                  },
+                  "Conduct Disorder": {
+                    "value": 32.8339066538913,
+                    "pct": 0.16646110701679734
+                  }
+                }
+              },
+              "Substance Abuse": {
+                "value": 287.0372335260754,
+                "pct": 1.455219330171507,
+                "sub": {
+                  "Alcohol Use": {
+                    "value": 252.191636066989,
+                    "pct": 1.278559367382285
+                  },
+                  "Drug Use": {
+                    "value": 34.8455974590864,
+                    "pct": 0.1766599627892219
+                  }
+                }
+              },
+              "Others": {
+                "value": 4358.0860351899255,
+                "pct": 22.094593663169338,
+                "sub": {
+                  "HIV/AIDS": {
+                    "value": 420.13725066687,
+                    "pct": 2.1300088528062
+                  },
+                  "STDs": {
+                    "value": 52.5286329311374,
+                    "pct": 0.26630929057477354
+                  },
+                  "Leprosy": {
+                    "value": 0.312042472140474,
+                    "pct": 0.0015819907115014423
+                  },
+                  "Neurological": {
+                    "value": 594.434299293478,
+                    "pct": 3.0136587933991565
+                  },
+                  "Digestive Diseases": {
+                    "value": 864.778689299617,
+                    "pct": 4.384248863919117
+                  },
+                  "Genitourinary": {
+                    "value": 561.552980372982,
+                    "pct": 2.8469573160094885
+                  },
+                  "Skin Diseases": {
+                    "value": 300.002678380402,
+                    "pct": 1.520951450511828
+                  },
+                  "Musculoskeletal": {
+                    "value": 773.481465162162,
+                    "pct": 3.921390844686724
+                  },
+                  "Sense Organ Diseases": {
+                    "value": 501.004304836967,
+                    "pct": 2.5399880703339535
+                  },
+                  "Oral Conditions": {
+                    "value": 94.0820457548415,
+                    "pct": 0.4769764881115612
+                  }
+                }
+              },
+              "Noncommunicable Diseases": {
+                "value": 7727.437968766552,
+                "pct": 39.17651019246181,
+                "sub": {
+                  "Diabetes": {
+                    "value": 880.855507223497,
+                    "pct": 4.465755001374113
+                  },
+                  "Cardiovascular (excl Stroke)": {
+                    "value": 3296.14921080724,
+                    "pct": 16.71079388472615
+                  },
+                  "Stroke": {
+                    "value": 1729.56864011177,
+                    "pct": 8.768554821374597
+                  },
+                  "COPD": {
+                    "value": 739.516006741931,
+                    "pct": 3.749193004552627
+                  },
+                  "Asthma": {
+                    "value": 287.155234912817,
+                    "pct": 1.4558175727648597
+                  },
+                  "Neoplasms": {
+                    "value": 1779.46611391023,
+                    "pct": 9.021524680045037
+                  }
+                }
+              }
+            }
+          },
+          "Philippines": {
+            "total": 35538.423242955,
+            "population": 110804.681,
+            "dalyRate": 320.73,
+            "dalyRateVsWorld": 84.4,
+            "diseases": {
+              "Infectious & Parasitic": {
+                "value": 3363.67147307293,
+                "pct": 10.02313509261317,
+                "sub": {
+                  "Tuberculosis": {
+                    "value": 1165.93079763228,
+                    "pct": 3.4742637581756464
+                  },
+                  "Diarrhoeal Diseases": {
+                    "value": 690.459567634757,
+                    "pct": 2.057445139274575
+                  },
+                  "Malaria": {
+                    "value": 1.16881048311841,
+                    "pct": 0.0034828447022074217
+                  },
+                  "Dengue": {
+                    "value": 41.6219225246241,
+                    "pct": 0.12402583177882816
+                  },
+                  "Hepatitis": {
+                    "value": 68.9192654446593,
+                    "pct": 0.20536699661825425
+                  },
+                  "Respiratory Infections": {
+                    "value": 2277.19366131962,
+                    "pct": 6.785626920514087
+                  },
+                  "Meningitis": {
+                    "value": 96.1500086471328,
+                    "pct": 0.2865097062959338
+                  },
+                  "Encephalitis": {
+                    "value": 29.4052849376396,
+                    "pct": 0.08762245234891719
+                  },
+                  "Other Infectious": {
+                    "value": 492.25875763169,
+                    "pct": 1.466842427318518
+                  },
+                  "COVID-19": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  }
+                }
+              },
+              "Injuries": {
+                "value": 3408.17685966994,
+                "pct": 10.15575312793018,
+                "sub": {
+                  "Unintentional Injuries": {
+                    "value": 2149.99512613581,
+                    "pct": 6.406598197900726
+                  },
+                  "Interpersonal Violence": {
+                    "value": 894.032108080138,
+                    "pct": 2.6640546403405163
+                  },
+                  "Collective Violence": {
+                    "value": 163.490695527391,
+                    "pct": 0.48717282314116117
+                  }
+                }
+              },
+              "Maternal, Perinatal & Nutritional": {
+                "value": 3578.59398014949,
+                "pct": 10.663565449773904,
+                "sub": {
+                  "Maternal Conditions": {
+                    "value": 162.148109596599,
+                    "pct": 0.48317215890700627
+                  },
+                  "Preterm Birth": {
+                    "value": 1491.31414837237,
+                    "pct": 4.443847532174714
+                  },
+                  "Birth Asphyxia": {
+                    "value": 589.357334194313,
+                    "pct": 1.756178695137356
+                  },
+                  "Neonatal Sepsis": {
+                    "value": 285.034646369169,
+                    "pct": 0.8493519029738668
+                  },
+                  "Other Neonatal": {
+                    "value": 285.460863009742,
+                    "pct": 0.8506219517884973
+                  },
+                  "Protein-Energy Malnutrition": {
+                    "value": 131.043325330016,
+                    "pct": 0.39048550468814747
+                  },
+                  "Iron Deficiency Anaemia": {
+                    "value": 515.359515284239,
+                    "pct": 1.5356785239904942
+                  },
+                  "Other Nutritional": {
+                    "value": 18.9811891601991,
+                    "pct": 0.0565605246214232
+                  }
+                }
+              },
+              "Mental & Substance Disorders": {
+                "value": 1322.860182534847,
+                "pct": 3.941885057541767,
+                "sub": {
+                  "Self-Harm": {
+                    "value": 200.658929926609,
+                    "pct": 0.5979274665477995
+                  },
+                  "Depressive Disorders": {
+                    "value": 480.375947106881,
+                    "pct": 1.4314337924017206
+                  },
+                  "Anxiety Disorders": {
+                    "value": 504.690634713897,
+                    "pct": 1.5038871816731658
+                  },
+                  "Eating Disorders": {
+                    "value": 32.9224358800439,
+                    "pct": 0.09810292861392657
+                  },
+                  "ADHD": {
+                    "value": 12.9476257587551,
+                    "pct": 0.038581592509104916
+                  },
+                  "Conduct Disorder": {
+                    "value": 91.2646091486606,
+                    "pct": 0.27195209579604845
+                  }
+                }
+              },
+              "Substance Abuse": {
+                "value": 190.5651322665326,
+                "pct": 0.5678497677135486,
+                "sub": {
+                  "Alcohol Use": {
+                    "value": 123.30368906439,
+                    "pct": 0.36742278275496554
+                  },
+                  "Drug Use": {
+                    "value": 67.2614432021426,
+                    "pct": 0.20042698495858305
+                  }
+                }
+              },
+              "Others": {
+                "value": 8480.374502117107,
+                "pct": 25.269988448966746,
+                "sub": {
+                  "HIV/AIDS": {
+                    "value": 88.653622122394,
+                    "pct": 0.2641718247740921
+                  },
+                  "STDs": {
+                    "value": 153.863724199212,
+                    "pct": 0.4584861826866759
+                  },
+                  "Leprosy": {
+                    "value": 1.39238410561564,
+                    "pct": 0.0041490538249989
+                  },
+                  "Neurological": {
+                    "value": 1290.1882415146,
+                    "pct": 3.8445285584884705
+                  },
+                  "Digestive Diseases": {
+                    "value": 1157.07839903829,
+                    "pct": 3.4478852049454867
+                  },
+                  "Genitourinary": {
+                    "value": 1666.18334363,
+                    "pct": 4.9649262349062075
+                  },
+                  "Skin Diseases": {
+                    "value": 747.547347736279,
+                    "pct": 2.227556440772223
+                  },
+                  "Musculoskeletal": {
+                    "value": 1614.71772465477,
+                    "pct": 4.811567960846695
+                  },
+                  "Sense Organ Diseases": {
+                    "value": 934.384095704424,
+                    "pct": 2.784296294869334
+                  },
+                  "Oral Conditions": {
+                    "value": 239.408168503501,
+                    "pct": 0.7133932176180928
+                  }
+                }
+              },
+              "Noncommunicable Diseases": {
+                "value": 13214.833368950834,
+                "pct": 39.37782305546068,
+                "sub": {
+                  "Diabetes": {
+                    "value": 1021.08295541566,
+                    "pct": 3.0426432797689484
+                  },
+                  "Cardiovascular (excl Stroke)": {
+                    "value": 6718.3863524179,
+                    "pct": 20.019581149265587
+                  },
+                  "Stroke": {
+                    "value": 2182.06002400567,
+                    "pct": 6.502145817712372
+                  },
+                  "COPD": {
+                    "value": 622.795946266805,
+                    "pct": 1.8558197358261135
+                  },
+                  "Asthma": {
+                    "value": 530.105292831143,
+                    "pct": 1.579618284927735
+                  },
+                  "Neoplasms": {
+                    "value": 2485.18509089699,
+                    "pct": 7.405403915220169
+                  }
+                }
+              }
+            }
+          },
+          "Republic of Korea": {
+            "total": 12387.6298826432,
+            "population": 51767.853,
+            "dalyRate": 239.29,
+            "dalyRateVsWorld": 63.0,
+            "diseases": {
+              "Infectious & Parasitic": {
+                "value": 254.585849755668,
+                "pct": 2.121189080185388,
+                "sub": {
+                  "Tuberculosis": {
+                    "value": 39.2312538631129,
+                    "pct": 0.3268716913225189
+                  },
+                  "Diarrhoeal Diseases": {
+                    "value": 19.2414243794249,
+                    "pct": 0.16031801971719883
+                  },
+                  "Malaria": {
+                    "value": 0.0127166481957476,
+                    "pct": 0.00010595410277227503
+                  },
+                  "Dengue": {
+                    "value": 4.274343415257e-06,
+                    "pct": 3.5613489854628526e-08
+                  },
+                  "Hepatitis": {
+                    "value": 23.8081136138423,
+                    "pct": 0.1983673117180819
+                  },
+                  "Respiratory Infections": {
+                    "value": 400.968774340539,
+                    "pct": 3.3408399816515506
+                  },
+                  "Meningitis": {
+                    "value": 1.96427064387975,
+                    "pct": 0.016366146996485545
+                  },
+                  "Encephalitis": {
+                    "value": 1.59517555126547,
+                    "pct": 0.013290875999472897
+                  },
+                  "Other Infectious": {
+                    "value": 100.412737057417,
+                    "pct": 0.8366309500788646
+                  },
+                  "COVID-19": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  }
+                }
+              },
+              "Injuries": {
+                "value": 1545.97161023481,
+                "pct": 12.880912670731382,
+                "sub": {
+                  "Unintentional Injuries": {
+                    "value": 918.325344686766,
+                    "pct": 7.651413835751421
+                  },
+                  "Interpersonal Violence": {
+                    "value": 35.5625515599502,
+                    "pct": 0.2963043551120097
+                  },
+                  "Collective Violence": {
+                    "value": 0.143469307061181,
+                    "pct": 0.0011953748716671008
+                  }
+                }
+              },
+              "Maternal, Perinatal & Nutritional": {
+                "value": 150.42080769194936,
+                "pct": 1.2532942228134403,
+                "sub": {
+                  "Maternal Conditions": {
+                    "value": 2.65725174019052,
+                    "pct": 0.02214001045229051
+                  },
+                  "Preterm Birth": {
+                    "value": 63.0697691703719,
+                    "pct": 0.5254923075355543
+                  },
+                  "Birth Asphyxia": {
+                    "value": 29.1509699908548,
+                    "pct": 0.24288356670552338
+                  },
+                  "Neonatal Sepsis": {
+                    "value": 15.8383380340376,
+                    "pct": 0.1319637745708508
+                  },
+                  "Other Neonatal": {
+                    "value": 4.59920174266483,
+                    "pct": 0.03832018363735883
+                  },
+                  "Protein-Energy Malnutrition": {
+                    "value": 1.58509359260311,
+                    "pct": 0.013206873920637791
+                  },
+                  "Iron Deficiency Anaemia": {
+                    "value": 25.56204052044,
+                    "pct": 0.21298089140166973
+                  },
+                  "Other Nutritional": {
+                    "value": 3.90249548357662,
+                    "pct": 0.03251528242115595
+                  }
+                }
+              },
+              "Mental & Substance Disorders": {
+                "value": 1094.0217903530088,
+                "pct": 9.115302666698993,
+                "sub": {
+                  "Self-Harm": {
+                    "value": 591.940244681032,
+                    "pct": 4.9319991049962795
+                  },
+                  "Depressive Disorders": {
+                    "value": 225.358351265035,
+                    "pct": 1.8776678840978376
+                  },
+                  "Anxiety Disorders": {
+                    "value": 214.76642087595,
+                    "pct": 1.7894167613391556
+                  },
+                  "Eating Disorders": {
+                    "value": 38.5601715291441,
+                    "pct": 0.3212802866152813
+                  },
+                  "ADHD": {
+                    "value": 5.34335943168165,
+                    "pct": 0.0445204463989907
+                  },
+                  "Conduct Disorder": {
+                    "value": 18.0532425701659,
+                    "pct": 0.15041818325144884
+                  }
+                }
+              },
+              "Substance Abuse": {
+                "value": 244.59558658985048,
+                "pct": 2.037951000944738,
+                "sub": {
+                  "Alcohol Use": {
+                    "value": 193.287191093834,
+                    "pct": 1.6104535247400136
+                  },
+                  "Drug Use": {
+                    "value": 51.3083954960165,
+                    "pct": 0.42749747620472484
+                  }
+                }
+              },
+              "Others": {
+                "value": 4200.381452335467,
+                "pct": 34.99724465384929,
+                "sub": {
+                  "HIV/AIDS": {
+                    "value": 3.83245337697264,
+                    "pct": 0.03193169715188772
+                  },
+                  "STDs": {
+                    "value": 8.97181951105443,
+                    "pct": 0.07475248759704159
+                  },
+                  "Leprosy": {
+                    "value": 0.0214607684675633,
+                    "pct": 0.00017880941839254236
+                  },
+                  "Neurological": {
+                    "value": 753.534295305143,
+                    "pct": 6.278387900507713
+                  },
+                  "Digestive Diseases": {
+                    "value": 470.201612320472,
+                    "pct": 3.9176824890187865
+                  },
+                  "Genitourinary": {
+                    "value": 376.270600343625,
+                    "pct": 3.135056757513005
+                  },
+                  "Skin Diseases": {
+                    "value": 285.42945410211,
+                    "pct": 2.3781755419075195
+                  },
+                  "Musculoskeletal": {
+                    "value": 1668.62990347047,
+                    "pct": 13.902891828077957
+                  },
+                  "Sense Organ Diseases": {
+                    "value": 437.913639065468,
+                    "pct": 3.6486616602666673
+                  },
+                  "Oral Conditions": {
+                    "value": 131.040019743934,
+                    "pct": 1.0918150369114221
+                  }
+                }
+              },
+              "Noncommunicable Diseases": {
+                "value": 4512.057617144868,
+                "pct": 37.59410570477675,
+                "sub": {
+                  "Diabetes": {
+                    "value": 696.064928650207,
+                    "pct": 5.79955770192985
+                  },
+                  "Cardiovascular (excl Stroke)": {
+                    "value": 1392.58404171361,
+                    "pct": 11.602899632317751
+                  },
+                  "Stroke": {
+                    "value": 622.386687241977,
+                    "pct": 5.1856764462654406
+                  },
+                  "COPD": {
+                    "value": 245.205921774324,
+                    "pct": 2.0430362652271037
+                  },
+                  "Asthma": {
+                    "value": 72.4607917496061,
+                    "pct": 0.6037375618022931
+                  },
+                  "Neoplasms": {
+                    "value": 2100.64466947727,
+                    "pct": 17.502404546526154
+                  }
+                }
+              }
+            }
+          },
+          "Singapore": {
+            "total": 1055.22744378032,
+            "population": 5669.566,
+            "dalyRate": 186.12,
+            "dalyRateVsWorld": 49.0,
+            "diseases": {
+              "Infectious & Parasitic": {
+                "value": 12.8829930089,
+                "pct": 1.3098263692237904,
+                "sub": {
+                  "Tuberculosis": {
+                    "value": 0.82211278142632,
+                    "pct": 0.08358500224631046
+                  },
+                  "Diarrhoeal Diseases": {
+                    "value": 0.482784574402804,
+                    "pct": 0.04908517498770818
+                  },
+                  "Malaria": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  },
+                  "Dengue": {
+                    "value": 4.56674126179662,
+                    "pct": 0.46430500443423545
+                  },
+                  "Hepatitis": {
+                    "value": 0.43792507432219,
+                    "pct": 0.04452426619305209
+                  },
+                  "Respiratory Infections": {
+                    "value": 73.1845481223499,
+                    "pct": 7.440743846104605
+                  },
+                  "Meningitis": {
+                    "value": 0.238904671069464,
+                    "pct": 0.02428966915384817
+                  },
+                  "Encephalitis": {
+                    "value": 0.0525486106751679,
+                    "pct": 0.00534266811142876
+                  },
+                  "Other Infectious": {
+                    "value": 4.74185269883374,
+                    "pct": 0.48210875373577095
+                  },
+                  "COVID-19": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  }
+                }
+              },
+              "Injuries": {
+                "value": 85.5204832711691,
+                "pct": 8.694950313172898,
+                "sub": {
+                  "Unintentional Injuries": {
+                    "value": 59.2567636959541,
+                    "pct": 6.02469252216499
+                  },
+                  "Interpersonal Violence": {
+                    "value": 2.42350873045788,
+                    "pct": 0.24640047844509722
+                  },
+                  "Collective Violence": {
+                    "value": 0.438028401817354,
+                    "pct": 0.04453477159950059
+                  }
+                }
+              },
+              "Maternal, Perinatal & Nutritional": {
+                "value": 14.797186781700983,
+                "pct": 1.5044443029358245,
+                "sub": {
+                  "Maternal Conditions": {
+                    "value": 0.319465033534855,
+                    "pct": 0.032480319183581075
+                  },
+                  "Preterm Birth": {
+                    "value": 7.60308632696191,
+                    "pct": 0.7730131462199619
+                  },
+                  "Birth Asphyxia": {
+                    "value": 2.54205889543711,
+                    "pct": 0.25845358846839334
+                  },
+                  "Neonatal Sepsis": {
+                    "value": 1.16875963090445,
+                    "pct": 0.11882892296730546
+                  },
+                  "Other Neonatal": {
+                    "value": 0.678169164264293,
+                    "pct": 0.06895011536016321
+                  },
+                  "Protein-Energy Malnutrition": {
+                    "value": 0.00672050357970361,
+                    "pct": 0.0006832801040160056
+                  },
+                  "Iron Deficiency Anaemia": {
+                    "value": 2.29652410310036,
+                    "pct": 0.2334898284677176
+                  },
+                  "Other Nutritional": {
+                    "value": 0.00140247112833004,
+                    "pct": 0.00014259059713008247
+                  }
+                }
+              },
+              "Mental & Substance Disorders": {
+                "value": 79.1848711265387,
+                "pct": 8.050802493913938,
+                "sub": {
+                  "Self-Harm": {
+                    "value": 23.4021824429398,
+                    "pct": 2.379322540963315
+                  },
+                  "Depressive Disorders": {
+                    "value": 24.5622255282468,
+                    "pct": 2.4972652443026044
+                  },
+                  "Anxiety Disorders": {
+                    "value": 21.0620835796885,
+                    "pct": 2.141402424453147
+                  },
+                  "Eating Disorders": {
+                    "value": 7.14135833835824,
+                    "pct": 0.7260688146920364
+                  },
+                  "ADHD": {
+                    "value": 0.738232380973696,
+                    "pct": 0.07505680074080648
+                  },
+                  "Conduct Disorder": {
+                    "value": 2.27878885633165,
+                    "pct": 0.23168666876202662
+                  }
+                }
+              },
+              "Substance Abuse": {
+                "value": 12.98855142109841,
+                "pct": 1.3205585951665784,
+                "sub": {
+                  "Alcohol Use": {
+                    "value": 4.98948141682565,
+                    "pct": 0.5072854051846085
+                  },
+                  "Drug Use": {
+                    "value": 7.99907000427276,
+                    "pct": 0.8132731899819698
+                  }
+                }
+              },
+              "Others": {
+                "value": 355.81081953618303,
+                "pct": 36.17563042700224,
+                "sub": {
+                  "HIV/AIDS": {
+                    "value": 0.800654650205753,
+                    "pct": 0.08140333327485746
+                  },
+                  "STDs": {
+                    "value": 0.70873075125659,
+                    "pct": 0.07205734149155854
+                  },
+                  "Leprosy": {
+                    "value": 0.000220753033396544,
+                    "pct": 2.244417458188328e-05
+                  },
+                  "Neurological": {
+                    "value": 47.1623188873315,
+                    "pct": 4.7950386117334824
+                  },
+                  "Digestive Diseases": {
+                    "value": 23.4159823092609,
+                    "pct": 2.380725586729672
+                  },
+                  "Genitourinary": {
+                    "value": 44.4700262994375,
+                    "pct": 4.521310618335275
+                  },
+                  "Skin Diseases": {
+                    "value": 31.0495143783468,
+                    "pct": 3.156834181021137
+                  },
+                  "Musculoskeletal": {
+                    "value": 152.446892900213,
+                    "pct": 15.49942316113881
+                  },
+                  "Sense Organ Diseases": {
+                    "value": 40.079295277825,
+                    "pct": 4.074900745388522
+                  },
+                  "Oral Conditions": {
+                    "value": 12.3516950977716,
+                    "pct": 1.2558087963330236
+                  }
+                }
+              },
+              "Noncommunicable Diseases": {
+                "value": 422.3800399191916,
+                "pct": 42.94378749858473,
+                "sub": {
+                  "Diabetes": {
+                    "value": 44.5246063876245,
+                    "pct": 4.526859828731688
+                  },
+                  "Cardiovascular (excl Stroke)": {
+                    "value": 159.291054224437,
+                    "pct": 16.19527566773391
+                  },
+                  "Stroke": {
+                    "value": 37.3030314775971,
+                    "pct": 3.7926353175529415
+                  },
+                  "COPD": {
+                    "value": 9.55367671410846,
+                    "pct": 0.9713315589423751
+                  },
+                  "Asthma": {
+                    "value": 7.94371992193777,
+                    "pct": 0.8076456935352208
+                  },
+                  "Neoplasms": {
+                    "value": 160.057288307026,
+                    "pct": 16.273179428582008
+                  }
+                }
+              }
+            }
+          },
+          "Thailand": {
+            "total": 23119.1581386829,
+            "population": 71522.27,
+            "dalyRate": 323.24,
+            "dalyRateVsWorld": 85.1,
+            "diseases": {
+              "Infectious & Parasitic": {
+                "value": 1592.50465746695,
+                "pct": 6.899883829259156,
+                "sub": {
+                  "Tuberculosis": {
+                    "value": 320.574047812116,
+                    "pct": 1.3889590075656506
+                  },
+                  "Diarrhoeal Diseases": {
+                    "value": 193.460384898633,
+                    "pct": 0.8382105352756454
+                  },
+                  "Malaria": {
+                    "value": 1.05016737327531,
+                    "pct": 0.004550085830457458
+                  },
+                  "Dengue": {
+                    "value": 15.2792442545878,
+                    "pct": 0.06620075480546542
+                  },
+                  "Hepatitis": {
+                    "value": 12.5507133469305,
+                    "pct": 0.054378782292478195
+                  },
+                  "Respiratory Infections": {
+                    "value": 868.735599119234,
+                    "pct": 3.7639919507670068
+                  },
+                  "Meningitis": {
+                    "value": 49.1442201387761,
+                    "pct": 0.21292836303314278
+                  },
+                  "Encephalitis": {
+                    "value": 39.3283680439493,
+                    "pct": 0.170398980891665
+                  },
+                  "Other Infectious": {
+                    "value": 83.2420650365905,
+                    "pct": 0.36066492852441145
+                  },
+                  "COVID-19": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  }
+                }
+              },
+              "Injuries": {
+                "value": 3084.49862502902,
+                "pct": 13.364282537209174,
+                "sub": {
+                  "Unintentional Injuries": {
+                    "value": 2362.38034544675,
+                    "pct": 10.235543028197377
+                  },
+                  "Interpersonal Violence": {
+                    "value": 213.407222611999,
+                    "pct": 0.9246346862745048
+                  },
+                  "Collective Violence": {
+                    "value": 19.7622350902312,
+                    "pct": 0.08562431870434514
+                  }
+                }
+              },
+              "Maternal, Perinatal & Nutritional": {
+                "value": 645.0966031090404,
+                "pct": 2.79502580996028,
+                "sub": {
+                  "Maternal Conditions": {
+                    "value": 16.6276561452275,
+                    "pct": 0.07204305194147785
+                  },
+                  "Preterm Birth": {
+                    "value": 217.701357316116,
+                    "pct": 0.9432399885991621
+                  },
+                  "Birth Asphyxia": {
+                    "value": 122.465088738798,
+                    "pct": 0.5306074814133827
+                  },
+                  "Neonatal Sepsis": {
+                    "value": 37.8182542905275,
+                    "pct": 0.1638560741449115
+                  },
+                  "Other Neonatal": {
+                    "value": 28.0999906078768,
+                    "pct": 0.12174951570064539
+                  },
+                  "Protein-Energy Malnutrition": {
+                    "value": 37.4188460526194,
+                    "pct": 0.16212554831624704
+                  },
+                  "Iron Deficiency Anaemia": {
+                    "value": 163.055422397261,
+                    "pct": 0.7064742115488799
+                  },
+                  "Other Nutritional": {
+                    "value": 4.51469367009913,
+                    "pct": 0.019560923544126054
+                  }
+                }
+              },
+              "Mental & Substance Disorders": {
+                "value": 1260.2598426989885,
+                "pct": 5.460358604623989,
+                "sub": {
+                  "Self-Harm": {
+                    "value": 488.948821880041,
+                    "pct": 2.118480504032954
+                  },
+                  "Depressive Disorders": {
+                    "value": 386.917219193265,
+                    "pct": 1.6764056867626054
+                  },
+                  "Anxiety Disorders": {
+                    "value": 316.355908392344,
+                    "pct": 1.3706829718657993
+                  },
+                  "Eating Disorders": {
+                    "value": 22.4879003134154,
+                    "pct": 0.09743387499621615
+                  },
+                  "ADHD": {
+                    "value": 13.3627036940967,
+                    "pct": 0.057896912704001255
+                  },
+                  "Conduct Disorder": {
+                    "value": 32.1872892258262,
+                    "pct": 0.13945865426241288
+                  }
+                }
+              },
+              "Substance Abuse": {
+                "value": 247.1950587682434,
+                "pct": 1.07102806931864,
+                "sub": {
+                  "Alcohol Use": {
+                    "value": 168.255413587325,
+                    "pct": 0.7290043403974087
+                  },
+                  "Drug Use": {
+                    "value": 78.9396451809184,
+                    "pct": 0.3420237289212313
+                  }
+                }
+              },
+              "Others": {
+                "value": 7989.673528152141,
+                "pct": 34.61705365787981,
+                "sub": {
+                  "HIV/AIDS": {
+                    "value": 805.288324685152,
+                    "pct": 3.489092395010212
+                  },
+                  "STDs": {
+                    "value": 17.0066222065194,
+                    "pct": 0.07368500745217957
+                  },
+                  "Leprosy": {
+                    "value": 0.124958019523952,
+                    "pct": 0.000541408663520634
+                  },
+                  "Neurological": {
+                    "value": 1184.71995514564,
+                    "pct": 5.1330650886210565
+                  },
+                  "Digestive Diseases": {
+                    "value": 1200.06489895708,
+                    "pct": 5.199550501501328
+                  },
+                  "Genitourinary": {
+                    "value": 1292.27574110378,
+                    "pct": 5.59907466968957
+                  },
+                  "Skin Diseases": {
+                    "value": 494.177852924741,
+                    "pct": 2.1411364545690157
+                  },
+                  "Musculoskeletal": {
+                    "value": 1614.11439525867,
+                    "pct": 6.99351286804689
+                  },
+                  "Sense Organ Diseases": {
+                    "value": 899.910364119473,
+                    "pct": 3.8990636165844528
+                  },
+                  "Oral Conditions": {
+                    "value": 236.887432397522,
+                    "pct": 1.0263679647595034
+                  }
+                }
+              },
+              "Noncommunicable Diseases": {
+                "value": 8260.937914732822,
+                "pct": 35.79236749174895,
+                "sub": {
+                  "Diabetes": {
+                    "value": 1034.63374107378,
+                    "pct": 4.482782882780382
+                  },
+                  "Cardiovascular (excl Stroke)": {
+                    "value": 3244.49961304853,
+                    "pct": 14.057522726319402
+                  },
+                  "Stroke": {
+                    "value": 1718.3888614279,
+                    "pct": 7.445305394713729
+                  },
+                  "COPD": {
+                    "value": 455.532685856408,
+                    "pct": 1.9736975952328428
+                  },
+                  "Asthma": {
+                    "value": 174.451205912718,
+                    "pct": 0.7558490011492498
+                  },
+                  "Neoplasms": {
+                    "value": 3095.47608336693,
+                    "pct": 13.411844839094428
+                  }
+                }
+              }
+            }
+          },
+          "Viet Nam": {
+            "total": 27996.2919702532,
+            "population": 97173.78,
+            "dalyRate": 288.11,
+            "dalyRateVsWorld": 75.8,
+            "diseases": {
+              "Infectious & Parasitic": {
+                "value": 1380.30548142761,
+                "pct": 5.017737191438814,
+                "sub": {
+                  "Tuberculosis": {
+                    "value": 392.683820221774,
+                    "pct": 1.4274986484623369
+                  },
+                  "Diarrhoeal Diseases": {
+                    "value": 261.445824171148,
+                    "pct": 0.9504174642073556
+                  },
+                  "Malaria": {
+                    "value": 0.278067825238581,
+                    "pct": 0.0010108423730948656
+                  },
+                  "Dengue": {
+                    "value": 15.1636948508394,
+                    "pct": 0.0551236205582485
+                  },
+                  "Hepatitis": {
+                    "value": 18.6278287998529,
+                    "pct": 0.06771656754423963
+                  },
+                  "Respiratory Infections": {
+                    "value": 832.017635660584,
+                    "pct": 3.024581073219516
+                  },
+                  "Meningitis": {
+                    "value": 35.7056037721894,
+                    "pct": 0.12979832247365372
+                  },
+                  "Encephalitis": {
+                    "value": 78.4959994387502,
+                    "pct": 0.28535154070069074
+                  },
+                  "Other Infectious": {
+                    "value": 79.6293639242468,
+                    "pct": 0.28947158891237385
+                  },
+                  "COVID-19": {
+                    "value": 0.0,
+                    "pct": 0.0
+                  }
+                }
+              },
+              "Injuries": {
+                "value": 3350.54459969198,
+                "pct": 12.180022810646669,
+                "sub": {
+                  "Unintentional Injuries": {
+                    "value": 2866.24757048527,
+                    "pct": 10.419488459482258
+                  },
+                  "Interpersonal Violence": {
+                    "value": 142.739210667484,
+                    "pct": 0.5188908221258969
+                  },
+                  "Collective Violence": {
+                    "value": 2.02404422392602,
+                    "pct": 0.007357879915833065
+                  }
+                }
+              },
+              "Maternal, Perinatal & Nutritional": {
+                "value": 1788.3634340333126,
+                "pct": 6.501124450710083,
+                "sub": {
+                  "Maternal Conditions": {
+                    "value": 48.2925884344251,
+                    "pct": 0.1755549914991562
+                  },
+                  "Preterm Birth": {
+                    "value": 801.684814086187,
+                    "pct": 2.9143140859597745
+                  },
+                  "Birth Asphyxia": {
+                    "value": 332.818331198468,
+                    "pct": 1.2098734236133921
+                  },
+                  "Neonatal Sepsis": {
+                    "value": 121.034786819114,
+                    "pct": 0.43999010324294485
+                  },
+                  "Other Neonatal": {
+                    "value": 91.9498296293532,
+                    "pct": 0.3342593984343786
+                  },
+                  "Protein-Energy Malnutrition": {
+                    "value": 20.5987656793554,
+                    "pct": 0.0748813896907325
+                  },
+                  "Iron Deficiency Anaemia": {
+                    "value": 287.393847085007,
+                    "pct": 1.0447446703012664
+                  },
+                  "Other Nutritional": {
+                    "value": 25.6060139065763,
+                    "pct": 0.09308392238697759
+                  }
+                }
+              },
+              "Mental & Substance Disorders": {
+                "value": 1066.0739565105462,
+                "pct": 3.8754312088036396,
+                "sub": {
+                  "Self-Harm": {
+                    "value": 339.533774315309,
+                    "pct": 1.2342856491227148
+                  },
+                  "Depressive Disorders": {
+                    "value": 372.747257541038,
+                    "pct": 1.355024523438132
+                  },
+                  "Anxiety Disorders": {
+                    "value": 264.863700474234,
+                    "pct": 0.9628422536996022
+                  },
+                  "Eating Disorders": {
+                    "value": 25.3984082483462,
+                    "pct": 0.09232922667181105
+                  },
+                  "ADHD": {
+                    "value": 9.38279842521341,
+                    "pct": 0.03410869351128922
+                  },
+                  "Conduct Disorder": {
+                    "value": 54.1480175064055,
+                    "pct": 0.1968408623600907
+                  }
+                }
+              },
+              "Substance Abuse": {
+                "value": 323.7965829377,
+                "pct": 1.1770772329230286,
+                "sub": {
+                  "Alcohol Use": {
+                    "value": 176.508325468251,
+                    "pct": 0.6416495487539502
+                  },
+                  "Drug Use": {
+                    "value": 147.288257469449,
+                    "pct": 0.5354276841690784
+                  }
+                }
+              },
+              "Others": {
+                "value": 7128.4793172340105,
+                "pct": 25.913709877825585,
+                "sub": {
+                  "HIV/AIDS": {
+                    "value": 271.276644318452,
+                    "pct": 0.9861548227408116
+                  },
+                  "STDs": {
+                    "value": 31.0141075794498,
+                    "pct": 0.11274362317226745
+                  },
+                  "Leprosy": {
+                    "value": 0.156676578567903,
+                    "pct": 0.0005695564539050065
+                  },
+                  "Neurological": {
+                    "value": 1210.32832993475,
+                    "pct": 4.399830006242083
+                  },
+                  "Digestive Diseases": {
+                    "value": 1063.11444848134,
+                    "pct": 3.864672696498704
+                  },
+                  "Genitourinary": {
+                    "value": 987.283184168847,
+                    "pct": 3.589008098817702
+                  },
+                  "Skin Diseases": {
+                    "value": 555.393782290386,
+                    "pct": 2.0189878797047265
+                  },
+                  "Musculoskeletal": {
+                    "value": 1604.43546294844,
+                    "pct": 5.832502733650815
+                  },
+                  "Sense Organ Diseases": {
+                    "value": 893.883295180518,
+                    "pct": 3.2494773913338215
+                  },
+                  "Oral Conditions": {
+                    "value": 214.352237434419,
+                    "pct": 0.7792211277248451
+                  }
+                }
+              },
+              "Noncommunicable Diseases": {
+                "value": 12470.961462479914,
+                "pct": 45.33489722765217,
+                "sub": {
+                  "Diabetes": {
+                    "value": 995.182505136503,
+                    "pct": 3.617724000579916
+                  },
+                  "Cardiovascular (excl Stroke)": {
+                    "value": 5590.80851637072,
+                    "pct": 20.32391249637841
+                  },
+                  "Stroke": {
+                    "value": 3601.16029377631,
+                    "pct": 13.09107018811892
+                  },
+                  "COPD": {
+                    "value": 742.498743813976,
+                    "pct": 2.6991587091131755
+                  },
+                  "Asthma": {
+                    "value": 268.904462121431,
+                    "pct": 0.9775313788763779
+                  },
+                  "Neoplasms": {
+                    "value": 3829.26478629933,
+                    "pct": 13.920284018729257
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ageGroups": {
+          "0-4": {
+            "Bangladesh": 22.18,
+            "Brunei Darussalam": 6.82,
+            "Cambodia": 18.05,
+            "China": 3.35,
+            "India": 17.3,
+            "Indonesia": 12.46,
+            "Japan": 0.94,
+            "Lao People's Democratic Republic": 28.27,
+            "Malaysia": 5.24,
+            "Myanmar": 20.19,
+            "Philippines": 17.74,
+            "Republic of Korea": 1.11,
+            "Singapore": 1.32,
+            "Thailand": 2.89,
+            "Viet Nam": 11.41
+          },
+          "5-14": {
+            "Bangladesh": 6.2,
+            "Brunei Darussalam": 3.63,
+            "Cambodia": 5.16,
+            "China": 2.08,
+            "India": 4.95,
+            "Indonesia": 4.47,
+            "Japan": 1.37,
+            "Lao People's Democratic Republic": 6.02,
+            "Malaysia": 3.82,
+            "Myanmar": 3.82,
+            "Philippines": 5.05,
+            "Republic of Korea": 1.65,
+            "Singapore": 1.95,
+            "Thailand": 2.69,
+            "Viet Nam": 3.42
+          },
+          "15-29": {
+            "Bangladesh": 13.36,
+            "Brunei Darussalam": 13.35,
+            "Cambodia": 12.73,
+            "China": 6.74,
+            "India": 11.95,
+            "Indonesia": 10.5,
+            "Japan": 4.54,
+            "Lao People's Democratic Republic": 13.92,
+            "Malaysia": 13.48,
+            "Myanmar": 11.36,
+            "Philippines": 14.15,
+            "Republic of Korea": 7.67,
+            "Singapore": 13.49,
+            "Thailand": 11.0,
+            "Viet Nam": 9.88
+          },
+          "30-49": {
+            "Bangladesh": 19.88,
+            "Brunei Darussalam": 29.85,
+            "Cambodia": 21.11,
+            "China": 19.76,
+            "India": 21.69,
+            "Indonesia": 21.74,
+            "Japan": 13.15,
+            "Lao People's Democratic Republic": 19.11,
+            "Malaysia": 25.16,
+            "Myanmar": 21.18,
+            "Philippines": 23.17,
+            "Republic of Korea": 20.43,
+            "Singapore": 22.32,
+            "Thailand": 26.03,
+            "Viet Nam": 21.88
+          },
+          "50-59": {
+            "Bangladesh": 12.22,
+            "Brunei Darussalam": 16.64,
+            "Cambodia": 14.5,
+            "China": 16.84,
+            "India": 14.26,
+            "Indonesia": 16.31,
+            "Japan": 10.6,
+            "Lao People's Democratic Republic": 11.29,
+            "Malaysia": 16.74,
+            "Myanmar": 14.66,
+            "Philippines": 14.7,
+            "Republic of Korea": 18.35,
+            "Singapore": 15.47,
+            "Thailand": 17.67,
+            "Viet Nam": 16.71
+          },
+          "60-69": {
+            "Bangladesh": 12.46,
+            "Brunei Darussalam": 14.34,
+            "Cambodia": 14.21,
+            "China": 20.54,
+            "India": 15.24,
+            "Indonesia": 15.98,
+            "Japan": 16.75,
+            "Lao People's Democratic Republic": 10.84,
+            "Malaysia": 17.33,
+            "Myanmar": 15.16,
+            "Philippines": 13.85,
+            "Republic of Korea": 18.13,
+            "Singapore": 18.79,
+            "Thailand": 17.29,
+            "Viet Nam": 16.67
+          },
+          "70+": {
+            "Bangladesh": 13.7,
+            "Brunei Darussalam": 15.38,
+            "Cambodia": 14.24,
+            "China": 30.7,
+            "India": 14.62,
+            "Indonesia": 18.53,
+            "Japan": 52.66,
+            "Lao People's Democratic Republic": 10.56,
+            "Malaysia": 18.22,
+            "Myanmar": 13.63,
+            "Philippines": 11.33,
+            "Republic of Korea": 32.67,
+            "Singapore": 26.66,
+            "Thailand": 22.43,
+            "Viet Nam": 20.03
+          }
+        },
+        "gender": {
+          "malePct": {
+            "Bangladesh": 50.46,
+            "Brunei Darussalam": 54.84,
+            "Cambodia": 52.51,
+            "China": 55.87,
+            "India": 52.61,
+            "Indonesia": 52.24,
+            "Japan": 52.21,
+            "Lao People's Democratic Republic": 54.45,
+            "Malaysia": 56.6,
+            "Myanmar": 55.39,
+            "Philippines": 56.23,
+            "Republic of Korea": 53.92,
+            "Singapore": 52.97,
+            "Thailand": 56.6,
+            "Viet Nam": 56.59
+          },
+          "femalePct": {
+            "Bangladesh": 49.54,
+            "Brunei Darussalam": 45.16,
+            "Cambodia": 47.49,
+            "China": 44.13,
+            "India": 47.39,
+            "Indonesia": 47.76,
+            "Japan": 47.79,
+            "Lao People's Democratic Republic": 45.55,
+            "Malaysia": 43.4,
+            "Myanmar": 44.61,
+            "Philippines": 43.77,
+            "Republic of Korea": 46.08,
+            "Singapore": 47.03,
+            "Thailand": 43.4,
+            "Viet Nam": 43.41
+          },
+          "malePopPct": {
+            "Bangladesh": 49.22,
+            "Brunei Darussalam": 53.17,
+            "Cambodia": 48.89,
+            "China": 51.1,
+            "India": 51.64,
+            "Indonesia": 50.25,
+            "Japan": 48.86,
+            "Lao People's Democratic Republic": 50.29,
+            "Malaysia": 52.59,
+            "Myanmar": 49.87,
+            "Philippines": 49.91,
+            "Republic of Korea": 50.0,
+            "Singapore": 51.71,
+            "Thailand": 48.97,
+            "Viet Nam": 48.95
+          },
+          "femalePopPct": {
+            "Bangladesh": 50.78,
+            "Brunei Darussalam": 46.83,
+            "Cambodia": 51.11,
+            "China": 48.9,
+            "India": 48.36,
+            "Indonesia": 49.75,
+            "Japan": 51.14,
+            "Lao People's Democratic Republic": 49.71,
+            "Malaysia": 47.41,
+            "Myanmar": 50.13,
+            "Philippines": 50.09,
+            "Republic of Korea": 50.0,
+            "Singapore": 48.29,
+            "Thailand": 51.03,
+            "Viet Nam": 51.05
+          }
+        }
       }
     },
     "global": {
@@ -11242,77 +14895,92 @@
         "Bangladesh": {
           "2010": 335.91,
           "2021": 297.61,
-          "2000": 479.84
+          "2000": 479.84,
+          "2019": 283.29
         },
         "Brunei Darussalam": {
           "2010": 191.95,
           "2021": 234.2,
-          "2000": 188.42
+          "2000": 188.42,
+          "2019": 224.7
         },
         "Cambodia": {
           "2010": 383.34,
           "2021": 349.26,
-          "2000": 610.11
+          "2000": 610.11,
+          "2019": 334.45
         },
         "China": {
           "2010": 283.75,
           "2021": 283.49,
-          "2000": 309.48
+          "2000": 309.48,
+          "2019": 277.53
         },
         "India": {
           "2010": 418.67,
           "2021": 415.39,
-          "2000": 556.06
+          "2000": 556.06,
+          "2019": 347.62
         },
         "Indonesia": {
           "2010": 347.28,
           "2021": 386.42,
-          "2000": 388.0
+          "2000": 388.0,
+          "2019": 317.03
         },
         "Japan": {
           "2010": 291.49,
           "2021": 306.25,
-          "2000": 274.65
+          "2000": 274.65,
+          "2019": 296.65
         },
         "Lao People's Democratic Republic": {
           "2010": 449.4,
           "2021": 349.93,
-          "2000": 669.77
+          "2000": 669.77,
+          "2019": 351.59
         },
         "Malaysia": {
           "2010": 240.44,
           "2021": 295.17,
-          "2000": 237.41
+          "2000": 237.41,
+          "2019": 259.31
         },
         "Myanmar": {
           "2010": 454.82,
           "2021": 404.79,
-          "2000": 595.38
+          "2000": 595.38,
+          "2019": 379.93
         },
         "Philippines": {
           "2010": 309.63,
           "2021": 373.35,
-          "2000": 314.8
+          "2000": 314.8,
+          "2019": 320.73
         },
         "Republic of Korea": {
           "2010": 238.93,
           "2021": 248.22,
-          "2000": 251.25
+          "2000": 251.25,
+          "2019": 239.29
         },
         "Singapore": {
           "2010": 184.29,
           "2021": 197.85,
-          "2000": 199.43
+          "2000": 199.43,
+          "2019": 186.12
         },
         "Thailand": {
           "2010": 307.86,
           "2021": 364.93,
-          "2000": 358.05
+          "2000": 358.05,
+          "2019": 323.24
         },
         "Viet Nam": {
           "2010": 287.77,
           "2021": 294.9,
-          "2000": 281.44
+          "2000": 281.44,
+          "2019": 288.11
         }
       },
       "categoryTotals": {
@@ -11367,6 +15035,23 @@
             "Singapore": 13.4702039984804,
             "Thailand": 5284.63058415994,
             "Viet Nam": 2578.24912263789
+          },
+          "2019": {
+            "Bangladesh": 4157.85295182923,
+            "Brunei Darussalam": 3.94651428474148,
+            "Cambodia": 462.04554277101,
+            "China": 7605.03487151845,
+            "India": 52094.8758367215,
+            "Indonesia": 9529.48094540344,
+            "Japan": 521.432648002427,
+            "Lao People's Democratic Republic": 318.630724586551,
+            "Malaysia": 415.580804521863,
+            "Myanmar": 2425.65959932871,
+            "Philippines": 3363.67147307293,
+            "Republic of Korea": 254.585849755668,
+            "Singapore": 12.8829930089,
+            "Thailand": 1592.50465746695,
+            "Viet Nam": 1380.30548142761
           }
         },
         "Maternal, Perinatal & Nutritional": {
@@ -11420,6 +15105,23 @@
             "Singapore": 16.330865707961333,
             "Thailand": 1245.2699666265478,
             "Viet Nam": 2331.738352885152
+          },
+          "2019": {
+            "Bangladesh": 7411.580146079068,
+            "Brunei Darussalam": 4.193908414665171,
+            "Cambodia": 579.6662368717024,
+            "China": 8515.62579071409,
+            "India": 65918.01513444136,
+            "Indonesia": 6200.038159380005,
+            "Japan": 352.3376659668147,
+            "Lao People's Democratic Republic": 376.0697303995134,
+            "Malaysia": 388.7503478732428,
+            "Myanmar": 2256.665097969115,
+            "Philippines": 3578.59398014949,
+            "Republic of Korea": 150.42080769194936,
+            "Singapore": 14.797186781700983,
+            "Thailand": 645.0966031090404,
+            "Viet Nam": 1788.3634340333126
           }
         },
         "Noncommunicable Diseases": {
@@ -11473,6 +15175,23 @@
             "Singapore": 348.69788028940656,
             "Thailand": 5928.373785530231,
             "Viet Nam": 7277.7851259166755
+          },
+          "2019": {
+            "Bangladesh": 16152.013132046668,
+            "Brunei Darussalam": 44.038394160843886,
+            "Cambodia": 1866.5247934978859,
+            "China": 209325.17495643446,
+            "India": 161308.41048632291,
+            "Indonesia": 38228.213557041745,
+            "Japan": 17001.843675891352,
+            "Lao People's Democratic Republic": 842.7592248627857,
+            "Malaysia": 3551.3644601114165,
+            "Myanmar": 7727.437968766552,
+            "Philippines": 13214.833368950834,
+            "Republic of Korea": 4512.057617144868,
+            "Singapore": 422.3800399191916,
+            "Thailand": 8260.937914732822,
+            "Viet Nam": 12470.961462479914
           }
         },
         "Injuries": {
@@ -11526,6 +15245,23 @@
             "Singapore": 88.6681070491647,
             "Thailand": 3859.00460397334,
             "Viet Nam": 3313.60926938121
+          },
+          "2019": {
+            "Bangladesh": 4028.23621966307,
+            "Brunei Darussalam": 8.61791762431176,
+            "Cambodia": 649.60541868095,
+            "China": 36762.6606843657,
+            "India": 52645.9282208623,
+            "Indonesia": 6034.32475588587,
+            "Japan": 2947.17276679259,
+            "Lao People's Democratic Republic": 289.16692233365,
+            "Malaysia": 845.51001367431,
+            "Myanmar": 2126.60973960616,
+            "Philippines": 3408.17685966994,
+            "Republic of Korea": 1545.97161023481,
+            "Singapore": 85.5204832711691,
+            "Thailand": 3084.49862502902,
+            "Viet Nam": 3350.54459969198
           }
         },
         "Mental & Substance Disorders": {
@@ -11579,6 +15315,23 @@
             "Singapore": 69.11818175624175,
             "Thailand": 1047.5614761122358,
             "Viet Nam": 781.7855299135229
+          },
+          "2019": {
+            "Bangladesh": 2429.9536328524714,
+            "Brunei Darussalam": 4.416621018360068,
+            "Cambodia": 203.2693736698051,
+            "China": 18942.911563528305,
+            "India": 25962.12857998582,
+            "Indonesia": 2692.5361415878087,
+            "Japan": 1926.9398848323333,
+            "Lao People's Democratic Republic": 94.14917873161708,
+            "Malaysia": 517.0194573653472,
+            "Myanmar": 543.1758974407951,
+            "Philippines": 1322.860182534847,
+            "Republic of Korea": 1094.0217903530088,
+            "Singapore": 79.1848711265387,
+            "Thailand": 1260.2598426989885,
+            "Viet Nam": 1066.0739565105462
           }
         },
         "Substance Abuse": {
@@ -11632,6 +15385,23 @@
             "Singapore": 8.30077942150329,
             "Thailand": 207.6044285697206,
             "Viet Nam": 181.6789919538152
+          },
+          "2019": {
+            "Bangladesh": 290.862187130013,
+            "Brunei Darussalam": 0.9751694090439009,
+            "Cambodia": 29.1109176599874,
+            "China": 4459.39683092791,
+            "India": 3892.7123998674897,
+            "Indonesia": 280.755123653023,
+            "Japan": 176.4616790301307,
+            "Lao People's Democratic Republic": 12.44640616054025,
+            "Malaysia": 52.4800921822515,
+            "Myanmar": 287.0372335260754,
+            "Philippines": 190.5651322665326,
+            "Republic of Korea": 244.59558658985048,
+            "Singapore": 12.98855142109841,
+            "Thailand": 247.1950587682434,
+            "Viet Nam": 323.7965829377
           }
         },
         "Others": {
@@ -11685,6 +15455,23 @@
             "Singapore": 221.39087240054698,
             "Thailand": 7857.205102639491,
             "Viet Nam": 4784.124032858464
+          },
+          "2019": {
+            "Bangladesh": 10601.228882240684,
+            "Brunei Darussalam": 31.547888686769177,
+            "Cambodia": 1423.7811116354517,
+            "China": 106643.46123076476,
+            "India": 105637.95274640138,
+            "Indonesia": 23583.694158459308,
+            "Japan": 13329.357936786579,
+            "Lao People's Democratic Republic": 484.5467257567416,
+            "Malaysia": 2514.862046323351,
+            "Myanmar": 4358.0860351899255,
+            "Philippines": 8480.374502117107,
+            "Republic of Korea": 4200.381452335467,
+            "Singapore": 355.81081953618303,
+            "Thailand": 7989.673528152141,
+            "Viet Nam": 7128.4793172340105
           }
         }
       },
@@ -11692,77 +15479,92 @@
         "Bangladesh": {
           "2010": 51125.5174722606,
           "2021": 49896.8202260195,
-          "2000": 64560.0339766875
+          "2000": 64560.0339766875,
+          "2019": 46718.2631100796
         },
         "Brunei Darussalam": {
           "2010": 75.3134356039084,
           "2021": 105.795167707344,
-          "2000": 61.5102332659663
+          "2000": 61.5102332659663,
+          "2019": 99.4749661352681
         },
         "Cambodia": {
           "2010": 5558.64692133283,
           "2021": 5928.5220731492,
-          "2000": 7603.35679163607
+          "2000": 7603.35679163607,
+          "2019": 5512.09954677586
         },
         "China": {
           "2010": 383510.09105187,
           "2021": 404385.226302728,
-          "2000": 392910.001670354
+          "2000": 392910.001670354,
+          "2019": 395072.520778747
         },
         "India": {
           "2010": 520605.352872986,
           "2021": 587446.421269847,
-          "2000": 588265.398717902
+          "2000": 588265.398717902,
+          "2019": 482856.765254674
         },
         "Indonesia": {
           "2010": 85537.5813835742,
           "2021": 106943.505249781,
-          "2000": 83837.4129088296
+          "2000": 83837.4129088296,
+          "2019": 86387.6529194132
         },
         "Japan": {
           "2010": 37364.0870070344,
           "2021": 38489.03709472,
-          "2000": 34887.7973971429
+          "2000": 34887.7973971429,
+          "2019": 37585.307026075
         },
         "Lao People's Democratic Republic": {
           "2010": 2846.57865824054,
           "2021": 2608.07027608778,
-          "2000": 3637.64619080866
+          "2000": 3637.64619080866,
+          "2019": 2544.65428925883
         },
         "Malaysia": {
           "2010": 6889.98820673997,
           "2021": 10119.0942048455,
-          "2000": 5452.68108203537
+          "2000": 5452.68108203537,
+          "2019": 8671.32635856312
         },
         "Myanmar": {
           "2010": 22297.4773423798,
           "2021": 21610.7981753407,
-          "2000": 26965.4758961685
+          "2000": 26965.4758961685,
+          "2019": 19999.825149547
         },
         "Philippines": {
           "2010": 29829.0592131049,
           "2021": 42225.8840248706,
-          "2000": 25065.8947922709
+          "2000": 25065.8947922709,
+          "2019": 35538.423242955
         },
         "Republic of Korea": {
           "2010": 11652.4945427013,
           "2021": 12869.8916617817,
-          "2000": 11749.9082620346
+          "2000": 11749.9082620346,
+          "2019": 12387.6298826432
         },
         "Singapore": {
           "2010": 935.667370796272,
           "2021": 1097.36069482264,
-          "2000": 804.741603763225
+          "2000": 804.741603763225,
+          "2019": 1055.22744378032
         },
         "Thailand": {
           "2010": 21113.0851712821,
           "2021": 26175.736501085,
-          "2000": 22559.6962781168
+          "2000": 22559.6962781168,
+          "2019": 23119.1581386829
         },
         "Viet Nam": {
           "2010": 25166.9336551042,
           "2021": 29175.6839509506,
-          "2000": 21713.883581513
+          "2000": 21713.883581513,
+          "2019": 27996.2919702532
         }
       }
     }
